@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+  backend:
+    container_name: kanban-backend
+    image: kanban-backend
+    ports:
+      - 8000:8080
+    volumes:
+      - ./backend:/kanban-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+  frontend:
+    container_name: kanban-frontend
+    image: kanban-frontend
+    ports:
+      - 8001:8081
+    volumes:
+      - ./frontend/src:/kanban-frontend/src
+      - ./frontend/public:/kanban-frontend/public
+      - ./frontend/eslintrc.cjs:/kanban-frontend/eslintrc.cjs
+      - ./frontend/.prettierrc.cjs:/kanban-frontend/.prettierrc.cjs
+      - ./frontend/index.html:/kanban-frontend/index.html
+      - ./frontend/package.json:/kanban-frontend/package.json
+      - ./frontend/pnpm-lock.yaml:/kanban-frontend/pnpm-lock.yaml
+      - ./frontend/postcss.config.js:/kanban-frontend/postcss.config.js
+      - ./frontend/svelte.config.js:/kanban-frontend/svelte.config.js
+      - ./frontend/tailwind.config.js:/kanban-frontend/tailwind.config.js
+      - ./frontend/tsconfig.json:/kanban-frontend/tsconfig.json
+      - ./frontend/tsconfig.node.json:/kanban-frontend/tsconfig.node.json
+      - ./frontend/vite.config.ts:/kanban-frontend/vite.config.ts
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+
+volumes:
+  kanban-backend:
+  kanban-frontend:
