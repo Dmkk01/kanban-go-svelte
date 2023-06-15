@@ -1,0 +1,6 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll.prettier": true
+  },
+  "editor.formatOnSave": true
+}

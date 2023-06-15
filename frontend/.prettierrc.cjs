@@ -1,0 +1,16 @@
+module.exports = {
+    trailingComma: 'es5',
+    tabWidth: 2,
+    semi: false,
+    singleQuote: true,
+    bracketSpacing: true,
+    endOfLine: 'auto',
+    bracketSameLine: false,
+    singleAttributePerLine: true,
+    printWidth: 150,
+    svelteSortOrder: 'options-styles-scripts-markup',
+    svelteStrictMode: false,
+    svelteBracketNewLine: true,
+    svelteIndentScriptAndStyle: true,
+    plugins: ['prettier-plugin-svelte'],
+  }
