@@ -1,47 +1,28 @@
 <script lang="ts">
-  import svelteLogo from './assets/svelte.svg'
-  import viteLogo from '/vite.svg'
-  import Counter from './lib/Counter.svelte'
+  import { Router, Link, Route } from 'svelte-routing'
+  import Counter from './components/Counter.svelte'
+  import Home from './pages/Home.svelte'
+  import About from './pages/About.svelte'
+
+  export let url = '/'
 </script>
 
-<main>
-  <div>
-    <a
-      href="https://vitejs.dev"
-      target="_blank"
-      rel="noreferrer"
-    >
-      <img
-        src={viteLogo}
-        class="logo"
-        alt="Vite Logo"
+<main class={import.meta.env.MODE === 'development' ? 'debug-screens' : ''}>
+  <Router {url}>
+    <nav>
+      <Link to="/">Home</Link>
+      <Link to="/about">About</Link>
+    </nav>
+    <div>
+      <Route
+        path="/about"
+        component={About}
       />
-    </a>
-    <a
-      href="https://svelte.dev"
-      target="_blank"
-      rel="noreferrer"
-    >
-      <img
-        src={svelteLogo}
-        class="logo svelte"
-        alt="Svelte Logo"
-      />
-    </a>
-  </div>
-  <h1 class="text-3xl text-blue-600">Vite + Svelte</h1>
-
-  <div class="card">
+      <Route path="/"><Home /></Route>
+    </div>
     <Counter />
-  </div>
-
-  <p>
-    Check out <a
-      href="https://github.com/sveltejs/kit#readme"
-      target="_blank"
-      rel="noreferrer">SvelteKit</a
-    >, the official Svelte app framework powered by Vite!
-  </p>
-
-  <p class="read-the-docs">Click on the Vite and Svelte logos to learn more</p>
+    <p>
+      {JSON.stringify(import.meta.env)}
+    </p>
+  </Router>
 </main>
