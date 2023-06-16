@@ -2,6 +2,8 @@ module github.com/Dmkk01/kanban-go-svelte
 
 go 1.20
 
+require github.com/lib/pq v1.10.9
+
 require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/labstack/echo/v4 v4.10.2 // indirect
