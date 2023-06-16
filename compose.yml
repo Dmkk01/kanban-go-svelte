@@ -29,10 +29,22 @@ services:
       - ./frontend/tsconfig.json:/kanban-frontend/tsconfig.json
       - ./frontend/tsconfig.node.json:/kanban-frontend/tsconfig.node.json
       - ./frontend/vite.config.ts:/kanban-frontend/vite.config.ts
-    build: 
+    build:
       context: ./frontend
       dockerfile: Dockerfile
+  postgres:
+    container_name: kanban-postgres
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=mydb
+    ports:
+      - 6500:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data/
 
 volumes:
   kanban-backend:
   kanban-frontend:
+  postgres:
