@@ -6,7 +6,12 @@ services:
     ports:
       - 8000:8080
     volumes:
-      - ./backend:/kanban-backend
+      - ./backend/cmd:/kanban-backend/cmd
+      - ./backend/main.go:/kanban-backend/main.go
+      - ./backend/go.mod:/kanban-backend/go.mod
+      - ./backend/go.sum:/kanban-backend/go.sum
+    environment:
+      - JWT_SECRET_KEY=secret
     build:
       context: ./backend
       dockerfile: Dockerfile

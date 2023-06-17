@@ -3,17 +3,19 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
-	"github.com/Dmkk01/kanban-go-svelte/models"
-	"github.com/Dmkk01/kanban-go-svelte/services"
+	"github.com/Dmkk01/kanban-go-svelte/cmd/models"
+	"github.com/Dmkk01/kanban-go-svelte/cmd/services"
+	"github.com/asaskevich/govalidator"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"
 )
 
-var jwtSecretKey = "secret_key"
+var jwtSecretKey = os.Getenv("JWT_SECRET_KEY")
 
 type loginCredentials struct {
 	Email    string
@@ -87,11 +89,23 @@ func Register(c echo.Context) error {
 	if creds.Email == "" {
 		return echo.NewHTTPError(400, "Email is required")
 	}
+	if !govalidator.IsEmail(creds.Email) {
+		return echo.NewHTTPError(400, "Invalid email")
+	}
+
 	if creds.Username == "" {
 		return echo.NewHTTPError(400, "Username is required")
 	}
+
+	if len(creds.Username) < 3 {
+		return echo.NewHTTPError(400, "Username must be at least 3 characters long")
+	}
+
 	if creds.Password == "" {
 		return echo.NewHTTPError(400, "Password is required")
+	}
+	if len(creds.Password) < 6 {
+		return echo.NewHTTPError(400, "Password must be at least 6 characters long")
 	}
 
 	ok := services.CreateUser(creds.Username, creds.Password, creds.Email)

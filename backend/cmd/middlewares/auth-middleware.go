@@ -1,16 +1,17 @@
 package middlewares
 
 import (
+	"os"
 	"strings"
 
-	"github.com/Dmkk01/kanban-go-svelte/models"
+	"github.com/Dmkk01/kanban-go-svelte/cmd/models"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 )
 
 func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var jwtSecretKey = "secret_key"
+		var jwtSecretKey = os.Getenv("JWT_SECRET_KEY")
 
 		token := c.Request().Header.Get("Authorization")
 		if token == "" {

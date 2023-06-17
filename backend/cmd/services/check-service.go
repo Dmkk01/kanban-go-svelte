@@ -1,8 +1,8 @@
 package services
 
 import (
-	"github.com/Dmkk01/kanban-go-svelte/db"
-	"github.com/Dmkk01/kanban-go-svelte/models"
+	"github.com/Dmkk01/kanban-go-svelte/cmd/db"
+	"github.com/Dmkk01/kanban-go-svelte/cmd/models"
 )
 
 func GetChecks() ([]models.Check, error) {

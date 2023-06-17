@@ -3,7 +3,7 @@ package controllers
 import (
 	"log"
 
-	"github.com/Dmkk01/kanban-go-svelte/services"
+	"github.com/Dmkk01/kanban-go-svelte/cmd/services"
 	"github.com/labstack/echo/v4"
 )
 

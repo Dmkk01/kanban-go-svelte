@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/Dmkk01/kanban-go-svelte/controllers"
-	"github.com/Dmkk01/kanban-go-svelte/middlewares"
+	"github.com/Dmkk01/kanban-go-svelte/cmd/controllers"
+	"github.com/Dmkk01/kanban-go-svelte/cmd/middlewares"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )

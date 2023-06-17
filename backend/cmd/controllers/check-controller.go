@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"github.com/Dmkk01/kanban-go-svelte/models"
-	"github.com/Dmkk01/kanban-go-svelte/services"
+	"github.com/Dmkk01/kanban-go-svelte/cmd/models"
+	"github.com/Dmkk01/kanban-go-svelte/cmd/services"
 	"github.com/labstack/echo/v4"
 )
 
