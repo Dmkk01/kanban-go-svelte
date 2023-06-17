@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/Dmkk01/kanban-go-svelte/cmd/db"
@@ -51,7 +50,6 @@ func GetUsers() ([]models.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("Rows", rows)
 
 	checks := []models.User{}
 

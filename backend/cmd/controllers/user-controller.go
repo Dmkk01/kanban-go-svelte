@@ -9,7 +9,8 @@ import (
 
 func GetUsers(c echo.Context) error {
 	users, err := services.GetUsers()
-	log.Println("Found users:", users)
+
+	log.Println("claims", c.Get("claims"))
 	if err != nil {
 		return err
 	}
