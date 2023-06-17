@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/Dmkk01/kanban-go-svelte/controllers"
+	"github.com/Dmkk01/kanban-go-svelte/middlewares"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -12,7 +13,9 @@ import (
 func main() {
 	e := echo.New()
 
-	e.Use(middleware.Logger())
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "method=${method}, uri=${uri}, status=${status}\n",
+	}))
 	e.Use(middleware.Recover())
 
 	checkGroup := e.Group("/check")
@@ -20,7 +23,12 @@ func main() {
 	checkGroup.GET("/:id", controllers.GetCheck)
 	checkGroup.POST("", controllers.CreateCheck)
 
-	userGroup := e.Group("/user")
+	authGroup := e.Group("/auth")
+	authGroup.POST("/login", controllers.Login)
+	authGroup.POST("/register", controllers.Register)
+	authGroup.POST("/refresh-token", controllers.RefreshToken)
+
+	userGroup := e.Group("/user", middlewares.AuthMiddleware)
 	userGroup.GET("", controllers.GetUsers)
 
 	e.GET("/", func(c echo.Context) error {
