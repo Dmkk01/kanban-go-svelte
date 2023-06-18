@@ -1,11 +1,9 @@
 package main
 
 import (
-	"net/http"
 	"os"
 
-	"github.com/Dmkk01/kanban-go-svelte/cmd/controllers"
-	"github.com/Dmkk01/kanban-go-svelte/cmd/middlewares"
+	"github.com/Dmkk01/kanban-go-svelte/cmd/routes"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -18,26 +16,7 @@ func main() {
 	}))
 	e.Use(middleware.Recover())
 
-	checkGroup := e.Group("/check")
-	checkGroup.GET("", controllers.GetChecks)
-	checkGroup.GET("/:id", controllers.GetCheck)
-	checkGroup.POST("", controllers.CreateCheck)
-
-	authGroup := e.Group("/auth")
-	authGroup.POST("/login", controllers.Login)
-	authGroup.POST("/register", controllers.Register)
-	authGroup.POST("/refresh-token", controllers.RefreshToken)
-
-	userGroup := e.Group("/user", middlewares.AuthMiddleware)
-	userGroup.GET("", controllers.GetUsers)
-
-	e.GET("/", func(c echo.Context) error {
-		return c.HTML(http.StatusOK, "Helasdasdlo, asdasd! <3")
-	})
-
-	e.GET("/ping", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, struct{ Status string }{Status: "OK"})
-	})
+	routes.InitRoutes(e)
 
 	httpPort := os.Getenv("HTTP_PORT")
 	if httpPort == "" {

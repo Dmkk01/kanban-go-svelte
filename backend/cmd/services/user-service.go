@@ -46,7 +46,7 @@ func GetUsers() ([]models.User, error) {
 		return nil, err
 	}
 
-	rows, err := db.Query("SELECT id, email, name, password, created_at, updated_at FROM user_table")
+	rows, err := db.Query("SELECT id, email, name, password, created_at, updated_at, role, inactive_status FROM user_table")
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +55,7 @@ func GetUsers() ([]models.User, error) {
 
 	for rows.Next() {
 		var check models.User
-		err := rows.Scan(&check.ID, &check.Email, &check.Username, &check.Password, &check.CreatedAt, &check.UpdatedAt)
+		err := rows.Scan(&check.ID, &check.Email, &check.Username, &check.Password, &check.CreatedAt, &check.UpdatedAt, &check.Role, &check.InactiveStatus)
 		if err != nil {
 			return nil, err
 		}
@@ -63,4 +63,69 @@ func GetUsers() ([]models.User, error) {
 	}
 
 	return checks, nil
+}
+
+func GetUser(id int) (models.User, error) {
+	db, err := db.Connect()
+	if err != nil {
+		return models.User{}, err
+	}
+
+	var user models.User
+	err = db.QueryRow("SELECT id, email, name, password, created_at, updated_at, role, inactive_status FROM user_table WHERE id = $1", id).Scan(&user.ID, &user.Email, &user.Username, &user.Password, &user.CreatedAt, &user.UpdatedAt, &user.Role, &user.InactiveStatus)
+	if err != nil {
+		return models.User{}, err
+	}
+
+	return user, nil
+}
+
+func UpdateUserPassword(id int, password string) error {
+	db, err := db.Connect()
+	if err != nil {
+		return err
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	updatedAt := time.Now()
+
+	_, err = db.Exec("UPDATE user_table SET password = $1, updated_at = $2 WHERE id = $3", string(hashedPassword), updatedAt, id)
+	return err
+}
+
+func UpdateUserEmail(id int, email string) error {
+	db, err := db.Connect()
+	if err != nil {
+		return err
+	}
+
+	updatedAt := time.Now()
+	_, err = db.Exec("UPDATE user_table SET email = $1, updated_at = $2 WHERE id = $3", email, updatedAt, id)
+	return err
+}
+
+func UpdateUserName(id int, username string) error {
+	db, err := db.Connect()
+	if err != nil {
+		return err
+	}
+
+	updatedAt := time.Now()
+	_, err = db.Exec("UPDATE user_table SET name = $1, updated_at = $2 WHERE id = $3", username, updatedAt, id)
+	return err
+}
+
+func ChangeUserStatus(id int, status bool) error {
+	db, err := db.Connect()
+	if err != nil {
+		return err
+	}
+
+	updatedAt := time.Now()
+	_, err = db.Exec("UPDATE user_table SET inactive_status = $1, updated_at = $2 WHERE id = $3", status, updatedAt, id)
+
+	return err
 }

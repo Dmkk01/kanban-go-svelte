@@ -18,14 +18,14 @@ Install migrate CLI
 
 
 - Create migration files
-`migrate create -ext sql -dir backend/db/migration/ -seq init`
+`migrate create -ext sql -dir backend/cmd/db/migration/ -seq init`
 
 - Apply migrations (local)
-`migrate -path backend/db/migration/ -database "postgresql://postgres:password@localhost:6500/mydb?sslmode=disable" -verbose up`
+`migrate -path backend/cmd/db/migration/ -database "postgresql://postgres:password@localhost:6500/mydb?sslmode=disable" -verbose up`
 
 - Rollback migrations (local)
-`migrate -path backend/db/migration/ -database "postgresql://postgres:password@localhost:6500/mydb?sslmode=disable" -verbose down`
+`migrate -path backend/cmd/db/migration/ -database "postgresql://postgres:password@localhost:6500/mydb?sslmode=disable" -verbose down`
 
 - Resolve migration errors (local)
-`migrate -path backend/db/migration/ -database "postgresql://postgres:password@localhost:6500/mydb?sslmode=disable" force <VERSION>`
+`migrate -path backend/cmd/db/migration/ -database "postgresql://postgres:password@localhost:6500/mydb?sslmode=disable" force <VERSION>`
 

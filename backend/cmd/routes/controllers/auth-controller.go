@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"strings"
 	"time"
@@ -42,13 +41,9 @@ func Login(c echo.Context) error {
 		return echo.NewHTTPError(500, "There is no user with that email")
 	}
 
-	fmt.Println("User found:", user)
-
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(creds.Password)); err != nil {
 		return echo.NewHTTPError(500, "Incorrect password")
 	}
-
-	fmt.Println("User is logged in (technically)")
 
 	expirationTime := time.Now().Add(60 * time.Minute)
 	claims := &models.Claims{
@@ -101,6 +96,7 @@ func Register(c echo.Context) error {
 		return echo.NewHTTPError(400, "Username must be at least 3 characters long")
 	}
 
+	//TODO better password validation
 	if creds.Password == "" {
 		return echo.NewHTTPError(400, "Password is required")
 	}
