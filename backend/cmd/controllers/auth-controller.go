@@ -16,13 +16,18 @@ import (
 
 var jwtSecretKey = os.Getenv("JWT_SECRET_KEY")
 
-type loginCredentials struct {
-	Email    string
-	Password string
+type LoginCredentials struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type TokenResponse struct {
+	Token          string    `json:"token"`
+	ExpirationTime time.Time `json:"expirationTime"`
 }
 
 func Login(c echo.Context) error {
-	var creds loginCredentials
+	var creds LoginCredentials
 
 	err := json.NewDecoder(c.Request().Body).Decode(&creds)
 	if err != nil {
@@ -61,20 +66,17 @@ func Login(c echo.Context) error {
 		return echo.NewHTTPError(500, "Error generating token")
 	}
 
-	return c.JSON(200, struct {
-		Token          string    `json:"token"`
-		ExpirationTime time.Time `json:"expirationTime"`
-	}{Token: tokenString, ExpirationTime: expirationTime})
+	return c.JSON(200, TokenResponse{Token: tokenString, ExpirationTime: expirationTime})
 }
 
-type registerCredentials struct {
-	Email    string
-	Username string
-	Password string
+type RegisterCredentials struct {
+	Email    string `json:"email"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 func Register(c echo.Context) error {
-	var creds registerCredentials
+	var creds RegisterCredentials
 
 	err := json.NewDecoder(c.Request().Body).Decode(&creds)
 	if err != nil {
@@ -110,7 +112,7 @@ func Register(c echo.Context) error {
 		return echo.NewHTTPError(500, "Error creating user")
 	}
 
-	return c.JSON(200, struct{ Status string }{Status: "OK"})
+	return c.JSON(200, models.StatusResponse{Status: "OK"})
 }
 
 func RefreshToken(c echo.Context) error {
@@ -148,8 +150,5 @@ func RefreshToken(c echo.Context) error {
 		return echo.NewHTTPError(500, "Error generating token")
 	}
 
-	return c.JSON(200, struct {
-		Token          string    `json:"token"`
-		ExpirationTime time.Time `json:"expirationTime"`
-	}{Token: tokenString, ExpirationTime: expirationTime})
+	return c.JSON(200, TokenResponse{Token: tokenString, ExpirationTime: expirationTime})
 }

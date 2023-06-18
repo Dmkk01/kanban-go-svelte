@@ -27,7 +27,7 @@ func getUserById(id int) (models.User, error) {
 func GetUsers(c echo.Context) error {
 	users, err := services.GetUsers()
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusInternalServerError, "There was an error getting the users")
 	}
 
 	return c.JSON(http.StatusOK, users)
@@ -44,16 +44,12 @@ func GetUser(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-
-	// user, err := services.GetUser(idInt)
-	// if err != nil {
-	// 	if err == sql.ErrNoRows {
-	// 		return echo.NewHTTPError(http.StatusNotFound, "User not found")
-	// 	}
-	// 	return err
-	// }
-
 	return c.JSON(http.StatusOK, user)
+}
+
+type UpdatePasswordData struct {
+	OldPassword string `json:"oldPassword"`
+	NewPassword string `json:"newPassword"`
 }
 
 func UpdateUserPassword(c echo.Context) error {
@@ -65,10 +61,7 @@ func UpdateUserPassword(c echo.Context) error {
 		return err
 	}
 
-	var data struct {
-		OldPassword string `json:"oldPassword"`
-		NewPassword string `json:"newPassword"`
-	}
+	var data UpdatePasswordData
 
 	err = c.Bind(&data)
 	if err != nil {
@@ -80,7 +73,7 @@ func UpdateUserPassword(c echo.Context) error {
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(data.OldPassword)); err != nil {
-		return echo.NewHTTPError(500, "Incorrect Old password")
+		return echo.NewHTTPError(http.StatusBadRequest, "Incorrect Old password")
 	}
 
 	//TODO better password validation
@@ -93,7 +86,7 @@ func UpdateUserPassword(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "There was an error updating the password")
 	}
 
-	return c.JSON(http.StatusOK, struct{ Message string }{Message: "Password updated successfully"})
+	return c.JSON(http.StatusOK, models.MessageResponse{Message: "Password updated successfully"})
 }
 
 func changeUserStatus(status bool, c echo.Context) error {
@@ -113,7 +106,7 @@ func DeactivateUser(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "There was an error deactivating the user")
 	}
-	return c.JSON(http.StatusOK, struct{ Message string }{Message: "User deactivated successfully"})
+	return c.JSON(http.StatusOK, models.MessageResponse{Message: "User deactivated successfully"})
 }
 
 func ActivateUser(c echo.Context) error {
@@ -121,16 +114,18 @@ func ActivateUser(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "There was an error activating the user")
 	}
-	return c.JSON(http.StatusOK, struct{ Message string }{Message: "User activated successfully"})
+	return c.JSON(http.StatusOK, models.MessageResponse{Message: "User activated successfully"})
+}
+
+type UpdateUserEmailData struct {
+	Email string `json:"email"`
 }
 
 func UpdateUserEmail(c echo.Context) error {
 	claims := c.Get("claims").(*models.Claims)
 	id := claims.Id
 
-	var data struct {
-		Email string `json:"email"`
-	}
+	var data UpdateUserEmailData
 
 	err := c.Bind(&data)
 	if err != nil {
@@ -141,7 +136,7 @@ func UpdateUserEmail(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Email is required")
 	}
 	if !govalidator.IsEmail(data.Email) {
-		return echo.NewHTTPError(400, "Invalid email")
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid email")
 	}
 
 	err = services.UpdateUserEmail(id, data.Email)
@@ -149,16 +144,18 @@ func UpdateUserEmail(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "There was an error updating the email")
 	}
 
-	return c.JSON(http.StatusOK, struct{ Message string }{Message: "Email updated successfully"})
+	return c.JSON(http.StatusOK, models.MessageResponse{Message: "Email updated successfully"})
+}
+
+type UpdateUserUsernameData struct {
+	Username string `json:"username"`
 }
 
 func UpdateUserUsername(c echo.Context) error {
 	claims := c.Get("claims").(*models.Claims)
 	id := claims.Id
 
-	var data struct {
-		Username string `json:"username"`
-	}
+	var data UpdateUserUsernameData
 
 	err := c.Bind(&data)
 	if err != nil {
@@ -174,5 +171,17 @@ func UpdateUserUsername(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "There was an error updating the username")
 	}
 
-	return c.JSON(http.StatusOK, struct{ Message string }{Message: "Username updated successfully"})
+	return c.JSON(http.StatusOK, models.MessageResponse{Message: "Username updated successfully"})
+}
+
+func GetMe(c echo.Context) error {
+	claims := c.Get("claims").(*models.Claims)
+	id := claims.Id
+
+	user, err := getUserById(id)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, user)
 }
