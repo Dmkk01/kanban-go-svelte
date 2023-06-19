@@ -8,3 +8,13 @@ type Board struct {
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
 }
+
+type CreateBoardRequest struct {
+	Name  string `json:"name"`
+	Emoji string `json:"emoji"`
+}
+
+type BoardUpdate struct {
+	Name  string `json:"name"`
+	Emoji string `json:"emoji"`
+}

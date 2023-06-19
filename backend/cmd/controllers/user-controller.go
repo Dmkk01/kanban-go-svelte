@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"database/sql"
 	"net/http"
 	"strconv"
 
@@ -11,18 +10,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"
 )
-
-func getUserById(id int) (models.User, error) {
-	user, err := services.GetUser(id)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return models.User{}, echo.NewHTTPError(http.StatusNotFound, "User not found")
-		}
-		return models.User{}, err
-	}
-
-	return user, nil
-}
 
 func GetUsers(c echo.Context) error {
 	users, err := services.GetUsers()
