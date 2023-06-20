@@ -62,6 +62,15 @@ func CreateBoard(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "There was an error creating the board")
 	}
 
+	userSettings, _ := services.GetUserSettings(id)
+
+	if userSettings.PrimaryBoardID == 0 {
+		boards, _ := services.GetBoards(id)
+		if len(boards) > 0 {
+			services.UpdateUserPrimaryBoard(id, boards[0].Id)
+		}
+	}
+
 	return c.JSON(http.StatusCreated, models.StatusResponse{Status: "ok"})
 }
 

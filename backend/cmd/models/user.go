@@ -18,10 +18,23 @@ type User struct {
 	Role           Role   `json:"role"`
 }
 
+type UserGettingStarted struct {
+	AppName  string `json:"app_name"`
+	AppEmoji string `json:"app_emoji"`
+}
+
 type UserSettings struct {
-	ID             int    `json:"id"`
 	UserID         int    `json:"user_id"`
 	PrimaryBoardID int    `json:"primary_board_id"`
 	AppName        string `json:"app_name"`
 	AppEmoji       string `json:"app_emoji"`
+}
+
+type UpdateUserSettings struct {
+	AppName  string `json:"app_name"`
+	AppEmoji string `json:"app_emoji"`
+}
+
+type UpdateUserPrimaryBoard struct {
+	PrimaryBoardID int `json:"primary_board_id"`
 }

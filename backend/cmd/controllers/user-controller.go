@@ -174,9 +174,95 @@ func GetMe(c echo.Context) error {
 }
 
 func GetUserSettings(c echo.Context) error {
-	return nil
+	claims := c.Get("claims").(*models.Claims)
+	id := claims.Id
+
+	settings, _ := services.GetUserSettings(id)
+
+	return c.JSON(http.StatusOK, settings)
+}
+
+func UpdateUserSettings(c echo.Context) error {
+	claims := c.Get("claims").(*models.Claims)
+	id := claims.Id
+
+	var data models.UpdateUserSettings
+	err := c.Bind(&data)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Error Binding Data")
+	}
+
+	if data.AppEmoji == "" || data.AppName == "" {
+		return echo.NewHTTPError(http.StatusBadRequest, "App name and emoji are required")
+	}
+
+	err = services.UpdateUserSettings(id, data)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Server Error updating user settings")
+	}
+
+	return c.JSON(http.StatusOK, models.MessageResponse{Message: "User settings updated successfully"})
 }
 
 func UserGettingStarted(c echo.Context) error {
-	return nil
+	claims := c.Get("claims").(*models.Claims)
+	id := claims.Id
+
+	var data models.UserGettingStarted
+	err := c.Bind(&data)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Error Binding Data")
+	}
+
+	if data.AppEmoji == "" || data.AppName == "" {
+		return echo.NewHTTPError(http.StatusBadRequest, "App name and emoji are required")
+	}
+
+	settings, err := services.GetUserSettings(id)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Server Error getting user settings")
+	}
+
+	if settings.AppName != "" {
+		return echo.NewHTTPError(http.StatusBadRequest, "User getting started already updated")
+	}
+
+	err = services.UserGettingStarted(id, data)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Server Error updating user getting started")
+	}
+
+	return c.JSON(http.StatusOK, models.MessageResponse{Message: "User getting started updated successfully"})
+}
+
+func UpdateUserPrimaryBoard(c echo.Context) error {
+	claims := c.Get("claims").(*models.Claims)
+	id := claims.Id
+
+	var data models.UpdateUserPrimaryBoard
+	err := c.Bind(&data)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Error Binding Data")
+	}
+
+	if data.PrimaryBoardID <= 0 {
+		return echo.NewHTTPError(http.StatusBadRequest, "Primary board id is required")
+	}
+
+	board, err := services.GetBoard(data.PrimaryBoardID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "Board not found")
+	}
+
+	if board.UserId != id {
+		return echo.NewHTTPError(http.StatusForbidden, "Board does not belong to user")
+	}
+
+	err = services.UpdateUserPrimaryBoard(id, data.PrimaryBoardID)
+
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Server Error updating user primary board")
+	}
+
+	return c.JSON(http.StatusOK, models.MessageResponse{Message: "User primary board updated successfully"})
 }

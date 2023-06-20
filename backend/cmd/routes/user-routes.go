@@ -63,8 +63,29 @@ func userRoutes(e echoswagger.ApiRoot) {
 		AddResponse(http.StatusBadRequest, "Invalid data", models.MessageResponse{}, nil)
 
 	userGroup.GET("/me/settings", controllers.GetUserSettings).
-		SetSummary("Get User Settings")
+		SetSummary("Get User Settings").
+		AddResponse(http.StatusOK, "User Settings", models.UserSettings{}, nil)
+
+	userGroup.PUT("/me/settings", controllers.UpdateUserSettings).
+		SetSummary("User Settings").
+		AddParamBody(models.UpdateUserSettings{}, "data", "Data", true).
+		AddResponse(http.StatusOK, "Updated Succesfully", models.MessageResponse{}, nil).
+		AddResponse(http.StatusInternalServerError, "Server Error", models.MessageResponse{}, nil).
+		AddResponse(http.StatusBadRequest, "Invalid data", models.MessageResponse{}, nil)
+
+	userGroup.PUT("/me/settings/primary-board", controllers.UpdateUserPrimaryBoard).
+		SetSummary("Updates User Primary Board").
+		AddResponse(http.StatusOK, "User Settings", models.UserSettings{}, nil).
+		AddParamBody(models.UpdateUserPrimaryBoard{}, "data", "Data", true).
+		AddResponse(http.StatusInternalServerError, "Server Error", models.MessageResponse{}, nil).
+		AddResponse(http.StatusBadRequest, "Invalid data", models.MessageResponse{}, nil).
+		AddResponse(http.StatusForbidden, "Forbidden Access", models.MessageResponse{}, nil).
+		AddResponse(http.StatusNotFound, "Not Found", models.MessageResponse{}, nil)
 
 	userGroup.POST("/getting-started", controllers.UserGettingStarted).
-		SetSummary("User Getting Started")
+		SetSummary("User Getting Started").
+		AddParamBody(models.UserGettingStarted{}, "data", "Data", true).
+		AddResponse(http.StatusOK, "Completed Succesfully", models.MessageResponse{}, nil).
+		AddResponse(http.StatusInternalServerError, "Server Error", models.MessageResponse{}, nil).
+		AddResponse(http.StatusBadRequest, "Invalid data", models.MessageResponse{}, nil)
 }

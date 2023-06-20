@@ -129,3 +129,54 @@ func ChangeUserStatus(id int, status bool) error {
 
 	return err
 }
+
+func GetUserSettings(userID int) (models.UserSettings, error) {
+	db, err := db.Connect()
+	if err != nil {
+		return models.UserSettings{}, err
+	}
+	var settings models.UserSettings
+	err = db.QueryRow("SELECT user_id, primary_board_id, app_name, app_emoji FROM user_settings WHERE user_id = $1", userID).Scan(&settings.UserID, &settings.PrimaryBoardID, &settings.AppName, &settings.AppEmoji)
+
+	if err != nil {
+		// primary_board_id could be null -> database/sql converting NULL to int is unsupported
+		err = db.QueryRow("SELECT user_id, app_name, app_emoji FROM user_settings WHERE user_id = $1", userID).Scan(&settings.UserID, &settings.AppName, &settings.AppEmoji)
+		if err != nil {
+			return models.UserSettings{}, err
+		}
+	}
+
+	return settings, nil
+}
+
+func UpdateUserSettings(userID int, settings models.UpdateUserSettings) error {
+	db, err := db.Connect()
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Exec("INSERT INTO user_settings (user_id, app_name, app_emoji) VALUES ($1, $2, $3)", userID, settings.AppName, settings.AppEmoji)
+
+	return err
+}
+
+func UserGettingStarted(userID int, gs models.UserGettingStarted) error {
+	db, err := db.Connect()
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Exec("INSERT INTO user_settings (user_id, app_name, app_emoji) VALUES ($1, $2, $3)", userID, gs.AppName, gs.AppEmoji)
+
+	return err
+}
+
+func UpdateUserPrimaryBoard(userID, boardID int) error {
+	db, err := db.Connect()
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Exec("UPDATE user_settings SET primary_board_id = $1 WHERE user_id = $2", boardID, userID)
+	return err
+}
