@@ -14,7 +14,7 @@ func getCheckUserBoardById(c echo.Context) (models.Board, error) {
 	claims := c.Get("claims").(*models.Claims)
 	id := claims.Id
 
-	boardId, err := strconv.Atoi(c.Param("id"))
+	boardId, err := strconv.Atoi(c.Param("board_id"))
 	if err != nil {
 		return models.Board{}, echo.NewHTTPError(http.StatusBadRequest, "Invalid id")
 	}

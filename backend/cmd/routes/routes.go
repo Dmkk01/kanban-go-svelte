@@ -17,6 +17,7 @@ func InitRoutes(e echoswagger.ApiRoot) {
 	authRoutes(e)
 	userRoutes(e)
 	boardRoutes(e)
+	columnRoutes(e)
 
 	e.GET("/", func(c echo.Context) error {
 		return c.HTML(http.StatusOK, "Helasdasdlo, asdasd! <3")

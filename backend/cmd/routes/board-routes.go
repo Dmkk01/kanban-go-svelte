@@ -24,7 +24,7 @@ func boardRoutes(e echoswagger.ApiRoot) {
 		AddResponse(http.StatusInternalServerError, "Server Error", models.MessageResponse{}, nil).
 		AddResponse(http.StatusBadRequest, "Bad Request", models.MessageResponse{}, nil)
 
-	boardGroup.GET("/:id", controllers.GetBoard).
+	boardGroup.GET("/:board_id", controllers.GetBoard).
 		AddParamPath("", "id", "Board ID").
 		SetSummary("Get Single Board").
 		AddResponse(http.StatusOK, "Board Found", []models.Board{}, nil).
@@ -33,7 +33,7 @@ func boardRoutes(e echoswagger.ApiRoot) {
 		AddResponse(http.StatusNotFound, "Board not Found", models.MessageResponse{}, nil).
 		AddResponse(http.StatusForbidden, "Forbidden Access", models.MessageResponse{}, nil)
 
-	boardGroup.PUT("/:id", controllers.UpdateBoard).
+	boardGroup.PUT("/:board_id", controllers.UpdateBoard).
 		AddParamPath("", "id", "Board ID").
 		SetSummary("Update Single Board").
 		AddParamBody(models.BoardUpdate{}, "body", "Update Board Request", true).
@@ -43,7 +43,7 @@ func boardRoutes(e echoswagger.ApiRoot) {
 		AddResponse(http.StatusNotFound, "Board not Found", models.MessageResponse{}, nil).
 		AddResponse(http.StatusForbidden, "Forbidden Access", models.MessageResponse{}, nil)
 
-	boardGroup.DELETE("/:id", controllers.DeleteBoard).
+	boardGroup.DELETE("/:board_id", controllers.DeleteBoard).
 		AddParamPath("", "id", "Board ID").
 		SetSummary("Delete Single Board").
 		AddResponse(http.StatusOK, "Board Deleted", []models.StatusResponse{}, nil).
