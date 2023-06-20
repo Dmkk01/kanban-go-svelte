@@ -51,4 +51,21 @@ func boardRoutes(e echoswagger.ApiRoot) {
 		AddResponse(http.StatusBadRequest, "Bad Request", models.MessageResponse{}, nil).
 		AddResponse(http.StatusNotFound, "Board not Found", models.MessageResponse{}, nil).
 		AddResponse(http.StatusForbidden, "Forbidden Access", models.MessageResponse{}, nil)
+
+	boardGroup.GET("/:board_id/column", controllers.GetColumnsBoardID).
+		AddParamPath("", "id", "Board ID").
+		SetSummary("Get Board Columns").
+		AddResponse(http.StatusOK, "Columns Found", []models.BoardColumn{}, nil).
+		AddResponse(http.StatusInternalServerError, "Server Error", models.MessageResponse{}, nil).
+		AddResponse(http.StatusBadRequest, "Bad Request", models.MessageResponse{}, nil).
+		AddResponse(http.StatusNotFound, "Board not Found", models.MessageResponse{}, nil).
+		AddResponse(http.StatusForbidden, "Forbidden Access", models.MessageResponse{}, nil)
+
+	boardGroup.POST("/:board_id/column", controllers.CreateColumn).
+		AddParamPath("", "id", "Board ID").
+		SetSummary("Create Board Columns").
+		AddParamBody(models.ColumnCreate{}, "body", "Column Create Request", true).
+		AddResponse(http.StatusCreated, "Column Created", []models.StatusResponse{}, nil).
+		AddResponse(http.StatusInternalServerError, "Server Error", models.MessageResponse{}, nil).
+		AddResponse(http.StatusBadRequest, "Bad Request", models.MessageResponse{}, nil)
 }

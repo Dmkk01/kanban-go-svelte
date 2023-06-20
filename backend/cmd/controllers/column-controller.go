@@ -11,13 +11,10 @@ import (
 )
 
 func GetColumnsBoardID(c echo.Context) error {
-	log.Println("GET COLUMNS")
 	board, err := getCheckUserBoardById(c)
 	if err != nil {
 		return err
 	}
-
-	log.Println("hello")
 
 	columns, _ := services.GetColumns(board.Id)
 

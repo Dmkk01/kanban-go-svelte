@@ -12,7 +12,4 @@ func columnRoutes(e echoswagger.ApiRoot) {
 	columnGroup.GET("/:column_id", controllers.GetColumn)
 	columnGroup.PUT("/:column_id", controllers.UpdateColumn)
 	columnGroup.DELETE("/:column_id", controllers.DeleteColumn)
-
-	columnGroup.GET("/board/:board_id", controllers.GetColumnsBoardID)
-	columnGroup.POST("/board/:board_id", controllers.CreateColumn)
 }
