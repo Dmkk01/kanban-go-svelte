@@ -172,3 +172,11 @@ func GetMe(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, user)
 }
+
+func GetUserSettings(c echo.Context) error {
+	return nil
+}
+
+func UserGettingStarted(c echo.Context) error {
+	return nil
+}

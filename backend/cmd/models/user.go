@@ -17,3 +17,11 @@ type User struct {
 	InactiveStatus bool   `json:"inactive_status"`
 	Role           Role   `json:"role"`
 }
+
+type UserSettings struct {
+	ID             int    `json:"id"`
+	UserID         int    `json:"user_id"`
+	PrimaryBoardID int    `json:"primary_board_id"`
+	AppName        string `json:"app_name"`
+	AppEmoji       string `json:"app_emoji"`
+}
