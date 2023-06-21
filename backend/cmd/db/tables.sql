@@ -5,6 +5,7 @@ CREATE TABLE check_test (
 ) 
 
 CREATE TYPE "UserRole" AS ENUM ('ADMIN', 'USER');
+CREATE TYPE "DateFormat" AS ENUM ('DD/MM/YYYY', 'MM/DD/YYYY', 'YYYY/MM/DD');
 
 CREATE TABLE user_table (
     id SERIAL PRIMARY KEY,
@@ -22,6 +23,7 @@ CREATE TABLE "user_settings" (
     primary_board_id INTEGER,
     app_name VARCHAR(30) NOT NULL,
     app_emoji VARCHAR(5) NOT NULL,
+    date_format "DateFormat" NOT NULL DEFAULT 'DD/MM/YYYY',
     PRIMARY KEY (user_id),
     CONSTRAINT fk_user_settings_user_id FOREIGN KEY (user_id) REFERENCES user_table (id) ON DELETE CASCADE,
     FOREIGN KEY (primary_board_id) REFERENCES board (id) ON DELETE CASCADE
@@ -46,4 +48,41 @@ CREATE TABLE "board_column" (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (board_id) REFERENCES board (id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE "task" (
+    id SERIAL PRIMARY KEY,
+    board_id INTEGER NOT NULL,
+    column_id INTEGER NOT NULL,
+    title VARCHAR(100) NOT NULL,
+    description TEXT NOT NULL,
+    position INTEGER NOT NULL,
+    time_needed INTEGER NOT NULL,
+    due_date TIMESTAMP DEFAULT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (board_id) REFERENCES board (id) ON DELETE CASCADE,
+    FOREIGN KEY (column_id) REFERENCES board_column (id) ON DELETE CASCADE
+);
+
+CREATE TABLE "subtasks" (
+    id SERIAL PRIMARY KEY,
+    task_id INTEGER NOT NULL,
+    title VARCHAR(100) NOT NULL,
+    completed BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (task_id) REFERENCES task (id) ON DELETE CASCADE
+);
+
+CREATE TABLE "links" (
+    id SERIAL PRIMARY KEY,
+    task_id INTEGER NOT NULL,
+    title VARCHAR(100) NOT NULL,
+    emoji VARCHAR(5) NOT NULL,
+    url TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (task_id) REFERENCES task (id) ON DELETE CASCADE
 );
