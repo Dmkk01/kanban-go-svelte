@@ -15,3 +15,13 @@ type ColumnCreate struct {
 	Emoji    string `json:"emoji"`
 	Position int    `json:"position"`
 }
+
+type ColumnUpdate struct {
+	Name  string `json:"name"`
+	Emoji string `json:"emoji"`
+}
+
+type ColumnUpdatePosition struct {
+	ID       int `json:"id"`
+	Position int `json:"position"`
+}

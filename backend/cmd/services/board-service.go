@@ -33,6 +33,23 @@ func GetBoards(userId int) ([]models.Board, error) {
 	return boards, nil
 }
 
+func GetBoardFromColumn(columnId int) (models.Board, error) {
+	db, err := db.Connect()
+	if err != nil {
+		return models.Board{}, err
+	}
+	defer db.Close()
+
+	var board models.Board
+
+	err = db.QueryRow("SELECT board.id, board.user_id, board.name, board.emoji, board.created_at, board.updated_at FROM board_column INNER JOIN board ON board_column.board_id = board.id WHERE board_column.id = $1", columnId).Scan(&board.Id, &board.UserId, &board.Name, &board.Emoji, &board.CreatedAt, &board.UpdatedAt)
+	if err != nil {
+		return models.Board{}, err
+	}
+
+	return board, nil
+}
+
 func GetBoard(id int) (models.Board, error) {
 	db, err := db.Connect()
 	if err != nil {
