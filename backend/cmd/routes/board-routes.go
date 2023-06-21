@@ -78,4 +78,6 @@ func boardRoutes(e echoswagger.ApiRoot) {
 		AddResponse(http.StatusBadRequest, "Bad Request", models.MessageResponse{}, nil).
 		AddResponse(http.StatusNotFound, "Board not Found", models.MessageResponse{}, nil).
 		AddResponse(http.StatusForbidden, "Forbidden Access", models.MessageResponse{}, nil)
+
+	boardGroup.GET("/:board_id/task", controllers.GetTaskByBoardID)
 }

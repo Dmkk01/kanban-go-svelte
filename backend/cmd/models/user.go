@@ -28,11 +28,13 @@ type UserSettings struct {
 	PrimaryBoardID int    `json:"primary_board_id"`
 	AppName        string `json:"app_name"`
 	AppEmoji       string `json:"app_emoji"`
+	DateFormat     string `json:"date_format"`
 }
 
 type UpdateUserSettings struct {
-	AppName  string `json:"app_name"`
-	AppEmoji string `json:"app_emoji"`
+	AppName    string `json:"app_name"`
+	AppEmoji   string `json:"app_emoji"`
+	DateFormat string `json:"date_format"`
 }
 
 type UpdateUserPrimaryBoard struct {

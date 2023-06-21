@@ -44,4 +44,8 @@ func columnRoutes(e echoswagger.ApiRoot) {
 		AddResponse(http.StatusBadRequest, "Bad Request", models.MessageResponse{}, nil).
 		AddResponse(http.StatusNotFound, "Column not Found", models.MessageResponse{}, nil).
 		AddResponse(http.StatusForbidden, "Forbidden Access", models.MessageResponse{}, nil)
+
+	columnGroup.GET("/:column_id/task", controllers.GetTasksByColumnID)
+	columnGroup.POST("/:column_id/task", controllers.CreateTaskByColumnID)
+	columnGroup.PUT("/:column_id/task/position", controllers.UpdateTaskPosition)
 }

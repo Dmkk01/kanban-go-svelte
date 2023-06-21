@@ -140,11 +140,11 @@ func GetUserSettings(userID int) (models.UserSettings, error) {
 		return models.UserSettings{}, err
 	}
 	var settings models.UserSettings
-	err = db.QueryRow("SELECT user_id, primary_board_id, app_name, app_emoji FROM user_settings WHERE user_id = $1", userID).Scan(&settings.UserID, &settings.PrimaryBoardID, &settings.AppName, &settings.AppEmoji)
+	err = db.QueryRow("SELECT user_id, primary_board_id, app_name, app_emoji, date_format FROM user_settings WHERE user_id = $1", userID).Scan(&settings.UserID, &settings.PrimaryBoardID, &settings.AppName, &settings.AppEmoji, &settings.DateFormat)
 
 	if err != nil {
 		// primary_board_id could be null -> database/sql converting NULL to int is unsupported
-		err = db.QueryRow("SELECT user_id, app_name, app_emoji FROM user_settings WHERE user_id = $1", userID).Scan(&settings.UserID, &settings.AppName, &settings.AppEmoji)
+		err = db.QueryRow("SELECT user_id, app_name, app_emoji, date_format FROM user_settings WHERE user_id = $1", userID).Scan(&settings.UserID, &settings.AppName, &settings.AppEmoji, &settings.DateFormat)
 		if err != nil {
 			return models.UserSettings{}, err
 		}
@@ -159,7 +159,7 @@ func UpdateUserSettings(userID int, settings models.UpdateUserSettings) error {
 		return err
 	}
 
-	_, err = db.Exec("INSERT INTO user_settings (user_id, app_name, app_emoji) VALUES ($1, $2, $3)", userID, settings.AppName, settings.AppEmoji)
+	_, err = db.Exec("INSERT INTO user_settings (user_id, app_name, app_emoji, date_format) VALUES ($1, $2, $3)", userID, settings.AppName, settings.AppEmoji, settings.DateFormat)
 	defer db.Close()
 	return err
 }

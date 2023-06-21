@@ -192,8 +192,8 @@ func UpdateUserSettings(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Error Binding Data")
 	}
 
-	if data.AppEmoji == "" || data.AppName == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "App name and emoji are required")
+	if data.AppEmoji == "" || data.AppName == "" || data.DateFormat == "" {
+		return echo.NewHTTPError(http.StatusBadRequest, "App name, emoji and date format are required")
 	}
 
 	err = services.UpdateUserSettings(id, data)
