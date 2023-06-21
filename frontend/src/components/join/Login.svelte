@@ -80,7 +80,7 @@
       <input
         type="submit"
         value="Login"
-        class="w-full my-10 cursor-pointer text-3xl shadow-lg text-black font-semibold bg-white/40 rounded-2xl py-2"
+        class="w-full my-10 cursor-pointer text-3xl shadow-lg text-black font-semibold bg-white/40 rounded-md py-2"
       />
     </div>
   </form>
