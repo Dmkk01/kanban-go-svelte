@@ -26,7 +26,7 @@ func GetChecks() ([]models.Check, error) {
 		}
 		checks = append(checks, check)
 	}
-
+	defer db.Close()
 	return checks, nil
 }
 
@@ -42,7 +42,7 @@ func GetCheck(id string) (models.Check, error) {
 	if err != nil {
 		return models.Check{}, err
 	}
-
+	defer db.Close()
 	return check, nil
 }
 
@@ -56,6 +56,6 @@ func CreateCheck(check models.Check) (models.Check, error) {
 	if err != nil {
 		return models.Check{}, err
 	}
-
+	defer db.Close()
 	return check, nil
 }

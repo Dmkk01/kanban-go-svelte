@@ -27,7 +27,7 @@ func GetColumns(boardID int) ([]models.BoardColumn, error) {
 
 		columns = append(columns, column)
 	}
-
+	defer db.Close()
 	return columns, nil
 }
 
@@ -43,7 +43,7 @@ func GetColumn(columnID int) (models.BoardColumn, error) {
 	if err != nil {
 		return models.BoardColumn{}, err
 	}
-
+	defer db.Close()
 	return data, nil
 }
 
@@ -56,6 +56,6 @@ func CreateColumn(boardID int, column models.ColumnCreate) error {
 	createdAt := time.Now()
 	updatedAt := time.Now()
 	_, err = db.Exec("INSERT INTO board_column (board_id, name, emoji, position, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6)", boardID, column.Name, column.Emoji, column.Position, createdAt, updatedAt)
-
+	defer db.Close()
 	return err
 }

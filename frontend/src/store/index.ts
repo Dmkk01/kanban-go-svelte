@@ -1,19 +1,13 @@
-import {writable} from 'svelte/store';
-
+import { writable } from 'svelte/store'
 
 interface IStore {
-    settings: UserSettings | null
-    boards: Board[]
-    currentBoard: Board | null
+  isSidebarOpen: boolean
 }
 
 const initial: IStore = {
-    settings: null,
-    boards: [],
-    currentBoard: null
+  isSidebarOpen: false,
 }
 
-const store = writable<IStore>(initial);
+const store = writable<IStore>(initial)
 
-
-export default store;
+export default store

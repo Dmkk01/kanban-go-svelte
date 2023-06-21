@@ -29,7 +29,7 @@ func GetBoards(userId int) ([]models.Board, error) {
 
 		boards = append(boards, board)
 	}
-
+	defer db.Close()
 	return boards, nil
 }
 
@@ -46,6 +46,8 @@ func GetBoard(id int) (models.Board, error) {
 		return models.Board{}, err
 	}
 
+	defer db.Close()
+
 	return board, nil
 }
 
@@ -57,6 +59,7 @@ func CreateBoard(board models.CreateBoardRequest, userId int) bool {
 
 	_, err = db.Exec("INSERT INTO board (user_id, name, emoji) VALUES ($1, $2, $3)", userId, board.Name, board.Emoji)
 
+	defer db.Close()
 	return err == nil
 }
 
@@ -68,7 +71,7 @@ func UpdateBoard(id int, board models.BoardUpdate) bool {
 
 	updatedAt := time.Now()
 	_, err = db.Exec("UPDATE board SET name = $1, emoji = $2, updated_at = $3 WHERE id = $4", board.Name, board.Emoji, updatedAt, id)
-
+	defer db.Close()
 	return err == nil
 }
 
@@ -79,6 +82,6 @@ func DeleteBoard(id int) bool {
 	}
 
 	_, err = db.Exec("DELETE FROM board WHERE id = $1", id)
-
+	defer db.Close()
 	return err == nil
 }

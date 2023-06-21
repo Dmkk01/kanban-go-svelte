@@ -22,6 +22,7 @@ func CreateUser(username, password, email string) bool {
 	updatedAt := time.Now()
 
 	_, err = db.Exec("INSERT INTO user_table (email, name, password, created_at, updated_at) VALUES ($1, $2, $3, $4, $5)", email, username, string(hashedPassword), createdAt, updatedAt)
+	defer db.Close()
 	return err == nil
 }
 
@@ -36,7 +37,7 @@ func GetUserByEmail(email string) (models.User, error) {
 	if err != nil {
 		return models.User{}, err
 	}
-
+	defer db.Close()
 	return user, nil
 }
 
@@ -61,7 +62,7 @@ func GetUsers() ([]models.User, error) {
 		}
 		checks = append(checks, check)
 	}
-
+	defer db.Close()
 	return checks, nil
 }
 
@@ -76,7 +77,7 @@ func GetUser(id int) (models.User, error) {
 	if err != nil {
 		return models.User{}, err
 	}
-
+	defer db.Close()
 	return user, nil
 }
 
@@ -93,6 +94,7 @@ func UpdateUserPassword(id int, password string) error {
 	updatedAt := time.Now()
 
 	_, err = db.Exec("UPDATE user_table SET password = $1, updated_at = $2 WHERE id = $3", string(hashedPassword), updatedAt, id)
+	defer db.Close()
 	return err
 }
 
@@ -104,6 +106,7 @@ func UpdateUserEmail(id int, email string) error {
 
 	updatedAt := time.Now()
 	_, err = db.Exec("UPDATE user_table SET email = $1, updated_at = $2 WHERE id = $3", email, updatedAt, id)
+	defer db.Close()
 	return err
 }
 
@@ -115,6 +118,7 @@ func UpdateUserName(id int, username string) error {
 
 	updatedAt := time.Now()
 	_, err = db.Exec("UPDATE user_table SET name = $1, updated_at = $2 WHERE id = $3", username, updatedAt, id)
+	defer db.Close()
 	return err
 }
 
@@ -126,7 +130,7 @@ func ChangeUserStatus(id int, status bool) error {
 
 	updatedAt := time.Now()
 	_, err = db.Exec("UPDATE user_table SET inactive_status = $1, updated_at = $2 WHERE id = $3", status, updatedAt, id)
-
+	defer db.Close()
 	return err
 }
 
@@ -145,7 +149,7 @@ func GetUserSettings(userID int) (models.UserSettings, error) {
 			return models.UserSettings{}, err
 		}
 	}
-
+	defer db.Close()
 	return settings, nil
 }
 
@@ -156,7 +160,7 @@ func UpdateUserSettings(userID int, settings models.UpdateUserSettings) error {
 	}
 
 	_, err = db.Exec("INSERT INTO user_settings (user_id, app_name, app_emoji) VALUES ($1, $2, $3)", userID, settings.AppName, settings.AppEmoji)
-
+	defer db.Close()
 	return err
 }
 
@@ -167,7 +171,7 @@ func UserGettingStarted(userID int, gs models.UserGettingStarted) error {
 	}
 
 	_, err = db.Exec("INSERT INTO user_settings (user_id, app_name, app_emoji) VALUES ($1, $2, $3)", userID, gs.AppName, gs.AppEmoji)
-
+	defer db.Close()
 	return err
 }
 
@@ -178,5 +182,6 @@ func UpdateUserPrimaryBoard(userID, boardID int) error {
 	}
 
 	_, err = db.Exec("UPDATE user_settings SET primary_board_id = $1 WHERE user_id = $2", boardID, userID)
+	defer db.Close()
 	return err
 }

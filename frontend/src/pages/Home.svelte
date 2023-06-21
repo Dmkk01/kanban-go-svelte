@@ -1,13 +1,8 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
-  import UserAPI from '../api/user'
-  import { navigate } from 'svelte-routing/src/history'
-  import Sidebar from '../components/Home/Sidebar.svelte'
-  import BoardsAPI from '../api/board'
-  import { useQuery } from '@sveltestack/svelte-query'
+  import Sidebar from '../components/home/sidebar/Sidebar.svelte'
 </script>
 
-<div class="w-full h-screen flex flex-row">
+<div class="w-full h-screen flex flex-row bg-[#C0C2CC]">
   <Sidebar />
 
   <div>Board</div>
