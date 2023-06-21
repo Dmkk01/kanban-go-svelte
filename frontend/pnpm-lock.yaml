@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@sveltejs/vite-plugin-svelte': ^2.0.4
+  '@sveltestack/svelte-query': ^1.6.0
   '@tsconfig/svelte': ^4.0.1
   '@typescript-eslint/eslint-plugin': ^5.59.11
   '@typescript-eslint/parser': ^5.59.11
@@ -21,6 +22,9 @@ specifiers:
   typescript: ^5.0.2
   vite: ^4.3.9
   zod: ^3.21.4
+
+dependencies:
+  '@sveltestack/svelte-query': 1.6.0
 
 devDependencies:
   '@sveltejs/vite-plugin-svelte': 2.4.1_svelte@3.59.1+vite@4.3.9
@@ -396,6 +400,15 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /@sveltestack/svelte-query/1.6.0:
+    resolution: {integrity: sha512-C0wWuh6av1zu3Pzwrg6EQmX3BhDZQ4gMAdYu6Tfv4bjbEZTB00uEDz52z92IZdONh+iUKuyo0xRZ2e16k2Xifg==}
+    peerDependencies:
+      broadcast-channel: ^4.5.0
+    peerDependenciesMeta:
+      broadcast-channel:
+        optional: true
+    dev: false
 
   /@tsconfig/svelte/4.0.1:
     resolution: {integrity: sha512-B+XlGpmuAQzJqDoBATNCvEPqQg0HkO7S8pM14QDI5NsmtymzRexQ1N+nX2H6RTtFbuFgaZD4I8AAi8voGg0GLg==}

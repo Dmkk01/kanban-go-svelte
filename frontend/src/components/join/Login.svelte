@@ -1,8 +1,9 @@
 <script lang="ts">
+  import { useMutation } from '@sveltestack/svelte-query'
   import AuthAPI from '../../api/auth'
   import InputField from './common/InputField.svelte'
   import { z } from 'zod'
-  import { navigate } from "svelte-routing"
+  import { navigate } from 'svelte-routing'
 
   const schema = z.object({
     email: z.string().email({ message: 'Invalid email' }),
@@ -15,6 +16,20 @@
     email: '',
     password: '',
   }
+
+  const loginMutation = useMutation((data: LoginSchema) => AuthAPI.login(data.email, data.password), {
+    onSuccess: async (data) => {
+      localStorage.setItem('token', data.token)
+      navigate('/home', { replace: true, state: {} })
+    },
+    onError: (err) => {
+      message = err as string
+
+      setTimeout(() => {
+        message = ''
+      }, 3000)
+    },
+  })
 
   let message: string = ''
 
@@ -35,19 +50,7 @@
       return
     }
 
-    const response = await AuthAPI.login(data.email, data.password)
-    const json = await response.json()
-
-    if (response.ok) {
-      localStorage.setItem('token', json.token)
-      navigate('/home', { replace: true, state: {} })
-    } else {
-      message = json.message
-
-      setTimeout(() => {
-        message = ''
-      }, 3000)
-    }
+    $loginMutation.mutate(data)
   }
 </script>
 

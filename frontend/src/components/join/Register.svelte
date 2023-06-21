@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { useMutation } from '@sveltestack/svelte-query'
   import { navigate } from 'svelte-routing/src/history'
   import AuthAPI from '../../api/auth'
   import InputField from './common/InputField.svelte'
@@ -21,6 +22,22 @@
   }
 
   let message: string = ''
+
+  const registerMutation = useMutation((data: RegisterSchema) => AuthAPI.register(data.email, data.username, data.password), {
+    onSuccess: async (data, request) => {
+      const login = await AuthAPI.login(request.email, request.password)
+
+      localStorage.setItem('token', login.token)
+      navigate('/home', { replace: true, state: {} })
+    },
+    onError: (err) => {
+      message = err as string
+
+      setTimeout(() => {
+        message = ''
+      }, 3000)
+    },
+  })
 
   const submitData = async (e: Event) => {
     e.preventDefault()
@@ -49,25 +66,7 @@
       return
     }
 
-    const response = await AuthAPI.register(data.email, data.username, data.password)
-    if (!response.ok) {
-      const json = await response.json()
-      message = json.message
-
-      setTimeout(() => {
-        message = ''
-      }, 3000)
-
-      return
-    }
-
-    const login = await AuthAPI.login(data.email, data.password)
-    const json = await login.json()
-
-    if (response.ok) {
-      localStorage.setItem('token', json.token)
-      navigate('/getting-started', { replace: true, state: {} })
-    }    
+    $registerMutation.mutate(data)
   }
 </script>
 

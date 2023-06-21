@@ -1,17 +1,14 @@
 <script lang="ts">
-  import { onMount } from "svelte"
-  import UserAPI from "../api/user";
-  import { navigate } from "svelte-routing/src/history"
-
-
-    onMount(async () => {
-        const response = await UserAPI.getUserSettings()
-        const data = await response.json() as UserSettings
-
-        if (data.app_name === "") {
-            navigate('/getting-started')
-        }
-    })
+  import { onMount } from 'svelte'
+  import UserAPI from '../api/user'
+  import { navigate } from 'svelte-routing/src/history'
+  import Sidebar from '../components/Home/Sidebar.svelte'
+  import BoardsAPI from '../api/board'
+  import { useQuery } from '@sveltestack/svelte-query'
 </script>
 
-<div class="text-6xl text-red-500">Home</div>
+<div class="w-full h-screen flex flex-row">
+  <Sidebar />
+
+  <div>Board</div>
+</div>

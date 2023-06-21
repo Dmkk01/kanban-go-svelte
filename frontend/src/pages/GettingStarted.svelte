@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { useMutation } from '@sveltestack/svelte-query'
   import { z } from 'zod'
   import UserAPI from '../api/user'
   import { navigate } from 'svelte-routing'
@@ -23,6 +24,23 @@
     data.app_emoji = value
   }
 
+  const gsMutation = useMutation((data: GetStartedType) => UserAPI.gettingStarted(data.app_name, data.app_emoji), {
+    onSuccess: async (data) => {
+      const response = await data.json()
+      if (!data.ok) {
+        message = response.message
+
+        setTimeout(() => {
+          message = ''
+        }, 3000)
+
+        return
+      }
+
+      navigate('/home', { replace: true, state: {} })
+    },
+  })
+
   const handleSubmit = async (e: Event) => {
     e.preventDefault()
 
@@ -40,18 +58,7 @@
       return
     }
 
-    const response = await UserAPI.gettingStarted(data.app_name, data.app_emoji)
-    if (response.ok) {
-      navigate('/home', { replace: true, state: {} })
-    } else {
-        console.log(await response.json())
-      message = 'Something went wrong'
-
-      setTimeout(() => {
-        message = ''
-      }, 3000)
-    }
-
+    $gsMutation.mutate(data)
   }
 </script>
 
