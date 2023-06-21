@@ -2,6 +2,7 @@
   import AuthAPI from '../../api/auth'
   import InputField from './common/InputField.svelte'
   import { z } from 'zod'
+  import { navigate } from "svelte-routing"
 
   const schema = z.object({
     email: z.string().email({ message: 'Invalid email' }),
@@ -36,6 +37,17 @@
 
     const response = await AuthAPI.login(data.email, data.password)
     const json = await response.json()
+
+    if (response.ok) {
+      localStorage.setItem('token', json.token)
+      navigate('/home', { replace: true, state: {} })
+    } else {
+      message = json.message
+
+      setTimeout(() => {
+        message = ''
+      }, 3000)
+    }
   }
 </script>
 

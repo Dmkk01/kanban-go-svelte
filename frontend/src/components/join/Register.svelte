@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { navigate } from 'svelte-routing/src/history'
   import AuthAPI from '../../api/auth'
   import InputField from './common/InputField.svelte'
   import { z } from 'zod'
@@ -49,7 +50,24 @@
     }
 
     const response = await AuthAPI.register(data.email, data.username, data.password)
-    const json = await response.json()
+    if (!response.ok) {
+      const json = await response.json()
+      message = json.message
+
+      setTimeout(() => {
+        message = ''
+      }, 3000)
+
+      return
+    }
+
+    const login = await AuthAPI.login(data.email, data.password)
+    const json = await login.json()
+
+    if (response.ok) {
+      localStorage.setItem('token', json.token)
+      navigate('/getting-started', { replace: true, state: {} })
+    }    
   }
 </script>
 

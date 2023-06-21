@@ -2,6 +2,8 @@
   import { Router, Link, Route } from 'svelte-routing'
   import Join from './pages/Join.svelte'
   import About from './pages/About.svelte'
+  import GettingStarted from './pages/GettingStarted.svelte'
+  import Home from './pages/Home.svelte'
 
   export let url = ''
 </script>
@@ -13,6 +15,12 @@
     </Route>
     <Route path="/about">
       <About />
+    </Route>
+    <Route path="/getting-started">
+      <GettingStarted/>
+    </Route>
+    <Route path="/home">
+      <Home/>
     </Route>
   </Router>
 </main>

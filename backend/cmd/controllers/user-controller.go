@@ -218,10 +218,7 @@ func UserGettingStarted(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "App name and emoji are required")
 	}
 
-	settings, err := services.GetUserSettings(id)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "Server Error getting user settings")
-	}
+	settings, _ := services.GetUserSettings(id)
 
 	if settings.AppName != "" {
 		return echo.NewHTTPError(http.StatusBadRequest, "User getting started already updated")
