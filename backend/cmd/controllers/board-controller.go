@@ -10,6 +10,22 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+func checkUserBoardByID(boardID int, userID int) (models.Board, error) {
+	board, err := services.GetBoard(boardID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return models.Board{}, echo.NewHTTPError(http.StatusNotFound, "Board not found")
+		}
+		return models.Board{}, echo.NewHTTPError(http.StatusInternalServerError, "There was an error getting the board")
+	}
+
+	if board.UserId != userID {
+		return models.Board{}, echo.NewHTTPError(http.StatusForbidden, "You don't have access to this board")
+	}
+
+	return board, nil
+}
+
 func getCheckUserBoardById(c echo.Context) (models.Board, error) {
 	claims := c.Get("claims").(*models.Claims)
 	id := claims.Id

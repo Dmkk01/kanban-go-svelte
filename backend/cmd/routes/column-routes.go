@@ -45,7 +45,23 @@ func columnRoutes(e echoswagger.ApiRoot) {
 		AddResponse(http.StatusNotFound, "Column not Found", models.MessageResponse{}, nil).
 		AddResponse(http.StatusForbidden, "Forbidden Access", models.MessageResponse{}, nil)
 
-	columnGroup.GET("/:column_id/task", controllers.GetTasksByColumnID)
-	columnGroup.POST("/:column_id/task", controllers.CreateTaskByColumnID)
-	columnGroup.PUT("/:column_id/task/position", controllers.UpdateTaskPosition)
+	columnGroup.GET("/:column_id/task", controllers.GetTasksByColumnID).
+		SetSummary("Get Tasks by Column ID").
+		AddParamPath("", "column_id", "Column ID").
+		AddResponse(http.StatusOK, "Tasks Found", []models.Task{}, nil).
+		AddResponse(http.StatusInternalServerError, "Server Error", models.MessageResponse{}, nil).
+		AddResponse(http.StatusBadRequest, "Bad Request", models.MessageResponse{}, nil).
+		AddResponse(http.StatusNotFound, "Not Found", models.MessageResponse{}, nil).
+		AddResponse(http.StatusForbidden, "Forbidden Access", models.MessageResponse{}, nil)
+
+	columnGroup.POST("/:column_id/task", controllers.CreateTaskByColumnID).
+		SetSummary("Get Tasks by Column ID").
+		AddParamPath("", "column_id", "Column ID").
+		AddParamBody(models.TaskCreate{}, "body", "Task Create Request", true).
+		AddResponse(http.StatusCreated, "Task Created", models.StatusResponse{}, nil).
+		AddResponse(http.StatusInternalServerError, "Server Error", models.MessageResponse{}, nil).
+		AddResponse(http.StatusBadRequest, "Bad Request", models.MessageResponse{}, nil).
+		AddResponse(http.StatusNotFound, "Column not Found", models.MessageResponse{}, nil).
+		AddResponse(http.StatusForbidden, "Forbidden Access", models.MessageResponse{}, nil)
+
 }

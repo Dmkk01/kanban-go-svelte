@@ -10,6 +10,26 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+func getCheckColumnById(c echo.Context) (models.BoardColumn, error) {
+	claims := c.Get("claims").(*models.Claims)
+	columnID, err := strconv.Atoi(c.Param("column_id"))
+	if err != nil {
+		return models.BoardColumn{}, echo.NewHTTPError(http.StatusBadRequest, "Invalid column id")
+	}
+
+	column, err := services.GetColumn(columnID)
+	if err != nil {
+		return models.BoardColumn{}, echo.NewHTTPError(http.StatusNotFound, "Column not found")
+	}
+
+	board, _ := services.GetBoardFromColumn(columnID)
+	if board.UserId != claims.Id {
+		return models.BoardColumn{}, echo.NewHTTPError(http.StatusForbidden, "Unauthorized")
+	}
+
+	return column, nil
+}
+
 func GetColumnsBoardID(c echo.Context) error {
 	board, err := getCheckUserBoardById(c)
 	if err != nil {
@@ -23,22 +43,9 @@ func GetColumnsBoardID(c echo.Context) error {
 }
 
 func GetColumn(c echo.Context) error {
-	claims := c.Get("claims").(*models.Claims)
-
-	columnId, err := strconv.Atoi(c.Param("column_id"))
+	column, err := getCheckColumnById(c)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "Invalid id")
-	}
-
-	column, err := services.GetColumn(columnId)
-
-	if err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, "Column not found")
-	}
-
-	board, _ := services.GetBoardFromColumn(columnId)
-	if board.UserId != claims.Id {
-		return echo.NewHTTPError(http.StatusForbidden, "Unauthorized")
+		return err
 	}
 
 	return c.JSON(http.StatusOK, column)
@@ -79,26 +86,15 @@ func CreateColumn(c echo.Context) error {
 }
 
 func UpdateColumn(c echo.Context) error {
-	claims := c.Get("claims").(*models.Claims)
-	columnID, err := strconv.Atoi(c.Param("column_id"))
+	column, err := getCheckColumnById(c)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "Invalid id")
+		return err
 	}
 
 	var data models.ColumnUpdate
 	c.Bind(&data)
 
-	_, err = services.GetColumn(columnID)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, "Column not found")
-	}
-
-	board, _ := services.GetBoardFromColumn(columnID)
-	if board.UserId != claims.Id {
-		return echo.NewHTTPError(http.StatusForbidden, "Unauthorized")
-	}
-
-	err = services.UpdateColumn(columnID, data)
+	err = services.UpdateColumn(column.ID, data)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Server Error")
 	}
@@ -145,24 +141,12 @@ func UpdateColumnPositions(c echo.Context) error {
 }
 
 func DeleteColumn(c echo.Context) error {
-	claims := c.Get("claims").(*models.Claims)
-
-	columnId, err := strconv.Atoi(c.Param("column_id"))
+	column, err := getCheckColumnById(c)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "Invalid id")
+		return err
 	}
 
-	_, err = services.GetColumn(columnId)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, "Column not found")
-	}
-
-	board, _ := services.GetBoardFromColumn(columnId)
-	if board.UserId != claims.Id {
-		return echo.NewHTTPError(http.StatusForbidden, "Unauthorized")
-	}
-
-	err = services.DeleteColumn(columnId)
+	err = services.DeleteColumn(column.ID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Server Error")
 	}
