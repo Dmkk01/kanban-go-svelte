@@ -26,18 +26,14 @@
 
   const gsMutation = useMutation((data: GetStartedType) => UserAPI.gettingStarted(data.app_name, data.app_emoji), {
     onSuccess: async (data) => {
-      const response = await data.json()
-      if (!data.ok) {
-        message = response.message
-
-        setTimeout(() => {
-          message = ''
-        }, 3000)
-
-        return
-      }
-
       navigate('/home', { replace: true, state: {} })
+    },
+    onError: (err) => {
+      message = err as string
+
+      setTimeout(() => {
+        message = ''
+      }, 3000)
     },
   })
 

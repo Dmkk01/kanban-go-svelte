@@ -26,8 +26,12 @@
 >
   {#if !$settings.isLoading && !$boards.isLoading}
     <div class="flex flex-col gap-6 w-full">
-      <div class="flex flex-row gap-3 items-center">
-        <p class="text-3xl text-center">
+      <div class="flex flex-row gap-3 items-center mb-10">
+        <p
+          class={`text-3xl text-center ${
+            !$store.isSidebarOpen ? 'bg-white/50 h-14 w-auto aspect-square rounded-lg flex items-center justify-center' : ''
+          }`}
+        >
           {$settings.data.app_emoji}
         </p>
         {#if $store.isSidebarOpen}

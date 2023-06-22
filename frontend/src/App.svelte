@@ -4,7 +4,8 @@
   import Join from './pages/Join.svelte'
   import About from './pages/About.svelte'
   import GettingStarted from './pages/GettingStarted.svelte'
-  import Home from './pages/Home.svelte'
+  import Home from './pages/home/Home.svelte'
+  import Settings from './pages/home/Settings.svelte'
 
   const queryClient = new QueryClient()
 
@@ -25,6 +26,9 @@
       </Route>
       <Route path="/home">
         <Home />
+      </Route>
+      <Route path="/home/settings">
+        <Settings />
       </Route>
     </Router>
   </main>

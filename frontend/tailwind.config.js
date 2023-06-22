@@ -13,6 +13,7 @@ export default {
         },
         rose: '#EE1C52',
       },
+      maxWidth: {},
     },
   },
   plugins: [require('tailwindcss-debug-screens')],
