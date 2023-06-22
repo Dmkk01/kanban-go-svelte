@@ -22,7 +22,7 @@ const getUserSettings = async () => {
   }).then(async (res) => handleResponse<UserSettings>(res))
 }
 
-const updateUserSettings = async (settings: Omit<UserSettings, 'primary_board_id'>) => {
+const updateUserSettings = async (settings: Omit<Omit<UserSettings, 'primary_board_id'>, 'user_id'>) => {
   return await fetch(`${API_URL}/user/me/settings`, {
     method: 'PUT',
     headers: authHeaderWithJSON(),

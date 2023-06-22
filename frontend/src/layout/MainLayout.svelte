@@ -5,7 +5,7 @@
 <div class="w-full h-screen flex flex-row bg-[#C0C2CC]">
   <Sidebar />
 
-  <div class="px-4 py-2 min-h-screen w-full">
+  <div class="px-4 py-2 h-screen w-full overflow-hidden">
     <slot />
   </div>
 </div>

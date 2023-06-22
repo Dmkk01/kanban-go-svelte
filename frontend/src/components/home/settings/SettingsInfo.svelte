@@ -122,7 +122,6 @@
       labelWidth="sm"
     />
     <SettingsSubmit
-      text="Save"
       {message}
       {isSaved}
     />

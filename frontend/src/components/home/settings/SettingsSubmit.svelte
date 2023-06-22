@@ -1,5 +1,5 @@
 <script lang="ts">
-  export let text: string = ''
+  export let text: string = 'Save'
   export let message: string = ''
   export let isSaved: boolean = false
 </script>
@@ -9,7 +9,7 @@
   class="bg-white/40 relative min-w-[15rem] max-w-xs gap-2 mx-auto border border-tgray-600 rounded-lg flex items-center justify-center py-2 px-6"
 >
   {#if message}
-    <p class="absolute -top-5 text-red-500 text-sm font-semibold">
+    <p class="absolute -left-16 -right-16 -top-5 text-red-500 text-sm font-semibold">
       {message}
     </p>
   {/if}

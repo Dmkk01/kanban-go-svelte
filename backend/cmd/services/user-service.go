@@ -159,7 +159,7 @@ func UpdateUserSettings(userID int, settings models.UpdateUserSettings) error {
 		return err
 	}
 
-	_, err = db.Exec("INSERT INTO user_settings (user_id, app_name, app_emoji, date_format) VALUES ($1, $2, $3)", userID, settings.AppName, settings.AppEmoji, settings.DateFormat)
+	_, err = db.Exec("UPDATE user_settings SET app_name = $1, app_emoji = $2, date_format = $3 WHERE user_id = $4", settings.AppName, settings.AppEmoji, settings.DateFormat, userID)
 	defer db.Close()
 	return err
 }
