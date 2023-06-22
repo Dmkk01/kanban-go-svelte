@@ -3,8 +3,6 @@ package emoji
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -22,45 +20,56 @@ type Emoji struct {
 }
 
 var jsonPath = "../frontend/src/utils/emojis.json"
-var imagesPath = "../frontend/public/images/emojis/"
+
+// var imagesPath = "../frontend/public/images/emojis/"
+
+var emojisMap map[string]Emoji = make(map[string]Emoji)
 
 func GetEmojis() {
-	// Add more categories here
-	categories := []string{"apple"}
-	allEmojis := []Emoji{}
+	emojis := readEmojis()
+
+	for _, emoji := range emojis {
+		emojisMap[emoji.Slug] = emoji
+	}
+
+	categories := []string{"apple", "microsoft-teams"}
+	newEmojis := []Emoji{}
 
 	for _, category := range categories {
 		emojis := scrapeEmojis(category)
-		allEmojis = append(allEmojis, emojis...)
+		newEmojis = append(newEmojis, emojis...)
 	}
 
-	fmt.Println("Saving emojis data...")
+	totalEmojis := append(newEmojis, emojis...)
 
-	emojisJSON, _ := json.Marshal(allEmojis)
+	fmt.Println("Saving emojis data...")
+	fmt.Println("Total emojis:", len(totalEmojis))
+
+	emojisJSON, _ := json.Marshal(totalEmojis)
 	absPath, _ := filepath.Abs(jsonPath)
 
 	os.WriteFile(absPath, emojisJSON, 0644)
 
 	fmt.Println("Successfully wrote to file:", absPath)
 
-	fmt.Println("Saving emojis images...")
-	for _, emoji := range allEmojis {
-		absPath, _ = filepath.Abs(imagesPath + emoji.Slug + ".png")
+	// fmt.Println("Saving emojis images...")
+	// for _, emoji := range newEmojis {
+	// 	absPath, _ = filepath.Abs(imagesPath + emoji.Slug + ".png")
 
-		img, _ := os.Create(absPath)
-		defer img.Close()
+	// 	img, _ := os.Create(absPath)
+	// 	defer img.Close()
 
-		resp, err := http.Get(emoji.ImageURL)
-		if err != nil {
-			fmt.Println("Error:", err)
-			continue
-		}
-		defer resp.Body.Close()
+	// 	resp, err := http.Get(emoji.ImageURL)
+	// 	if err != nil {
+	// 		fmt.Println("Error:", err)
+	// 		continue
+	// 	}
+	// 	defer resp.Body.Close()
 
-		io.Copy(img, resp.Body)
-	}
+	// 	io.Copy(img, resp.Body)
+	// }
 
-	fmt.Println("Successfully saved emojis images")
+	// fmt.Println("Successfully saved emojis images")
 }
 
 func scrapeEmojis(category string) []Emoji {
@@ -70,20 +79,24 @@ func scrapeEmojis(category string) []Emoji {
 
 	emojis := []Emoji{}
 
-	c.OnHTML(".lazyparent > a", func(e *colly.HTMLElement) {
+	c.OnHTML(".emoji-grid > li > a", func(e *colly.HTMLElement) {
 		var data Emoji
 		href := e.Attr("href")
 		src := e.ChildAttr("img", "data-src")
-		fmt.Println(href, src)
 
 		if href == "" || src == "" {
 			return
 		}
 
 		name := strings.ReplaceAll(href, "/", "")
+		slug := category + "-" + name
+
+		if _, ok := emojisMap[slug]; ok {
+			return
+		}
 
 		data.Name = name
-		data.Slug = category + "-" + name
+		data.Slug = slug
 		data.URL = "https://emojipedia.org" + href
 		data.ImageURL = src
 
@@ -106,7 +119,7 @@ func scrapeEmojis(category string) []Emoji {
 	return emojis
 }
 
-func ListEmojis() {
+func readEmojis() []Emoji {
 	absPath, _ := filepath.Abs(jsonPath)
 
 	file, _ := os.OpenFile(absPath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
@@ -116,9 +129,14 @@ func ListEmojis() {
 	err := json.NewDecoder(file).Decode(&emojis)
 	if err != nil {
 		fmt.Println("Error Decoding:", err)
-		return
+		return []Emoji{}
 	}
 
+	return emojis
+}
+
+func ListEmojis() {
+	emojis := readEmojis()
 	headerFmt := color.New(color.FgGreen, color.Underline).SprintfFunc()
 	columnFmt := color.New(color.FgYellow).SprintfFunc()
 
