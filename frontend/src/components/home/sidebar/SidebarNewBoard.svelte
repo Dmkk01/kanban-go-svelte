@@ -1,8 +1,14 @@
 <script lang="ts">
-  import store from '../../../store'
+  import store from '@/store'
 </script>
 
-<div class="flex flex-row gap-0 w-full items-center">
+<button
+  type="button"
+  on:click={() => {
+    $store.boardDrawer.isOpen = true
+  }}
+  class="flex flex-row gap-0 w-full items-center"
+>
   <div class="flex items-center justify-center bg-white/20 h-14 w-auto aspect-square rounded-lg shadow-lg">
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -24,4 +30,4 @@
       <p class="font-semibold text-base text-tgray-600 pl-4">Add new board</p>
     </div>
   {/if}
-</div>
+</button>

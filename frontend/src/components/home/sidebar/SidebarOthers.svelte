@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Link } from 'svelte-routing'
-  import store from '../../../store'
+  import store from '@/store'
 </script>
 
 <div class="flex flex-col gap-6 w-full">

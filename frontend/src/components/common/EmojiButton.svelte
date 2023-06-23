@@ -1,9 +1,11 @@
 <script lang="ts">
-  import store from '../../store'
-  import { getEmojiURLBySlug, openEmojiSelector } from '../../utils/emojis'
+  import store from '@/store'
+  import { getEmojiURLBySlug, getInitEmoji, openEmojiSelector } from '@/utils/emojis'
+
   export let emojiKey: string
   export let emojiSlug: string
   export let extraStyles: string = ''
+  export let imageStyles: string = 'w-11/12 h-full object-contain'
 
   $: {
     if ($store.emojis.isOpen) {
@@ -23,6 +25,6 @@
   <img
     src={getEmojiURLBySlug(emojiSlug)}
     alt={emojiSlug}
-    class="w-11/12 h-full object-contain"
+    class={imageStyles}
   />
 </button>

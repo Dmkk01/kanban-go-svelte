@@ -1,6 +1,6 @@
 <script lang="ts">
-  import Login from '../components/join/Login.svelte'
-  import Register from '../components/join/Register.svelte'
+  import Login from '@/components/join/Login.svelte'
+  import Register from '@/components/join/Register.svelte'
   const query = new URLSearchParams(window.location.search)
 
   const currentPage: 'login' | 'register' = query.get('type') === 'register' ? 'register' : 'login'

@@ -2,6 +2,10 @@ import { writable } from 'svelte/store'
 
 interface IStore {
   isSidebarOpen: boolean
+  boardDrawer: {
+    isOpen: boolean
+    boardID: number | null
+  }
   emojis: {
     isOpen: boolean
     activeKey: string | null
@@ -14,6 +18,10 @@ interface IStore {
 
 const initial: IStore = {
   isSidebarOpen: false,
+  boardDrawer: {
+    isOpen: true,
+    boardID: null,
+  },
   emojis: {
     isOpen: false,
     activeKey: null,

@@ -2,11 +2,13 @@
   export let text: string = 'Save'
   export let message: string = ''
   export let isSaved: boolean = false
+  export let extraStyles: string = ''
+  export let textStyles: string = ''
 </script>
 
 <button
   type="submit"
-  class="bg-white/40 relative min-w-[15rem] max-w-xs gap-2 mx-auto border border-tgray-600 rounded-lg flex items-center justify-center py-2 px-6"
+  class={`bg-white/40 relative min-w-[15rem] max-w-xs gap-2 mx-auto border border-tgray-600 rounded-lg flex items-center justify-center py-2 px-6 ${extraStyles}`}
 >
   {#if message}
     <p class="absolute -left-16 -right-16 -top-5 text-red-500 text-sm font-semibold">
@@ -29,7 +31,7 @@
       />
     </svg>
   {/if}
-  <p class="relative text-lg font-semibold">
+  <p class={`relative text-lg font-semibold ${textStyles}`}>
     {text}
   </p>
 </button>

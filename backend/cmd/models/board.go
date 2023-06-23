@@ -10,8 +10,9 @@ type Board struct {
 }
 
 type CreateBoardRequest struct {
-	Name  string `json:"name"`
-	Emoji string `json:"emoji"`
+	Name    string         `json:"name"`
+	Emoji   string         `json:"emoji"`
+	Columns []ColumnCreate `json:"columns"`
 }
 
 type BoardUpdate struct {

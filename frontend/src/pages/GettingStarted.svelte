@@ -1,11 +1,11 @@
 <script lang="ts">
   import { useMutation } from '@sveltestack/svelte-query'
   import { z } from 'zod'
-  import UserAPI from '../api/user'
+  import UserAPI from '@/api/user'
   import { navigate } from 'svelte-routing'
-  import store from '../store'
+  import store from '@/store'
 
-  import { getEmojiURLBySlug, getInitEmoji, openEmojiSelector } from '../utils/emojis'
+  import { getEmojiURLBySlug, getInitEmoji, openEmojiSelector } from '@/utils/emojis'
   import EmojiButton from '../components/common/EmojiButton.svelte'
 
   const schema = z.object({

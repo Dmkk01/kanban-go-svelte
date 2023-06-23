@@ -1,11 +1,11 @@
 <script lang="ts">
   import { useQuery } from '@sveltestack/svelte-query'
-  import SettingsCustomization from '../../components/home/settings/SettingsCustomization.svelte'
-  import SettingsInfo from '../../components/home/settings/SettingsInfo.svelte'
-  import SettingsSecurity from '../../components/home/settings/SettingsSecurity.svelte'
-  import MainLayout from '../../layout/MainLayout.svelte'
-  import UserAPI from '../../api/user'
-  import BoardsAPI from '../../api/board'
+  import SettingsCustomization from '@/components/home/settings/SettingsCustomization.svelte'
+  import SettingsInfo from '@/components/home/settings/SettingsInfo.svelte'
+  import SettingsSecurity from '@/components/home/settings/SettingsSecurity.svelte'
+  import MainLayout from '@/layout/MainLayout.svelte'
+  import UserAPI from '@/api/user'
+  import BoardsAPI from '@/api/board'
 
   const userSettings = useQuery('user-settings', async () => await UserAPI.getUserSettings())
   const boards = useQuery('boards', async () => await BoardsAPI.getBoards())

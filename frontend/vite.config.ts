@@ -9,7 +9,12 @@ export default defineConfig({
     port: 8081,
     strictPort: true,
     watch: {
-      usePolling: true
-    }
-  }
+      usePolling: true,
+    },
+  },
+  resolve: {
+    alias: {
+      '@': '/src',
+    },
+  },
 })

@@ -1,12 +1,12 @@
 <script lang="ts">
   import { useMutation, useQueryClient } from '@sveltestack/svelte-query'
   import { string, z } from 'zod'
-  import UserAPI from '../../../api/user'
-  import SettingsSubmit from './SettingsSubmit.svelte'
-  import EmojiButton from '../../common/EmojiButton.svelte'
-  import store from '../../../store'
+  import UserAPI from '@/api/user'
+  import SettingsSubmit from '../../common/SubmitButton.svelte'
+  import EmojiButton from '@/components/common/EmojiButton.svelte'
+  import store from '@/store'
 
-  import { getEmojiURLBySlug, getInitEmoji, openEmojiSelector } from '../../../utils/emojis'
+  import { getEmojiURLBySlug, getInitEmoji, openEmojiSelector } from '@/utils/emojis'
 
   export let emoji: string
   export let name: string

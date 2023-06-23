@@ -1,13 +1,16 @@
 <script lang="ts">
-  import store from '../../../store'
+  import store from '@/store'
+  import { getEmojiURLBySlug } from '@/utils/emojis'
   export let board: Board
 </script>
 
 <div class="flex flex-row gap-0 w-full items-center">
   <div class="flex items-center justify-center bg-white/50 h-14 w-auto aspect-square rounded-lg">
-    <p class="text-2xl">
-      {board.emoji}
-    </p>
+    <img
+      src={getEmojiURLBySlug(board.emoji || '')}
+      alt="sidebar-emoji"
+      class="w-8 h-8"
+    />
   </div>
   {#if $store.isSidebarOpen}
     <div class="flex flex-row bg-white/20 items-center justify-between w-full h-11 shadow-lg rounded-r-lg">

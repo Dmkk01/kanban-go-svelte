@@ -1,7 +1,7 @@
 <script lang="ts">
   import { useMutation } from '@sveltestack/svelte-query'
   import { navigate } from 'svelte-routing/src/history'
-  import AuthAPI from '../../api/auth'
+  import AuthAPI from '@/api/auth'
   import InputField from './common/InputField.svelte'
   import { z } from 'zod'
 

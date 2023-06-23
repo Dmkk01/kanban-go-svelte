@@ -1,9 +1,9 @@
 <script lang="ts">
   import { useMutation } from '@sveltestack/svelte-query'
   import { z } from 'zod'
-  import UserAPI from '../../../api/user'
+  import UserAPI from '@/api/user'
   import SettingsInput from './SettingsInput.svelte'
-  import SettingsSubmit from './SettingsSubmit.svelte'
+  import SettingsSubmit from '../../common/SubmitButton.svelte'
 
   export let email: string
   export let username: string

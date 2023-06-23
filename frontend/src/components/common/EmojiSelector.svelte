@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { closeEmojiSelector, getEmojiByCategoryVendor, searchEmojisByName } from '../../utils/emojis'
-  import store from '../../store'
-  import { clickOutside } from '../../directives/click-outside'
+  import { closeEmojiSelector, getEmojiByCategoryVendor, searchEmojisByName } from '@/utils/emojis'
+  import store from '@/store'
+  import { clickOutside } from '@/directives/click-outside'
 
   let currentEmojis: Emoji[] = []
   let currentVendor: EmojiVendor = 'apple'
