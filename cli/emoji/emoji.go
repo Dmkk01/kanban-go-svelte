@@ -6,7 +6,9 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/fatih/color"
 	"github.com/gocolly/colly/v2"
 	"github.com/rodaine/table"
@@ -15,89 +17,148 @@ import (
 type Emoji struct {
 	Name     string `json:"name"`
 	Slug     string `json:"slug"`
-	URL      string `json:"url"`
+	Category string `json:"category"`
 	ImageURL string `json:"image_url"`
+}
+
+type EmojiURL struct {
+	Category string
+	URL      string
 }
 
 var jsonPath = "../frontend/src/utils/emojis.json"
 
-// var imagesPath = "../frontend/public/images/emojis/"
-
+var emojipediaURL = "https://emojipedia.org"
 var emojisMap map[string]Emoji = make(map[string]Emoji)
 
+var wg sync.WaitGroup
+var mutex sync.Mutex
+
 func GetEmojis() {
-	emojis := readEmojis()
+	allEmojis := readEmojis()
 
-	for _, emoji := range emojis {
-		emojisMap[emoji.Slug] = emoji
-	}
+	categories := []string{"people", "nature", "food-drink", "activity", "travel-places", "objects", "symbols", "flags"}
+	emojiURLs := []EmojiURL{}
 
-	categories := []string{"apple", "microsoft-teams"}
-	newEmojis := []Emoji{}
+	wg.Add(len(categories))
 
 	for _, category := range categories {
-		emojis := scrapeEmojis(category)
-		newEmojis = append(newEmojis, emojis...)
+		go func(category string) {
+			defer wg.Done()
+			newEmojiUrls := scrapeEmojiList(category)
+			mutex.Lock()
+			emojiURLs = append(emojiURLs, newEmojiUrls...)
+			mutex.Unlock()
+		}(category)
 	}
 
-	totalEmojis := append(newEmojis, emojis...)
+	wg.Wait()
+
+	wg.Add(len(emojiURLs))
+
+	for _, item := range emojiURLs {
+		go func(emoji EmojiURL) {
+			defer wg.Done()
+
+			newEmojis := scrapeEmojiType(emoji)
+
+			mutex.Lock()
+			allEmojis = append(allEmojis, newEmojis...)
+			mutex.Unlock()
+
+		}(item)
+	}
+
+	wg.Wait()
 
 	fmt.Println("Saving emojis data...")
-	fmt.Println("Total emojis:", len(totalEmojis))
+	fmt.Println("Total emojis:", len(allEmojis))
 
-	emojisJSON, _ := json.Marshal(totalEmojis)
+	emojisJSON, _ := json.Marshal(allEmojis)
 	absPath, _ := filepath.Abs(jsonPath)
 
 	os.WriteFile(absPath, emojisJSON, 0644)
 
 	fmt.Println("Successfully wrote to file:", absPath)
-
-	// fmt.Println("Saving emojis images...")
-	// for _, emoji := range newEmojis {
-	// 	absPath, _ = filepath.Abs(imagesPath + emoji.Slug + ".png")
-
-	// 	img, _ := os.Create(absPath)
-	// 	defer img.Close()
-
-	// 	resp, err := http.Get(emoji.ImageURL)
-	// 	if err != nil {
-	// 		fmt.Println("Error:", err)
-	// 		continue
-	// 	}
-	// 	defer resp.Body.Close()
-
-	// 	io.Copy(img, resp.Body)
-	// }
-
-	// fmt.Println("Successfully saved emojis images")
 }
 
-func scrapeEmojis(category string) []Emoji {
-	url := "https://emojipedia.org/" + category + "/"
+func scrapeEmojiList(category string) []EmojiURL {
+	url := emojipediaURL + "/" + category
 
 	c := colly.NewCollector()
 
+	emojis := []EmojiURL{}
+
+	c.OnHTML(".emoji-list > li > a", func(e *colly.HTMLElement) {
+		href := e.Attr("href")
+
+		var emoji EmojiURL
+		emoji.Category = category
+		emoji.URL = href
+
+		emojis = append(emojis, emoji)
+	})
+
+	c.OnError(func(r *colly.Response, err error) {
+		fmt.Println("Error:", r.StatusCode, err)
+	})
+
+	c.OnRequest(func(r *colly.Request) {
+		c.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+		c.IgnoreRobotsTxt = true
+
+		fmt.Println("Company Visiting", r.URL.String())
+	})
+
+	c.Visit(url)
+
+	return emojis
+}
+
+func scrapeEmojiType(emojiURL EmojiURL) []Emoji {
+	url := emojipediaURL + emojiURL.URL
+	c := colly.NewCollector()
+	name := strings.ReplaceAll(emojiURL.URL, "/", "")
+
+	vendorOptions := []string{"Apple", "Microsoft Teams"}
+
 	emojis := []Emoji{}
 
-	c.OnHTML(".emoji-grid > li > a", func(e *colly.HTMLElement) {
-		var data Emoji
-		href := e.Attr("href")
-		src := e.ChildAttr("img", "data-src")
+	c.OnHTML("section.vendor-list > ul > li", func(e *colly.HTMLElement) {
+		el := e.DOM.Find("h2").FilterFunction(func(i int, s *goquery.Selection) bool {
+			for _, vendor := range vendorOptions {
+				if strings.Contains(s.Text(), vendor) {
+					return true
+				}
+			}
 
-		if href == "" || src == "" {
+			return false
+		})
+
+		vendor := el.Text()
+
+		if vendor == "" {
 			return
 		}
 
-		name := strings.ReplaceAll(href, "/", "")
-		slug := category + "-" + name
+		imageEl := e.DOM.Find("img")
+		src := imageEl.AttrOr("src", "not found")
+
+		if src == "not found" {
+			return
+		}
+
+		vendor = strings.ToLower(vendor)
+		slug := strings.ReplaceAll(vendor+"-"+name, " ", "-")
 
 		if _, ok := emojisMap[slug]; ok {
 			return
 		}
 
+		var data Emoji
 		data.Name = name
 		data.Slug = slug
-		data.URL = "https://emojipedia.org" + href
+		data.Category = emojiURL.Category
 		data.ImageURL = src
 
 		emojis = append(emojis, data)
@@ -130,6 +191,10 @@ func readEmojis() []Emoji {
 	if err != nil {
 		fmt.Println("Error Decoding:", err)
 		return []Emoji{}
+	}
+
+	for _, emoji := range emojis {
+		emojisMap[emoji.Slug] = emoji
 	}
 
 	return emojis
