@@ -6,6 +6,7 @@
   import store from '../store'
 
   import { getEmojiURLBySlug, getInitEmoji, openEmojiSelector } from '../utils/emojis'
+  import EmojiButton from '../components/common/EmojiButton.svelte'
 
   const schema = z.object({
     app_name: z.string().min(3, { message: 'App name must be at least 3 characters long' }),
@@ -53,16 +54,6 @@
 
     $gsMutation.mutate(data)
   }
-
-  let emojiKey = 'getting-started'
-  $: {
-    if ($store.emojis.isOpen) {
-      const possibleEmoji = $store.emojis.keys.find((item) => item.key === emojiKey)
-      if (possibleEmoji) {
-        data.app_emoji = possibleEmoji.emoji
-      }
-    }
-  }
 </script>
 
 <div class="w-full min-h-screen bg-[#C0C2CC] flex items-center justify-center">
@@ -89,20 +80,14 @@
       on:submit={handleSubmit}
     >
       <div class="flex flex-row gap-3 items-center w-full">
-        <button
-          type="button"
-          on:click={() => openEmojiSelector(emojiKey, data.app_emoji)}
-          class="flex flex-col gap-0 relative"
-        >
+        <div class="flex flex-col gap-0 relative">
           <p class="text-[10px] text-tgray-200">Emoji</p>
-          <div class="w-14 h-14 px-1 flex items-center justify-center bg-white/50 rounded-lg shadow-lg">
-            <img
-              src={getEmojiURLBySlug(data.app_emoji)}
-              alt="getting-started-emoji"
-              class="w-11/12 h-full object-contain"
-            />
-          </div>
-        </button>
+          <EmojiButton
+            bind:emojiSlug={data.app_emoji}
+            emojiKey="getting-started"
+            extraStyles="w-14 h-14 bg-white/50 shadow-lg"
+          />
+        </div>
         <div class="flex flex-col gap-0 w-full">
           <label
             for="#app_name"

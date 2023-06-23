@@ -3,7 +3,7 @@
   import { string, z } from 'zod'
   import UserAPI from '../../../api/user'
   import SettingsSubmit from './SettingsSubmit.svelte'
-
+  import EmojiButton from '../../common/EmojiButton.svelte'
   import store from '../../../store'
 
   import { getEmojiURLBySlug, getInitEmoji, openEmojiSelector } from '../../../utils/emojis'
@@ -99,16 +99,6 @@
       format: data.date_format,
     })
   }
-
-  let emojiKey = 'settings-customization'
-  $: {
-    if ($store.emojis.isOpen) {
-      const possibleEmoji = $store.emojis.keys.find((item) => item.key === emojiKey)
-      if (possibleEmoji) {
-        data.emoji = possibleEmoji.emoji
-      }
-    }
-  }
 </script>
 
 <div class="flex flex-col gap-2 w-full">
@@ -130,20 +120,14 @@
     class="flex flex-col gap-10 pt-10 px-4"
   >
     <div class="flex flex-row gap-3 items-center w-full">
-      <button
-        type="button"
-        on:click={() => openEmojiSelector(emojiKey, data.emoji)}
-        class="flex flex-col gap-0"
-      >
+      <div class="flex flex-col gap-0">
         <p class="text-[10px] text-tgray-200">Emoji</p>
-        <div class="w-12 h-12 px-1 flex items-center justify-center bg-white/20 rounded-lg shadow-lg">
-          <img
-            src={getEmojiURLBySlug(data.emoji)}
-            alt="getting-started-emoji"
-            class="w-11/12 h-full object-contain"
-          />
-        </div>
-      </button>
+        <EmojiButton
+          bind:emojiSlug={data.emoji}
+          emojiKey="settings-customization"
+          extraStyles="w-12 h-12 bg-white/20 shadow-lg"
+        />
+      </div>
       <div class="flex flex-col gap-0 w-full">
         <label
           for="#app_name"
