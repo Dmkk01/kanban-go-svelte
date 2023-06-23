@@ -208,7 +208,7 @@ func CreateTaskByColumnID(task models.TaskCreate) (int, error) {
 	}
 
 	for _, subTask := range task.SubTasks {
-		_, err = db.Exec("INSERT INTO subtasks (task_id, title, completed, created_at, updated_at) VALUES ($1, $2, $3, $4, $5)", taskID, subTask.Title, subTask.Completed, createdAt, updatedAt)
+		err := CreateSubTask(taskID, subTask)
 		if err != nil {
 			return 0, err
 		}
@@ -255,12 +255,19 @@ func UpdateTaskByID(taskID int, task models.TaskUpdate) error {
 
 	for _, subTask := range task.SubTasks {
 		if subTask.ID == 0 {
-			_, err = db.Exec("INSERT INTO subtasks (task_id, title, completed, created_at, updated_at) VALUES ($1, $2, $3, $4, $5)", taskID, subTask.Title, subTask.Completed, updatedAt, updatedAt)
+			err := CreateSubTask(taskID, models.SubTaskCreate{
+				Title:     subTask.Title,
+				Completed: subTask.Completed,
+			})
 			if err != nil {
 				return err
 			}
 		} else {
-			_, err = db.Exec("UPDATE subtasks SET title = $1, completed = $2, updated_at = $3 WHERE id = $4", subTask.Title, subTask.Completed, updatedAt, subTask.ID)
+			err := UpdateSubTaskByID(models.SubTaskUpdate{
+				ID:        subTask.ID,
+				Title:     subTask.Title,
+				Completed: subTask.Completed,
+			})
 			if err != nil {
 				return err
 			}
@@ -293,6 +300,92 @@ func UpdateTaskPosition(pos models.TaskPositionUpdate) error {
 
 	updatedAt := time.Now()
 	_, err = db.Exec("UPDATE task SET position = $1, updated_at = $2, column_id = $3 WHERE id = $4", pos.Position, updatedAt, pos.ColumnID, pos.TaskID)
+
+	return err
+}
+
+func GetSubTasks(taskID int) ([]models.SubTask, error) {
+	db, err := db.Connect()
+	if err != nil {
+		return []models.SubTask{}, err
+	}
+	defer db.Close()
+
+	subTasks := []models.SubTask{}
+	rows, err := db.Query("SELECT id, task_id, title, completed, created_at, updated_at FROM subtasks WHERE task_id = $1", taskID)
+	if err != nil {
+		return []models.SubTask{}, err
+	}
+
+	for rows.Next() {
+		var subTask models.SubTask
+		err := rows.Scan(&subTask.ID, &subTask.TaskID, &subTask.Title, &subTask.Completed, &subTask.CreatedAt, &subTask.UpdatedAt)
+		if err != nil {
+			return []models.SubTask{}, err
+		}
+
+		subTasks = append(subTasks, subTask)
+	}
+
+	return subTasks, nil
+}
+
+func GetSubTaskByID(subtaskID int) (models.SubTask, error) {
+	db, err := db.Connect()
+	if err != nil {
+		return models.SubTask{}, err
+	}
+	defer db.Close()
+
+	var subTask models.SubTask
+	err = db.QueryRow("SELECT id, task_id, title, completed, created_at, updated_at FROM subtasks WHERE id = $1", subtaskID).Scan(&subTask.ID, &subTask.TaskID, &subTask.Title, &subTask.Completed, &subTask.CreatedAt, &subTask.UpdatedAt)
+	if err != nil {
+		return models.SubTask{}, err
+	}
+
+	return subTask, nil
+}
+
+func CreateSubTask(taskID int, subtask models.SubTaskCreate) error {
+	db, err := db.Connect()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	createdAt := time.Now()
+	_, err = db.Exec("INSERT INTO subtasks (task_id, title, completed, created_at, updated_at) VALUES ($1, $2, $3, $4, $5)", taskID, subtask.Title, subtask.Completed, createdAt, createdAt)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func DeleteSubTaskByID(subtaskID int) error {
+	db, err := db.Connect()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	_, err = db.Exec("DELETE FROM subtasks WHERE id = $1", subtaskID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func UpdateSubTaskByID(subtask models.SubTaskUpdate) error {
+	db, err := db.Connect()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	updatedAt := time.Now()
+	_, err = db.Exec("UPDATE subtasks SET title = $1, completed = $2, updated_at = $3 WHERE id = $4", subtask.Title, subtask.Completed, updatedAt, subtask.ID)
 
 	return err
 }

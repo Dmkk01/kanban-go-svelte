@@ -16,8 +16,8 @@ type Task struct {
 }
 
 type SubTask struct {
-	ID        string `json:"id"`
-	TaskID    string `json:"task_id"`
+	ID        int    `json:"id"`
+	TaskID    int    `json:"task_id"`
 	Title     string `json:"title"`
 	Completed bool   `json:"completed"`
 	CreatedAt string `json:"created_at"`
@@ -25,8 +25,8 @@ type SubTask struct {
 }
 
 type LinkTask struct {
-	ID        string `json:"id"`
-	TaskID    string `json:"task_id"`
+	ID        int    `json:"id"`
+	TaskID    int    `json:"task_id"`
 	Title     string `json:"title"`
 	Emoji     string `json:"emoji"`
 	URL       string `json:"url"`

@@ -11,6 +11,21 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+func getCheckTaskByIdContext(c echo.Context) (models.Task, error) {
+	claims := c.Get("claims").(*models.Claims)
+	taskID, err := strconv.Atoi(c.Param("task_id"))
+	if err != nil {
+		return models.Task{}, echo.NewHTTPError(http.StatusBadRequest, "Invalid  ID")
+	}
+
+	task, err := getCheckTaskById(taskID, claims.Id)
+	if err != nil {
+		return models.Task{}, err
+	}
+
+	return task, nil
+}
+
 func getCheckTaskById(taskID int, userID int) (models.Task, error) {
 	task, err := getTaskByID(taskID)
 	if err != nil {
@@ -126,13 +141,7 @@ func CreateTaskByColumnID(c echo.Context) error {
 }
 
 func UpdateTaskByID(c echo.Context) error {
-	claims := c.Get("claims").(*models.Claims)
-	taskID, err := strconv.Atoi(c.Param("task_id"))
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "Invalid ID")
-	}
-
-	_, err = getCheckTaskById(taskID, claims.Id)
+	task, err := getCheckTaskByIdContext(c)
 	if err != nil {
 		return err
 	}
@@ -142,7 +151,7 @@ func UpdateTaskByID(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid Request Body")
 	}
 
-	err = services.UpdateTaskByID(taskID, data)
+	err = services.UpdateTaskByID(task.ID, data)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Server Error")
 	}
@@ -206,21 +215,121 @@ func UpdateTaskPosition(c echo.Context) error {
 }
 
 func DeleteTaskByID(c echo.Context) error {
-	claims := c.Get("claims").(*models.Claims)
-	taskID, err := strconv.Atoi(c.Param("task_id"))
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "Invalid  ID")
-	}
-
-	_, err = getCheckTaskById(taskID, claims.Id)
+	task, err := getCheckTaskByIdContext(c)
 	if err != nil {
 		return err
 	}
 
-	err = services.DeleteTaskByID(taskID)
+	err = services.DeleteTaskByID(task.ID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Server Error")
 	}
 
+	return c.JSON(http.StatusOK, models.StatusResponse{Status: "OK"})
+}
+
+func GetSubTasks(c echo.Context) error {
+	task, err := getCheckTaskByIdContext(c)
+	if err != nil {
+		return err
+	}
+
+	subTasks, err := services.GetSubTasks(task.ID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return echo.NewHTTPError(http.StatusNotFound, "SubTasks not Found")
+		}
+		return echo.NewHTTPError(http.StatusInternalServerError, "Server Error")
+	}
+
+	return c.JSON(http.StatusOK, subTasks)
+}
+
+func GetSubTaskByID(c echo.Context) error {
+	task, err := getCheckTaskByIdContext(c)
+	if err != nil {
+		return err
+	}
+
+	subTaskID, err := strconv.Atoi(c.Param("sub_task_id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid SubTask ID")
+	}
+
+	subTask, err := services.GetSubTaskByID(subTaskID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return echo.NewHTTPError(http.StatusNotFound, "SubTask not Found")
+		}
+		return echo.NewHTTPError(http.StatusInternalServerError, "Server Error")
+	}
+
+	if subTask.TaskID != task.ID {
+		return echo.NewHTTPError(http.StatusNotFound, "SubTask not Found")
+	}
+
+	return c.JSON(http.StatusOK, subTask)
+}
+
+func CreateSubTask(c echo.Context) error {
+	task, err := getCheckTaskByIdContext(c)
+	if err != nil {
+		return err
+	}
+
+	var data models.SubTaskCreate
+	if err := c.Bind(&data); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid Request Body")
+	}
+
+	err = services.CreateSubTask(task.ID, data)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Server Error")
+	}
+	return c.JSON(http.StatusCreated, models.StatusResponse{Status: "OK"})
+}
+
+func UpdateSubTaskByID(c echo.Context) error {
+	_, err := getCheckTaskByIdContext(c)
+	if err != nil {
+		return err
+	}
+
+	subTaskID, err := strconv.Atoi(c.Param("sub_task_id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid SubTask ID")
+	}
+
+	var data models.SubTaskUpdate
+	if err := c.Bind(&data); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid Request Body")
+	}
+
+	if data.ID == 0 {
+		data.ID = subTaskID
+	}
+
+	err = services.UpdateSubTaskByID(data)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Server Error")
+	}
+	return c.JSON(http.StatusOK, models.StatusResponse{Status: "OK"})
+}
+
+func DeleteSubTaskByID(c echo.Context) error {
+	_, err := getCheckTaskByIdContext(c)
+	if err != nil {
+		return err
+	}
+
+	subTaskID, err := strconv.Atoi(c.Param("sub_task_id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid SubTask ID")
+	}
+
+	err = services.DeleteSubTaskByID(subTaskID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Server Error")
+	}
 	return c.JSON(http.StatusOK, models.StatusResponse{Status: "OK"})
 }
