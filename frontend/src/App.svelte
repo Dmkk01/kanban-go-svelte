@@ -6,6 +6,9 @@
   import GettingStarted from './pages/GettingStarted.svelte'
   import Home from './pages/home/Home.svelte'
   import Settings from './pages/home/Settings.svelte'
+  import EmojiSelector from './components/common/EmojiSelector.svelte'
+
+  import store from './store'
 
   const queryClient = new QueryClient()
 
@@ -31,5 +34,8 @@
         <Settings />
       </Route>
     </Router>
+    {#if $store.emojis.isOpen}
+      <EmojiSelector />
+    {/if}
   </main>
 </QueryClientProvider>

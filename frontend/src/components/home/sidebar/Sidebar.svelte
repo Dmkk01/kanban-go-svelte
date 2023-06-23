@@ -7,6 +7,7 @@
   import SidebarNewBoard from './SidebarNewBoard.svelte'
   import SidebarOthers from './SidebarOthers.svelte'
   import store from '../../../store'
+  import { getEmojiURLBySlug } from '../../../utils/emojis'
 
   const settings = useQuery('settings', UserAPI.getUserSettings, {
     onSuccess: async (data) => {
@@ -27,13 +28,12 @@
   {#if !$settings.isLoading && !$boards.isLoading}
     <div class="flex flex-col gap-6 w-full">
       <div class="flex flex-row gap-3 items-center mb-10">
-        <p
-          class={`text-3xl text-center ${
-            !$store.isSidebarOpen ? 'bg-white/50 h-14 w-auto aspect-square rounded-lg flex items-center justify-center' : ''
-          }`}
-        >
-          {$settings.data.app_emoji}
-        </p>
+        <div class={`w-14 p-1 aspect-square h-full ${!$store.isSidebarOpen ? 'bg-white/50 h-auto rounded-lg ' : ''}`}>
+          <img
+            src={getEmojiURLBySlug($settings.data.app_emoji)}
+            alt="sidebar-emoji"
+          />
+        </div>
         {#if $store.isSidebarOpen}
           <h1 class="text-4xl font-bold">
             {$settings.data.app_name}

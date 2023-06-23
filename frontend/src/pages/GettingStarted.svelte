@@ -3,6 +3,9 @@
   import { z } from 'zod'
   import UserAPI from '../api/user'
   import { navigate } from 'svelte-routing'
+  import store from '../store'
+
+  import { getEmojiURLBySlug, getInitEmoji, openEmojiSelector } from '../utils/emojis'
 
   const schema = z.object({
     app_name: z.string().min(3, { message: 'App name must be at least 3 characters long' }),
@@ -13,16 +16,10 @@
 
   const data: GetStartedType = {
     app_name: 'BanBan',
-    app_emoji: '💗',
+    app_emoji: getInitEmoji().slug,
   }
 
   let message = ''
-
-  const handleEmojiInput = (e: Event) => {
-    const value = (e.target as HTMLInputElement).value
-
-    data.app_emoji = value
-  }
 
   const gsMutation = useMutation((data: GetStartedType) => UserAPI.gettingStarted(data.app_name, data.app_emoji), {
     onSuccess: async (data) => {
@@ -56,11 +53,28 @@
 
     $gsMutation.mutate(data)
   }
+
+  let emojiKey = 'getting-started'
+  $: {
+    if ($store.emojis.isOpen) {
+      const possibleEmoji = $store.emojis.keys.find((item) => item.key === emojiKey)
+      if (possibleEmoji) {
+        data.app_emoji = possibleEmoji.emoji
+      }
+    }
+  }
 </script>
 
 <div class="w-full min-h-screen bg-[#C0C2CC] flex items-center justify-center">
   <div class="bg-white/30 w-full max-w-xl rounded-3xl px-6 py-10 flex shadow-lg flex-col gap-6 items-start">
-    <h1 class="text-3xl font-extrabold text-tgray-600 mx-auto">{data.app_emoji} {data.app_name}</h1>
+    <div class="flex flex-row gap-2 items-center justify-center w-full">
+      <img
+        src={getEmojiURLBySlug(data.app_emoji)}
+        alt="getting-started-emoji"
+        class="w-10 h-full object-contain"
+      />
+      <h1 class="text-3xl font-extrabold text-tgray-600">{data.app_name}</h1>
+    </div>
 
     <div>
       <p class="font-bold text-2xl text-tgray-600">
@@ -75,21 +89,20 @@
       on:submit={handleSubmit}
     >
       <div class="flex flex-row gap-3 items-center w-full">
-        <div class="flex flex-col gap-0">
-          <label
-            for="#app_emoji"
-            class="text-[10px] text-tgray-200"
-          >
-            Emoji
-          </label>
-          <input
-            type="text"
-            id="app_emoji"
-            value={data.app_emoji}
-            on:input={handleEmojiInput}
-            class="text-4xl w-14 h-14 px-1 bg-white/50 rounded-lg shadow-lg"
-          />
-        </div>
+        <button
+          type="button"
+          on:click={() => openEmojiSelector(emojiKey, data.app_emoji)}
+          class="flex flex-col gap-0 relative"
+        >
+          <p class="text-[10px] text-tgray-200">Emoji</p>
+          <div class="w-14 h-14 px-1 flex items-center justify-center bg-white/50 rounded-lg shadow-lg">
+            <img
+              src={getEmojiURLBySlug(data.app_emoji)}
+              alt="getting-started-emoji"
+              class="w-11/12 h-full object-contain"
+            />
+          </div>
+        </button>
         <div class="flex flex-col gap-0 w-full">
           <label
             for="#app_name"
