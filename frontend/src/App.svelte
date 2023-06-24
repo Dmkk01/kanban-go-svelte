@@ -9,6 +9,7 @@
   import EmojiSelector from './components/common/EmojiSelector.svelte'
 
   import store from './store'
+  import Board from './pages/home/Board.svelte'
 
   const queryClient = new QueryClient()
 
@@ -30,6 +31,10 @@
       <Route path="/home">
         <Home />
       </Route>
+      <Route
+        path="/home/board/:id"
+        component={Board}
+      />
       <Route path="/home/settings">
         <Settings />
       </Route>

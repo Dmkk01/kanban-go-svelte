@@ -6,6 +6,11 @@ interface IStore {
     isOpen: boolean
     boardID: number | null
   }
+  columnDrawer: {
+    isOpen: boolean
+    columnID: number | null
+    boardID: number | null
+  }
   emojis: {
     isOpen: boolean
     activeKey: string | null
@@ -19,7 +24,12 @@ interface IStore {
 const initial: IStore = {
   isSidebarOpen: false,
   boardDrawer: {
-    isOpen: true,
+    isOpen: false,
+    boardID: null,
+  },
+  columnDrawer: {
+    isOpen: false,
+    columnID: null,
     boardID: null,
   },
   emojis: {

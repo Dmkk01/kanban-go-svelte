@@ -9,6 +9,8 @@
   import store from '@/store'
   import { getEmojiURLBySlug } from '@/utils/emojis'
 
+  export let boardID: number = 0
+
   const settings = useQuery('settings', UserAPI.getUserSettings, {
     onSuccess: async (data) => {
       if (data.app_name === '') {
@@ -47,7 +49,12 @@
           </p>
         {/if}
         {#each $boards.data || [] as board}
-          <SidebarBoardItem {board} />
+          <div class="relative">
+            {#if boardID === board.id}
+              <div class="absolute w-2 h-2 bg-white rounded-full top-1/2 -translate-y-1/2 -left-3" />
+            {/if}
+            <SidebarBoardItem {board} />
+          </div>
         {/each}
         <SidebarNewBoard />
       </div>

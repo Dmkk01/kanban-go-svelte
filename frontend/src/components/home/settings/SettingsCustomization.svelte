@@ -182,7 +182,6 @@
             value={board.id}
             class="text-tgray-200"
           >
-            {board.emoji}
             {board.name}
           </option>
         {/each}
