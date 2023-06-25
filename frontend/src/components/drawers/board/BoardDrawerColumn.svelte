@@ -14,10 +14,7 @@
   }
 </script>
 
-<div
-  transition:fade
-  class="flex flex-row gap-3 items-center w-full"
->
+<div class="flex flex-row gap-3 items-center w-full">
   <EmojiButton
     bind:emojiSlug={emoji}
     emojiKey={`board-column-${emojiKey}`}

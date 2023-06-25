@@ -8,12 +8,15 @@
   import SubmitButton from '@/components/common/SubmitButton.svelte'
   import BoardDrawerColumn from './BoardDrawerColumn.svelte'
   import { fly } from 'svelte/transition'
+  import { flip } from 'svelte/animate'
+  import { dndzone } from 'svelte-dnd-action'
 
   const schema = z.object({
     emoji: z.string().min(1),
     name: z.string().min(1),
     columns: z.array(
       z.object({
+        id: z.number(),
         emoji: z.string().min(1),
         name: z.string().min(1),
         position: z.number().min(1),
@@ -22,6 +25,8 @@
   })
 
   type Schema = z.infer<typeof schema>
+
+  type ColumnSchema = Schema['columns'][number]
 
   const queryClient = useQueryClient()
 
@@ -71,17 +76,10 @@
       emoji: getInitEmoji().slug,
       name: 'Column',
       position: data.columns.length + 1,
+      id: Math.floor(Math.random() * 100000),
     }
 
     data.columns = [...data.columns, newColumn]
-  }
-
-  $: {
-    console.log(data.columns)
-    data.columns = data.columns.map((item, index) => {
-      item.position = index + 1
-      return item
-    })
   }
 
   const deleteColumn = (e: CustomEvent<number>) => {
@@ -103,6 +101,15 @@
     }
 
     closeDrawer()
+  }
+
+  const handleSort = (e: CustomEvent<DndEvent<ColumnSchema>>) => {
+    const newItems = e.detail.items as ColumnSchema[]
+
+    data.columns = newItems.map((item, index) => {
+      item.position = index + 1
+      return item
+    })
   }
 </script>
 
@@ -126,6 +133,7 @@
       <div class="flex flex-row gap-3 items-center w-full">
         <div class="flex flex-col gap-2">
           <p class="text-sm font-bold text-tgray-600">Emoji</p>
+
           <EmojiButton
             bind:emojiSlug={data.emoji}
             emojiKey="board-customization"
@@ -148,19 +156,28 @@
           />
         </div>
       </div>
-
       <div class="flex flex-col gap-3">
         <p class="text-base font-bold text-tgray-600">Columns</p>
-        {#each data.columns as item}
-          <div class="w-full">
-            <BoardDrawerColumn
-              bind:emoji={item.emoji}
-              bind:name={item.name}
-              emojiKey={item.position}
-              on:delete-column={deleteColumn}
-            />
-          </div>
-        {/each}
+        <section
+          use:dndzone={{ items: data.columns, flipDurationMs: 200, type: 'board-create-columns', dropTargetStyle: { outline: 'none' } }}
+          on:consider={handleSort}
+          on:finalize={handleSort}
+          class="flex flex-col gap-3"
+        >
+          {#each data.columns as item (item.id)}
+            <div
+              draggable="true"
+              animate:flip={{ duration: 200 }}
+            >
+              <BoardDrawerColumn
+                bind:emoji={item.emoji}
+                bind:name={item.name}
+                emojiKey={item.position}
+                on:delete-column={deleteColumn}
+              />
+            </div>
+          {/each}
+        </section>
         <button
           type="button"
           on:click={createNewColumn}
