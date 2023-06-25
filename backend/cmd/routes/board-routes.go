@@ -27,7 +27,16 @@ func boardRoutes(e echoswagger.ApiRoot) {
 	boardGroup.GET("/:board_id", controllers.GetBoard).
 		AddParamPath("", "board_id", "Board ID").
 		SetSummary("Get Single Board").
-		AddResponse(http.StatusOK, "Board Found", []models.Board{}, nil).
+		AddResponse(http.StatusOK, "Board Found", models.Board{}, nil).
+		AddResponse(http.StatusInternalServerError, "Server Error", models.MessageResponse{}, nil).
+		AddResponse(http.StatusBadRequest, "Bad Request", models.MessageResponse{}, nil).
+		AddResponse(http.StatusNotFound, "Board not Found", models.MessageResponse{}, nil).
+		AddResponse(http.StatusForbidden, "Forbidden Access", models.MessageResponse{}, nil)
+
+	boardGroup.GET("/:board_id/full", controllers.GetBoardFull).
+		AddParamPath("", "board_id", "Board ID").
+		SetSummary("Get Single Board with all Data").
+		AddResponse(http.StatusOK, "Board Found", models.BoardColumnFullResponse{}, nil).
 		AddResponse(http.StatusInternalServerError, "Server Error", models.MessageResponse{}, nil).
 		AddResponse(http.StatusBadRequest, "Bad Request", models.MessageResponse{}, nil).
 		AddResponse(http.StatusNotFound, "Board not Found", models.MessageResponse{}, nil).

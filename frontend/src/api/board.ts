@@ -73,6 +73,23 @@ const getBoards = async () => {
   })
 }
 
+const getBoardFull = async (board_id: number) => {
+  return await fetch(`${API_URL}/board/${board_id}/full`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authHeader(),
+    },
+  }).then(async (res) => {
+    const data = await res.json()
+    if (res.ok) {
+      return data as BoardFull
+    }
+
+    throw new Error(data.message)
+  })
+}
+
 const createNewBoard = async (board_name: string, board_emoji: string, columns: { name: string; emoji: string; position: number }[]) => {
   return await fetch(`${API_URL}/board`, {
     method: 'POST',
@@ -120,6 +137,7 @@ const BoardsAPI = {
   createNewBoard,
   createColumn,
   updateColumnPosition,
+  getBoardFull,
 }
 
 export default BoardsAPI

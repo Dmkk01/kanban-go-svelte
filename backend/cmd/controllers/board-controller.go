@@ -99,6 +99,34 @@ func GetBoard(c echo.Context) error {
 	return c.JSON(http.StatusOK, board)
 }
 
+func GetBoardFull(c echo.Context) error {
+	final := models.BoardFullResponse{}
+	board, err := getCheckUserBoardById(c)
+	if err != nil {
+		return err
+	}
+
+	final.Board = board
+	final.Columns = []models.BoardColumnFullResponse{}
+
+	columns, _ := services.GetColumnsFromBoard(board.Id)
+
+	for _, column := range columns {
+		var columnFull models.BoardColumnFullResponse
+		tasks, err := services.GetTaskByColumnID(column.ID)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, "There was an error getting the tasks")
+		}
+
+		columnFull.BoardColumn = column
+		columnFull.Tasks = tasks
+
+		final.Columns = append(final.Columns, columnFull)
+	}
+
+	return c.JSON(http.StatusOK, final)
+}
+
 func UpdateBoard(c echo.Context) error {
 	board, err := getCheckUserBoardById(c)
 	if err != nil {

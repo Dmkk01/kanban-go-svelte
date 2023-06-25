@@ -1,6 +1,7 @@
 <script lang="ts">
   import BoardDrawer from '@/components/drawers/board/BoardDrawer.svelte'
   import ColumnDrawer from '@/components/drawers/column/ColumnDrawer.svelte'
+  import TaskDrawer from '@/components/drawers/task/TaskDrawer.svelte'
   import Sidebar from '@/components/home/sidebar/Sidebar.svelte'
   import store from '@/store'
 
@@ -18,5 +19,8 @@
   {/if}
   {#if $store.columnDrawer.isOpen}
     <ColumnDrawer />
+  {/if}
+  {#if $store.taskDrawer.isOpen}
+    <TaskDrawer />
   {/if}
 </div>

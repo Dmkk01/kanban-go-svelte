@@ -35,9 +35,28 @@ const taskUpdatePosition = async (data: { task_id: number; position: number; col
   })
 }
 
+const createTask = async (column_id: number, data: TaskCreate) => {
+  return await fetch(`${API_URL}/column/${column_id}/task`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authHeader(),
+    },
+    body: JSON.stringify(data),
+  }).then(async (res) => {
+    const data = await res.json()
+    if (res.ok) {
+      return data as StatusResponse
+    }
+
+    throw new Error(data.message)
+  })
+}
+
 const TaskAPI = {
   getTask,
   taskUpdatePosition,
+  createTask,
 }
 
 export default TaskAPI

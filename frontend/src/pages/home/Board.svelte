@@ -14,22 +14,23 @@
 
   let columnItems: ColumnBoard[] = []
 
-  const board = useQuery(`board-${boardID}`, async () => await BoardsAPI.getBoardById(boardID), {
-    onSuccess: () => {
-      void $columns.refetch()
-    },
-  })
-  const columns = useQuery(`board-${boardID}-columns`, async () => await BoardsAPI.getColumns(boardID), {
+  const board = useQuery(`board-${boardID}`, async () => await BoardsAPI.getBoardFull(boardID), {
+    refetchOnWindowFocus: false,
     onSuccess: (data) => {
-      columnItems = data
+      columnItems = data.columns.map((item) => item.column)
     },
   })
+  // const columns = useQuery(`board-${boardID}-columns`, async () => await BoardsAPI.getColumns(boardID), {
+  //   onSuccess: (data) => {
+  //     columnItems = data
+  //   },
+  // })
 
   $: {
     if (boardID !== parseInt(id)) {
       boardID = parseInt(id)
       void $board.refetch()
-      void $columns.refetch()
+      // void $columns.refetch()
     }
   }
 
@@ -65,12 +66,12 @@
       {#if !$board.isLoading && $board.data}
         <div class="flex flex-row gap-2 items-center">
           <img
-            src={getEmojiURLBySlug($board.data.emoji)}
+            src={getEmojiURLBySlug($board.data.board.emoji)}
             alt="emoji"
             class="w-8 h-8 rounded-full"
           />
           <h1 class="font-bold text-xl">
-            {$board.data.name}
+            {$board.data.board.name}
           </h1>
         </div>
         <button
@@ -104,7 +105,7 @@
         </button>
       {/if}
     </div>
-    {#if !$columns.isLoading && columnItems}
+    {#if columnItems && $board.data}
       <div
         use:dndzone={{ items: columnItems, flipDurationMs: 200, type: 'board-column' }}
         on:consider={handleSort}
@@ -116,13 +117,10 @@
             animate:flip={{ duration: 200 }}
             draggable="true"
           >
-            <BoardColumnItem columnID={column.id} />
+            <BoardColumnItem column={$board.data.columns.find((item) => item.column.id === column.id)} />
           </div>
         {/each}
       </div>
     {/if}
-    <p>
-      {JSON.stringify(columnItems)}
-    </p>
   </div>
 </MainLayout>

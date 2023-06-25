@@ -7,6 +7,16 @@ type Board = {
   updated_at: string
 }
 
+type BoardFull = {
+  board: Board
+  columns: ColumnBoardFull[]
+}
+
+type ColumnBoardFull = {
+  column: ColumnBoard
+  tasks: Task[]
+}
+
 type ColumnBoard = {
   id: number
   board_id: number
@@ -15,6 +25,16 @@ type ColumnBoard = {
   emoji: string
   name: string
   position: number
+}
+
+type TaskCreate = {
+  title: string
+  description: string
+  time_needed: number
+  due_date: string
+  position: number
+  sub_tasks: SubTaskCreate[]
+  links: LinkTaskCreate[]
 }
 
 type Task = {
@@ -32,6 +52,11 @@ type Task = {
   links: LinkTask[]
 }
 
+type SubTaskCreate = {
+  completed: boolean
+  title: string
+}
+
 type SubTask = {
   id: number
   task_id: number
@@ -39,6 +64,12 @@ type SubTask = {
   completed: boolean
   created_at: string
   updated_at: string
+}
+
+type LinkTaskCreate = {
+  title: string
+  url: string
+  emoji: string
 }
 
 type LinkTask = {

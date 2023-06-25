@@ -55,7 +55,7 @@ func columnRoutes(e echoswagger.ApiRoot) {
 		AddResponse(http.StatusForbidden, "Forbidden Access", models.MessageResponse{}, nil)
 
 	columnGroup.POST("/:column_id/task", controllers.CreateTaskByColumnID).
-		SetSummary("Get Tasks by Column ID").
+		SetSummary("Create Tasks by Column ID").
 		AddParamPath("", "column_id", "Column ID").
 		AddParamBody(models.TaskCreate{}, "body", "Task Create Request", true).
 		AddResponse(http.StatusCreated, "Task Created", models.StatusResponse{}, nil).

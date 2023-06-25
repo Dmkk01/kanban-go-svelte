@@ -52,7 +52,7 @@
     {
       onSuccess: () => {
         updateIsSaved()
-        queryClient.invalidateQueries(`board-${$store.columnDrawer.boardID}-columns`)
+        queryClient.invalidateQueries(`board-${$store.columnDrawer.boardID}`)
       },
       onError: (err) => {
         updateMessage(err as string)

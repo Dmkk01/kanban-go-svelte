@@ -10,6 +10,11 @@ type BoardColumn struct {
 	UpdatedAt string `json:"updated_at"`
 }
 
+type BoardColumnFullResponse struct {
+	BoardColumn `json:"column"`
+	Tasks       []Task `json:"tasks"`
+}
+
 type ColumnCreate struct {
 	Name     string `json:"name"`
 	Emoji    string `json:"emoji"`

@@ -11,6 +11,14 @@ interface IStore {
     columnID: number | null
     boardID: number | null
   }
+  taskDrawer: {
+    isOpen: boolean
+    ids: {
+      board: number | null
+      column: number | null
+      task: number | null
+    }
+  }
   emojis: {
     isOpen: boolean
     activeKey: string | null
@@ -31,6 +39,14 @@ const initial: IStore = {
     isOpen: false,
     columnID: null,
     boardID: null,
+  },
+  taskDrawer: {
+    isOpen: false,
+    ids: {
+      board: null,
+      column: null,
+      task: null,
+    },
   },
   emojis: {
     isOpen: false,

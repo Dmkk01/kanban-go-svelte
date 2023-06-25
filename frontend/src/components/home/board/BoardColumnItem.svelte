@@ -6,22 +6,31 @@
   import { dndzone } from 'svelte-dnd-action'
   import BoardTaskItem from './BoardTaskItem.svelte'
   import TaskAPI from '@/api/task'
+  import store from '@/store'
 
-  export let columnID: number = 0
-  let currColumnID = columnID
-  const column = useQuery(['column', currColumnID], async () => await ColumnAPI.getColumn(currColumnID), {})
-  const tasks = useQuery(['column', currColumnID, 'tasks'], async () => await ColumnAPI.getTasks(currColumnID), {
-    onSuccess: (data) => {
-      taskItems = data
-    },
-  })
+  export let column: ColumnBoardFull | undefined
+
   $: {
-    if (currColumnID !== columnID) {
-      currColumnID = columnID
-      void $column.refetch()
-      void $tasks.refetch()
+    if (column) {
+      taskItems = column.tasks
     }
   }
+
+  // export let columnID: number = 0
+  // let currColumnID = columnID
+  // const column = useQuery(['column', currColumnID], async () => await ColumnAPI.getColumn(currColumnID), {})
+  // const tasks = useQuery(['column', currColumnID, 'tasks'], async () => await ColumnAPI.getTasks(currColumnID), {
+  //   onSuccess: (data) => {
+  //     taskItems = data
+  //   },
+  // })
+  // $: {
+  //   if (currColumnID !== columnID) {
+  //     currColumnID = columnID
+  //     void $column.refetch()
+  //     void $tasks.refetch()
+  //   }
+  // }
 
   let taskItems: Task[] = []
 
@@ -52,16 +61,16 @@
 </script>
 
 <div class="bg-white/30 shadow-lg rounded-lg py-4 px-2 w-[17rem]">
-  {#if !$column.isLoading && $column.data}
+  {#if column}
     <div class="flex flex-row justify-between items-center pb-6">
       <div class="flex flex-row gap-2 items-center">
         <img
-          src={getEmojiURLBySlug($column.data.emoji)}
+          src={getEmojiURLBySlug(column.column.emoji)}
           alt="column-emoji"
           class="w-5 h-5"
         />
         <h3 class="font-bold text-sm">
-          {$column.data.name} ({$tasks.data?.length ?? 0})
+          {column.column.name} ({column.tasks.length ?? 0})
         </h3>
       </div>
       <button type="button">
@@ -76,26 +85,30 @@
         >
       </button>
     </div>
-    {#if !$tasks.isLoading && $tasks.data}
-      <div
-        use:dndzone={{ items: taskItems, flipDurationMs: 200, type: `board-column-tasks` }}
-        on:consider={handleSort}
-        on:finalize={handleSort}
-        class="flex flex-col gap-3 w-full pb-4 min-h-[7rem]"
-      >
-        {#each taskItems as task (task.id)}
-          <div
-            animate:flip={{ duration: 200 }}
-            draggable="true"
-          >
-            <BoardTaskItem {task} />
-          </div>
-        {/each}
-      </div>
-    {/if}
+
+    <div
+      use:dndzone={{ items: taskItems, flipDurationMs: 200, type: `board-column-tasks` }}
+      on:consider={handleSort}
+      on:finalize={handleSort}
+      class="flex flex-col gap-3 w-full pb-4 min-h-[7rem]"
+    >
+      {#each taskItems as task (task.id)}
+        <div
+          animate:flip={{ duration: 200 }}
+          draggable="true"
+        >
+          <BoardTaskItem {task} />
+        </div>
+      {/each}
+    </div>
     <div class="w-full flex justify-center items-center">
       <button
         type="button"
+        on:click={() => {
+          $store.taskDrawer.isOpen = true
+          $store.taskDrawer.ids.board = column?.column.board_id ?? 0
+          $store.taskDrawer.ids.column = column?.column.id ?? 0
+        }}
         class="p-0.5 rounded-lg shadow-lg bg-white/20"
       >
         <svg
