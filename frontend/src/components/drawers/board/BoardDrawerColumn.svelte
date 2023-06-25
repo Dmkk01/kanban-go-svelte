@@ -1,6 +1,7 @@
 <script lang="ts">
   import EmojiButton from '@/components/common/EmojiButton.svelte'
   import { createEventDispatcher } from 'svelte'
+  import { fade } from 'svelte/transition'
 
   export let emoji: string
   export let name: string
@@ -13,7 +14,10 @@
   }
 </script>
 
-<div class="flex flex-row gap-3 items-center w-full">
+<div
+  transition:fade
+  class="flex flex-row gap-3 items-center w-full"
+>
   <EmojiButton
     bind:emojiSlug={emoji}
     emojiKey={`board-column-${emojiKey}`}

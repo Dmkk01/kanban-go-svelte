@@ -36,7 +36,9 @@
             alt="emoji"
             class="w-8 h-8 rounded-full"
           />
-          <h1 class="font-bold text-xl">{$board.data.name}</h1>
+          <h1 class="font-bold text-xl">
+            {$board.data.name}
+          </h1>
         </div>
         <button
           type="button"

@@ -8,7 +8,7 @@
   import SidebarOthers from './SidebarOthers.svelte'
   import store from '@/store'
   import { getEmojiURLBySlug } from '@/utils/emojis'
-  import { fade } from 'svelte/transition'
+  import { fade, fly } from 'svelte/transition'
 
   export let boardID: number = 0
 
@@ -52,7 +52,10 @@
         {#each $boards.data || [] as board}
           <div class="relative">
             {#if boardID === board.id}
-              <div class="absolute w-2 h-2 bg-white rounded-full top-1/2 -translate-y-1/2 -left-3" />
+              <div
+                transition:fly={{ x: -200 }}
+                class="absolute w-2 h-2 bg-white rounded-full top-1/2 -translate-y-1/2 -left-3"
+              />
             {/if}
             <SidebarBoardItem {board} />
           </div>

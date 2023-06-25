@@ -2,9 +2,11 @@
   import store from '@/store'
   import { getEmojiURLBySlug } from '@/utils/emojis'
   import { link } from 'svelte-routing'
-  import { slide } from 'svelte/transition'
+  import { slide, fade } from 'svelte/transition'
 
   export let board: Board
+
+  let isHovering = false
 </script>
 
 <a
@@ -12,14 +14,42 @@
   use:link
   class="flex flex-row gap-0 w-full items-center"
   transition:slide
+  on:mouseover={() => (isHovering = true)}
+  on:mouseleave={() => (isHovering = false)}
+  on:focus={() => (isHovering = true)}
+  on:blur={() => (isHovering = false)}
 >
-  <div class="flex items-center justify-center bg-white/50 h-14 w-auto aspect-square rounded-lg">
+  <div class="flex items-center relative justify-center bg-white/50 h-14 w-auto aspect-square rounded-lg">
     <img
       src={getEmojiURLBySlug(board.emoji || '')}
       alt="sidebar-emoji"
       class="w-8 h-8"
     />
+
+    {#if !$store.isSidebarOpen && isHovering}
+      <div
+        transition:fade
+        class="absolute top-1/2 -translate-y-1/2 left-12 flex flex-row items-center"
+      >
+        <svg
+          class="w-5 h-5"
+          viewBox="0 0 9 10"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M8.33013 0.5L8.33013 9.16025L0.830127 4.83013L8.33013 0.5Z"
+            fill="white"
+          />
+        </svg>
+
+        <div class="py-1.5 px-3 bg-white rounded-md w-fit -ml-[3px]">
+          <p class="whitespace-nowrap text-[12px] text-tgray-600 font-semibold">{board.name}</p>
+        </div>
+      </div>
+    {/if}
   </div>
+
   {#if $store.isSidebarOpen}
     <div class="flex flex-row bg-white/20 items-center justify-between w-full h-11 shadow-lg rounded-r-lg">
       <p class="font-semibold text-base text-tgray-600 pl-4">
