@@ -10,7 +10,11 @@
   export let id: string = '0'
   let boardID = parseInt(id)
 
-  const board = useQuery(`board-${boardID}`, async () => await BoardsAPI.getBoardById(boardID), {})
+  const board = useQuery(`board-${boardID}`, async () => await BoardsAPI.getBoardById(boardID), {
+    onSuccess: () => {
+      $columns.refetch()
+    },
+  })
   const columns = useQuery(`board-${boardID}-columns`, async () => await BoardsAPI.getColumns(boardID), {})
 
   $: {
@@ -41,8 +45,6 @@
             $store.columnDrawer.boardID = boardID
             $store.columnDrawer.isOpen = true
             $store.columnDrawer.columnID = null
-
-            console.log($store.columnDrawer)
           }}
         >
           <div class="flex items-center justify-center bg-white/20 h-12 w-auto aspect-square rounded-lg shadow-lg">

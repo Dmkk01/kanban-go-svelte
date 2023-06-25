@@ -2,18 +2,24 @@
   import ColumnAPI from '@/api/column'
   import { getEmojiBySlug, getEmojiURLBySlug } from '@/utils/emojis'
   import { useQuery } from '@sveltestack/svelte-query'
+  import { fade } from 'svelte/transition'
 
   export let columnID: number = 0
+  let currColumnID = columnID
+  const column = useQuery(['column', currColumnID], async () => await ColumnAPI.getColumn(currColumnID), {})
 
-  const column = useQuery(['column', columnID], async () => await ColumnAPI.getColumn(columnID), {})
-
-  // run column.refetch() when columnID changes
   $: {
-    console.log($column.data)
+    if (currColumnID !== columnID) {
+      currColumnID = columnID
+      void $column.refetch()
+    }
   }
 </script>
 
-<div class="bg-white/30 shadow-lg rounded-lg py-4 px-2 w-[17rem]">
+<div
+  class="bg-white/30 shadow-lg rounded-lg py-4 px-2 w-[17rem]"
+  transition:fade
+>
   {#if !$column.isLoading && $column.data}
     <div class="flex flex-row justify-between items-center">
       <div class="flex flex-row gap-2 items-center">

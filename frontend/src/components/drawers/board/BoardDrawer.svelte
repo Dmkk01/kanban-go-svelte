@@ -7,6 +7,7 @@
   import BoardsAPI from '@/api/board'
   import SubmitButton from '@/components/common/SubmitButton.svelte'
   import BoardDrawerColumn from './BoardDrawerColumn.svelte'
+  import { fly } from 'svelte/transition'
 
   const schema = z.object({
     emoji: z.string().min(1),
@@ -113,6 +114,7 @@
     }
   }}
   class="absolute inset-0 backdrop-blur-sm"
+  transition:fly={{ x: 200, duration: 1000 }}
 >
   <div class="absolute right-0 top-0 bottom-0 w-full max-w-md bg-white/90 drop-shadow-lg px-6 py-10 flex flex-col gap-2">
     <h2 class="font-bold text-lg">{drawerType === 'edit' ? 'Edit' : 'Add'} Board</h2>

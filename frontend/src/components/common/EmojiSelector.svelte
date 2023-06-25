@@ -2,6 +2,7 @@
   import { closeEmojiSelector, getEmojiByCategoryVendor, searchEmojisByName } from '@/utils/emojis'
   import store from '@/store'
   import { clickOutside } from '@/directives/click-outside'
+  import { fade } from 'svelte/transition'
 
   let currentEmojis: Emoji[] = []
   let currentVendor: EmojiVendor = 'apple'
@@ -52,6 +53,7 @@
     }
   }}
   on:close={closeEmojiSelector}
+  transition:fade
   class="absolute backdrop:bg-transparent p-0 rounded-md inset-0 border-none bg-white/30 flex justify-center items-center z-10"
 >
   <div class="min-w-[30rem] static flex p-2 flex-col gap-2 bg-white/90 z-[10000] border border-tgray-200 rounded-lg">

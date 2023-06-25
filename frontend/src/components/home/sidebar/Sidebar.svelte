@@ -8,6 +8,7 @@
   import SidebarOthers from './SidebarOthers.svelte'
   import store from '@/store'
   import { getEmojiURLBySlug } from '@/utils/emojis'
+  import { fade } from 'svelte/transition'
 
   export let boardID: number = 0
 

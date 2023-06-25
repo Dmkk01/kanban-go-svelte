@@ -2,6 +2,7 @@
   import store from '@/store'
   import { getEmojiURLBySlug } from '@/utils/emojis'
   import { link } from 'svelte-routing'
+  import { slide } from 'svelte/transition'
 
   export let board: Board
 </script>
@@ -10,6 +11,7 @@
   href={`/home/board/${board.id}`}
   use:link
   class="flex flex-row gap-0 w-full items-center"
+  transition:slide
 >
   <div class="flex items-center justify-center bg-white/50 h-14 w-auto aspect-square rounded-lg">
     <img
