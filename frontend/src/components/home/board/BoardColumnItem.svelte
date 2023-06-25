@@ -83,7 +83,7 @@
           class="w-5 h-5"
         />
         <h3 class="font-bold text-sm">
-          {column.column.name} ({column.tasks.length ?? 0})
+          {column.column.name} ({taskItems.length ?? 0})
         </h3>
       </div>
       <button type="button">
