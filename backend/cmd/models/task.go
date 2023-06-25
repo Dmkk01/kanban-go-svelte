@@ -6,7 +6,7 @@ type Task struct {
 	ColumnID    int        `json:"column_id"`
 	Title       string     `json:"title"`
 	Description string     `json:"description"`
-	TimeNeeded  string     `json:"time_needed"`
+	TimeNeeded  int        `json:"time_needed"`
 	DueDate     string     `json:"due_date"`
 	Position    int        `json:"position"`
 	CreatedAt   string     `json:"created_at"`

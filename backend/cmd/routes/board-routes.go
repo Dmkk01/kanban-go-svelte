@@ -71,7 +71,7 @@ func boardRoutes(e echoswagger.ApiRoot) {
 
 	boardGroup.PUT("/:board_id/column/position", controllers.UpdateColumnPositions).
 		AddParamPath("", "board_id", "Board ID").
-		AddParamBody(models.ColumnUpdatePosition{}, "body", "Column Update Position Request", true).
+		AddParamBody([]models.ColumnUpdatePosition{}, "body", "Column Update Position Request", true).
 		SetSummary("Update column positions").
 		AddResponse(http.StatusCreated, "Columns Updated", []models.StatusResponse{}, nil).
 		AddResponse(http.StatusInternalServerError, "Server Error", models.MessageResponse{}, nil).

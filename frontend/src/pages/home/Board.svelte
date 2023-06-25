@@ -3,27 +3,60 @@
   import BoardColumnItem from '@/components/home/board/BoardColumnItem.svelte'
   import MainLayout from '@/layout/MainLayout.svelte'
   import { getEmojiURLBySlug } from '@/utils/emojis'
-  import { useQuery } from '@sveltestack/svelte-query'
+  import { useMutation, useQuery } from '@sveltestack/svelte-query'
   import { onMount } from 'svelte'
   import store from '@/store'
+  import { flip } from 'svelte/animate'
+  import { dndzone } from 'svelte-dnd-action'
 
   export let id: string = '0'
   let boardID = parseInt(id)
 
+  let columnItems: ColumnBoard[] = []
+
   const board = useQuery(`board-${boardID}`, async () => await BoardsAPI.getBoardById(boardID), {
     onSuccess: () => {
-      $columns.refetch()
+      void $columns.refetch()
     },
   })
-  const columns = useQuery(`board-${boardID}-columns`, async () => await BoardsAPI.getColumns(boardID), {})
+  const columns = useQuery(`board-${boardID}-columns`, async () => await BoardsAPI.getColumns(boardID), {
+    onSuccess: (data) => {
+      columnItems = data
+    },
+  })
 
   $: {
     if (boardID !== parseInt(id)) {
       boardID = parseInt(id)
-      $board.refetch()
-      $columns.refetch()
+      void $board.refetch()
+      void $columns.refetch()
     }
   }
+
+  const handleSort = (e: CustomEvent<DndEvent<ColumnBoard>>) => {
+    const newItems = e.detail.items.map((item, index) => {
+      item.position = index + 1
+      return item
+    })
+
+    const toUpdate: { id: number; position: number }[] = []
+
+    newItems.forEach((item, index) => {
+      if (item.position !== columnItems[index].position) {
+        toUpdate.push({ id: item.id, position: item.position })
+      }
+    })
+
+    columnItems = newItems
+
+    if (toUpdate.length > 0) {
+      void $positionMutation.mutate(toUpdate)
+    }
+  }
+
+  const positionMutation = useMutation(async (data: { id: number; position: number }[]) => {
+    return await BoardsAPI.updateColumnPosition(boardID, data)
+  })
 </script>
 
 <MainLayout {boardID}>
@@ -71,14 +104,25 @@
         </button>
       {/if}
     </div>
-    {#if !$columns.isLoading && $columns.data}
-      <div class="flex flex-row gap-8 w-full overflow-x-auto px-6 pb-4">
-        {#each $columns.data as column}
-          <div class="relative">
+    {#if !$columns.isLoading && columnItems}
+      <div
+        use:dndzone={{ items: columnItems, flipDurationMs: 200, type: 'board-column' }}
+        on:consider={handleSort}
+        on:finalize={handleSort}
+        class="flex flex-row gap-8 w-full px-6 pb-4 overflow-x-auto"
+      >
+        {#each columnItems as column (column.id)}
+          <div
+            animate:flip={{ duration: 200 }}
+            draggable="true"
+          >
             <BoardColumnItem columnID={column.id} />
           </div>
         {/each}
       </div>
     {/if}
+    <p>
+      {JSON.stringify(columnItems)}
+    </p>
   </div>
 </MainLayout>
