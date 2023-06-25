@@ -17,6 +17,7 @@
   const board = useQuery(`board-${boardID}`, async () => await BoardsAPI.getBoardFull(boardID), {
     refetchOnWindowFocus: false,
     onSuccess: (data) => {
+      console.log(data)
       columnItems = data.columns.map((item) => item.column)
     },
   })
@@ -40,10 +41,19 @@
       return item
     })
 
+    columnItems = newItems
+  }
+
+  const handleSortFinalized = (e: CustomEvent<DndEvent<ColumnBoard>>) => {
+    const newItems = e.detail.items.map((item, index) => {
+      item.position = index + 1
+      return item
+    })
+
     const toUpdate: { id: number; position: number }[] = []
 
     newItems.forEach((item, index) => {
-      if (item.position !== columnItems[index].position) {
+      if (typeof item.id === 'number') {
         toUpdate.push({ id: item.id, position: item.position })
       }
     })
@@ -109,7 +119,7 @@
       <div
         use:dndzone={{ items: columnItems, flipDurationMs: 200, type: 'board-column' }}
         on:consider={handleSort}
-        on:finalize={handleSort}
+        on:finalize={handleSortFinalized}
         class="flex flex-row gap-8 w-full px-6 pb-4 overflow-x-auto"
       >
         {#each columnItems as column (column.id)}

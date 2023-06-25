@@ -20,7 +20,7 @@ func taskRoutes(e echoswagger.ApiRoot) {
 
 	taskGroup.PUT("/position", controllers.UpdateTaskPosition).
 		SetSummary("Update Tasks Position").
-		AddParamBody(models.TaskPositionUpdate{}, "body", "Task Position Body", true).
+		AddParamBody([]models.TaskPositionUpdate{}, "body", "Task Position Body", true).
 		AddResponse(http.StatusOK, "Tasks Updated", models.StatusResponse{}, nil).
 		AddResponse(http.StatusInternalServerError, "Server Error", models.MessageResponse{}, nil).
 		AddResponse(http.StatusBadRequest, "Bad Request", models.MessageResponse{}, nil).

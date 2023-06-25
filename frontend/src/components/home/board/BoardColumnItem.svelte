@@ -3,12 +3,15 @@
   import { getEmojiURLBySlug } from '@/utils/emojis'
   import { useMutation, useQuery } from '@sveltestack/svelte-query'
   import { flip } from 'svelte/animate'
-  import { dndzone } from 'svelte-dnd-action'
+  import { dndzone, TRIGGERS } from 'svelte-dnd-action'
   import BoardTaskItem from './BoardTaskItem.svelte'
   import TaskAPI from '@/api/task'
   import store from '@/store'
+  import { createEventDispatcher } from 'svelte'
 
   export let column: ColumnBoardFull | undefined
+
+  const dispatch = createEventDispatcher<{ 'move-task-to-column': number }>()
 
   $: {
     if (column) {
@@ -40,15 +43,25 @@
       return item
     })
 
+    taskItems = newItems
+  }
+
+  const handleSortFinalized = (e: CustomEvent<DndEvent<Task>>) => {
+    const newItems = e.detail.items.map((item, index) => {
+      item.position = index + 1
+      return item
+    })
     const toUpdate: { task_id: number; position: number; column_id: number }[] = []
 
-    newItems.forEach((item, index) => {
-      if (item.position !== taskItems[index].position) {
-        toUpdate.push({ task_id: item.id, position: item.position, column_id: item.column_id })
+    taskItems = newItems
+
+    const columnID = column?.column.id as number
+
+    newItems.forEach((item) => {
+      if (typeof item.id === 'number') {
+        toUpdate.push({ task_id: item.id, position: item.position, column_id: columnID })
       }
     })
-
-    taskItems = newItems
 
     if (toUpdate.length > 0) {
       void $positionMutation.mutate(toUpdate)
@@ -89,7 +102,7 @@
     <div
       use:dndzone={{ items: taskItems, flipDurationMs: 200, type: `board-column-tasks` }}
       on:consider={handleSort}
-      on:finalize={handleSort}
+      on:finalize={handleSortFinalized}
       class="flex flex-col gap-3 w-full pb-4 min-h-[7rem]"
     >
       {#each taskItems as task (task.id)}
