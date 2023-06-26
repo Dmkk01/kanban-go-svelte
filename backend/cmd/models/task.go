@@ -45,6 +45,7 @@ type TaskCreate struct {
 	Position    int              `json:"position"`
 	SubTasks    []SubTaskCreate  `json:"sub_tasks"`
 	Links       []LinkTaskCreate `json:"links"`
+	Tags        []int            `json:"tags"`
 }
 
 type SubTaskCreate struct {

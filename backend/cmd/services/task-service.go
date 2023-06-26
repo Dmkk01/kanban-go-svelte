@@ -208,6 +208,10 @@ func CreateTaskByColumnID(task models.TaskCreate) (int, error) {
 	createdAt := time.Now()
 	updatedAt := time.Now()
 
+	if task.DueDate == "" {
+		task.DueDate = "0001-01-01"
+	}
+
 	taskID := 0
 	err = db.QueryRow("INSERT INTO task (board_id, column_id, title, description, position, time_needed, due_date, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id", task.BoardID, task.ColumnID, task.Title, task.Description, task.Position, task.TimeNeeded, task.DueDate, createdAt, updatedAt).Scan(&taskID)
 	if err != nil {
@@ -223,6 +227,13 @@ func CreateTaskByColumnID(task models.TaskCreate) (int, error) {
 
 	for _, link := range task.Links {
 		_, err = db.Exec("INSERT INTO links (task_id, title, emoji, url, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6)", taskID, link.Title, link.Emoji, link.URL, createdAt, updatedAt)
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	for _, tag := range task.Tags {
+		err := AddBoardTagToTaskTag(taskID, tag)
 		if err != nil {
 			return 0, err
 		}

@@ -24,6 +24,7 @@
     title: z.string(),
     sub_tasks: z.array(z.object({ id: z.number(), title: z.string(), completed: z.boolean() })),
     links: z.array(z.object({ id: z.number(), title: z.string(), url: z.string(), emoji: z.string() })),
+    tags: z.array(z.number().min(1)),
   })
 
   type Schema = z.infer<typeof schema>
@@ -32,18 +33,6 @@
 
   const columns = useQuery(`tasks-drawer-columns`, async () => await BoardsAPI.getColumns($store.taskDrawer.ids.board || 0), {})
   const tasks = useQuery(`tasks-drawer-tasks`, async () => await ColumnAPI.getTasks($store.taskDrawer.ids.column || 0), {})
-
-  type TagMutation = {
-    new: TagType[]
-    deleted: TagType[]
-    updated: TagType[]
-  }
-
-  let tagMutation: TagMutation = {
-    new: [],
-    deleted: [],
-    updated: [],
-  }
 
   const data: Schema = {
     board_id: $store.taskDrawer.ids.board || 0,
@@ -56,6 +45,7 @@
     title: '',
     sub_tasks: [],
     links: [],
+    tags: [],
   }
 
   let message = ''
@@ -237,7 +227,7 @@
               type="number"
               min="0"
               id="task_time_needed"
-              bind:value={data.due_date}
+              bind:value={data.time_needed}
               class="text-base w-full font-medium px-2 py-1 border border-tgray-200 rounded-md"
             />
             <span class="text-sm font-bold text-tgray-600">minutes</span>
@@ -247,12 +237,9 @@
 
       <div class="flex flex-col gap-3 w-full">
         <p class="text-sm font-bold text-tgray-600"># tags</p>
-
         {#if $store.taskDrawer.ids.board}
           <TagsInput
-            on:new-added={(e) => (tagMutation.new = e.detail)}
-            on:removed={(e) => (tagMutation.deleted = e.detail)}
-            on:updated={(e) => (tagMutation.updated = e.detail)}
+            bind:selectedTagIds={data.tags}
             boardID={$store.taskDrawer.ids.board}
           />
         {/if}

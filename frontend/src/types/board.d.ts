@@ -35,6 +35,7 @@ type TaskCreate = {
   position: number
   sub_tasks: SubTaskCreate[]
   links: LinkTaskCreate[]
+  tags: number[]
 }
 
 type Task = {
