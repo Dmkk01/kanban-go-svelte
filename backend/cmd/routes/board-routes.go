@@ -96,4 +96,23 @@ func boardRoutes(e echoswagger.ApiRoot) {
 		AddResponse(http.StatusBadRequest, "Bad Request", models.MessageResponse{}, nil).
 		AddResponse(http.StatusNotFound, "Not Found", models.MessageResponse{}, nil).
 		AddResponse(http.StatusForbidden, "Forbidden Access", models.MessageResponse{}, nil)
+
+	boardGroup.GET("/:board_id/tag", controllers.GetTagsBoardID).
+		AddParamPath("", "board_id", "Board ID").
+		SetSummary("Get Tag From a Board").
+		AddResponse(http.StatusOK, "Tags Found", []models.BoardTag{}, nil).
+		AddResponse(http.StatusInternalServerError, "Server Error", models.MessageResponse{}, nil).
+		AddResponse(http.StatusBadRequest, "Bad Request", models.MessageResponse{}, nil).
+		AddResponse(http.StatusNotFound, "Not Found", models.MessageResponse{}, nil).
+		AddResponse(http.StatusForbidden, "Forbidden", models.MessageResponse{}, nil)
+
+	boardGroup.POST("/:board_id/tag", controllers.CreateTag).
+		AddParamPath("", "board_id", "Board ID").
+		AddParamBody(models.BoardTagUpdate{}, "body", "Tag Create Request", true).
+		SetSummary("Add Tag to a Board").
+		AddResponse(http.StatusCreated, "Tags Found", models.StatusResponse{}, nil).
+		AddResponse(http.StatusInternalServerError, "Server Error", models.MessageResponse{}, nil).
+		AddResponse(http.StatusBadRequest, "Bad Request", models.MessageResponse{}, nil).
+		AddResponse(http.StatusNotFound, "Not Found", models.MessageResponse{}, nil).
+		AddResponse(http.StatusForbidden, "Forbidden", models.MessageResponse{}, nil)
 }

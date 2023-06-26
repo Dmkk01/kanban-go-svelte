@@ -104,4 +104,31 @@ func taskRoutes(e echoswagger.ApiRoot) {
 		AddResponse(http.StatusNotFound, "Not Found", models.MessageResponse{}, nil).
 		AddResponse(http.StatusForbidden, "Forbidden", models.MessageResponse{}, nil)
 
+	taskGroup.GET("/:task_id/tag", controllers.GetTagTasks).
+		AddParamPath("", "task_id", "Task ID").
+		SetSummary("Get Tags For a Task").
+		AddResponse(http.StatusOK, "SubTask Found", []models.TaskTag{}, nil).
+		AddResponse(http.StatusInternalServerError, "Server Error", models.MessageResponse{}, nil).
+		AddResponse(http.StatusBadRequest, "Bad Request", models.MessageResponse{}, nil).
+		AddResponse(http.StatusNotFound, "Not Found", models.MessageResponse{}, nil).
+		AddResponse(http.StatusForbidden, "Forbidden", models.MessageResponse{}, nil)
+	taskGroup.PUT("/:task_id/tag/:tag_id", controllers.AddTagToTask).
+		AddParamPath("", "task_id", "Task ID").
+		AddParamPath("", "tag_id", "Task ID").
+		SetSummary("Add Tag To a Task").
+		AddResponse(http.StatusOK, "Tag Added", models.StatusResponse{}, nil).
+		AddResponse(http.StatusInternalServerError, "Server Error", models.MessageResponse{}, nil).
+		AddResponse(http.StatusBadRequest, "Bad Request", models.MessageResponse{}, nil).
+		AddResponse(http.StatusNotFound, "Not Found", models.MessageResponse{}, nil).
+		AddResponse(http.StatusForbidden, "Forbidden", models.MessageResponse{}, nil)
+
+	taskGroup.DELETE("/:task_id/tag/:tag_id", controllers.RemoveTaskTagFromTask).
+		AddParamPath("", "task_id", "Task ID").
+		AddParamPath("", "tag_id", "Task ID").
+		SetSummary("Delete Tag From a Task").
+		AddResponse(http.StatusOK, "Tag Added", models.StatusResponse{}, nil).
+		AddResponse(http.StatusInternalServerError, "Server Error", models.MessageResponse{}, nil).
+		AddResponse(http.StatusBadRequest, "Bad Request", models.MessageResponse{}, nil).
+		AddResponse(http.StatusNotFound, "Not Found", models.MessageResponse{}, nil).
+		AddResponse(http.StatusForbidden, "Forbidden", models.MessageResponse{}, nil)
 }

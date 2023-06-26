@@ -1,0 +1,21 @@
+CREATE TABLE "board_tags" (
+    id SERIAL PRIMARY KEY,
+    board_id INTEGER NOT NULL,
+    title VARCHAR(100) NOT NULL,
+    color VARCHAR(7) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (board_id) REFERENCES board (id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE "tags" (
+    task_id INTEGER NOT NULL,
+    board_tag_id INTEGER NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (task_id, board_tag_id),
+    FOREIGN KEY (task_id) REFERENCES task (id) ON DELETE CASCADE,
+    FOREIGN KEY (board_tag_id) REFERENCES board_tags (id) ON DELETE CASCADE
+);
+
