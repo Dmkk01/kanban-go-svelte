@@ -17,7 +17,7 @@ func GetAllTags(boardIDs []int) ([]models.BoardTag, error) {
 	tags := []models.BoardTag{}
 
 	for _, boardID := range boardIDs {
-		boardTags, err := GetTagsBoardID(boardID)
+		boardTags, err := GetBoardTagsBoardID(boardID)
 		if err != nil {
 			return nil, err
 		}
@@ -28,7 +28,7 @@ func GetAllTags(boardIDs []int) ([]models.BoardTag, error) {
 	return tags, nil
 }
 
-func GetTagsBoardID(boardId int) ([]models.BoardTag, error) {
+func GetBoardTagsBoardID(boardId int) ([]models.BoardTag, error) {
 	db, err := db.Connect()
 	if err != nil {
 		return nil, err
@@ -115,6 +115,33 @@ func GetTagsTaskBoard(boardID int) ([]models.TaskTag, error) {
 	for rows.Next() {
 		var tag models.TaskTag
 		err := rows.Scan(&tag.TaskID, &tag.BoardTagID, &tag.CreatedAt, &tag.UpdatedAt)
+		if err != nil {
+			return nil, err
+		}
+
+		tags = append(tags, tag)
+	}
+
+	return tags, nil
+}
+
+func GetBoardTagsByTaskID(taskID int) ([]models.BoardTag, error) {
+	db, err := db.Connect()
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	tags := []models.BoardTag{}
+
+	rows, err := db.Query("SELECT id, board_id, title, color, created_at, updated_at FROM board_tags WHERE id IN (SELECT board_tag_id FROM tags WHERE task_id = $1)", taskID)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var tag models.BoardTag
+		err := rows.Scan(&tag.ID, &tag.BoardID, &tag.Title, &tag.Color, &tag.CreatedAt, &tag.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}

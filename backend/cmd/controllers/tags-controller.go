@@ -40,7 +40,7 @@ func GetTagsBoardID(c echo.Context) error {
 		return err
 	}
 
-	tags, err := services.GetTagsBoardID(board.Id)
+	tags, err := services.GetBoardTagsBoardID(board.Id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return echo.NewHTTPError(http.StatusNotFound, "No tags found")

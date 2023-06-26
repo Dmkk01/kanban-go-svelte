@@ -116,6 +116,13 @@ func GetTaskByColumnID(columnID int) ([]models.Task, error) {
 			return []models.Task{}, err
 		}
 
+		boardTags, err := GetBoardTagsByTaskID(task.ID)
+		if err != nil {
+			return []models.Task{}, err
+		}
+
+		task.Tags = boardTags
+
 		tasks = append(tasks, task)
 	}
 

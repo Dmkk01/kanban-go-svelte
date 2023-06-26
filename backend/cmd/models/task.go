@@ -13,6 +13,7 @@ type Task struct {
 	UpdatedAt   string     `json:"updated_at"`
 	SubTasks    []SubTask  `json:"sub_tasks"`
 	Links       []LinkTask `json:"links"`
+	Tags        []BoardTag `json:"tags"`
 }
 
 type SubTask struct {

@@ -124,6 +124,12 @@ func GetBoardFull(c echo.Context) error {
 		final.Columns = append(final.Columns, columnFull)
 	}
 
+	tags, err := services.GetBoardTagsBoardID(board.Id)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "There was an error getting the tags")
+	}
+	final.Tags = tags
+
 	return c.JSON(http.StatusOK, final)
 }
 

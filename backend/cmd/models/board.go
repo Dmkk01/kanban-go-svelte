@@ -12,6 +12,7 @@ type Board struct {
 type BoardFullResponse struct {
 	Board   `json:"board"`
 	Columns []BoardColumnFullResponse `json:"columns"`
+	Tags    []BoardTag                `json:"tags"`
 }
 
 type CreateBoardRequest struct {
