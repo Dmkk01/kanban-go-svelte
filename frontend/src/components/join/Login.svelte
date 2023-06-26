@@ -1,6 +1,7 @@
 <script lang="ts">
   import { useMutation } from '@sveltestack/svelte-query'
   import AuthAPI from '@/api/auth'
+  import Loading from '@/components/common/Loading.svelte'
   import InputField from './common/InputField.svelte'
   import { z } from 'zod'
   import { navigate } from 'svelte-routing'
@@ -20,7 +21,7 @@
   const loginMutation = useMutation((data: LoginSchema) => AuthAPI.login(data.email, data.password), {
     onSuccess: async (data) => {
       localStorage.setItem('token', data.token)
-      navigate('/home', { replace: true, state: {} })
+      navigate('/home/settings', { replace: true, state: {} })
     },
     onError: (err) => {
       message = err as string
@@ -56,7 +57,6 @@
 
 <div class="flex flex-col gap-0 w-full max-w-md">
   <h2 class="text-3xl text-tgray-600 font-bold mb-6 sm:mb-10 md:mb-16">Welcome back!</h2>
-
   <form
     on:submit={submitData}
     class="flex flex-col gap-5 md:gap-8 w-full"
@@ -80,11 +80,16 @@
       <p class="absolute w-full top-5 left-1/2 -translate-x-1/2 text-red-600 font-semibold text-sm">
         {message}
       </p>
-      <input
-        type="submit"
-        value="Login"
-        class="w-full my-6 md:my-10 cursor-pointer text-xl sm:text-2xl md:text-3xl shadow-lg text-black font-semibold bg-white/40 rounded-md py-2"
-      />
+
+      {#if $loginMutation.isLoading}
+        <Loading />
+      {:else}
+        <input
+          type="submit"
+          value="Login"
+          class="w-full my-6 md:my-10 cursor-pointer text-xl sm:text-2xl md:text-3xl shadow-lg text-black font-semibold bg-white/40 rounded-md py-2"
+        />
+      {/if}
     </div>
   </form>
   <div class="flex flex-row gap-1 text-sm md:text-base mx-auto font-semibold">

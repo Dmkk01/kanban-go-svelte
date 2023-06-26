@@ -28,16 +28,14 @@
       <Route path="/getting-started">
         <GettingStarted />
       </Route>
-      <Route path="/home">
-        <Home />
-      </Route>
       <Route
         path="/home/board/:id"
         component={Board}
       />
-      <Route path="/home/settings">
-        <Settings />
-      </Route>
+      <Route
+        path="/home/settings"
+        component={Settings}
+      />
     </Router>
     {#if $store.emojis.isOpen}
       <EmojiSelector />

@@ -1,30 +1,44 @@
 <script lang="ts">
+  import AuthAPI from '@/api/auth'
   import UserAPI from '@/api/user'
   import BoardDrawer from '@/components/drawers/board/BoardDrawer.svelte'
   import ColumnDrawer from '@/components/drawers/column/ColumnDrawer.svelte'
-  import TaskDrawer from '@/components/drawers/task/TaskDrawer.svelte'
+  import TaskDrawer from '@/components/drawers/task/add-edit/TaskEditDrawer.svelte'
   import Sidebar from '@/components/home/sidebar/Sidebar.svelte'
+  import Loading from '@/components/common/Loading.svelte'
   import store from '@/store'
-  import { useQuery } from '@sveltestack/svelte-query'
+  import { useMutation, useQuery } from '@sveltestack/svelte-query'
   import { navigate } from 'svelte-routing'
 
   export let boardID: number = 0
 
   const user = useQuery('user-check', async () => await UserAPI.getUser(), {
     onError: (err) => {
-      console.log(err)
-      console.log('BIG ERRROR')
       navigate('/')
     },
   })
+
+  const refreshMutation = useQuery('refresh', () => AuthAPI.refresh(), {
+    refetchOnWindowFocus: false,
+    onSuccess: async () => {
+      console.log('refreshed')
+    },
+  })
+
+  setInterval(() => {
+    $refreshMutation.refetch()
+  }, 1000 * 60 * 5)
 </script>
 
 <div class="w-full h-screen flex flex-row bg-[#C0C2CC] relative overflow-hidden">
+  <Sidebar {boardID} />
   {#if !$user.isLoading}
-    <Sidebar {boardID} />
-
     <div class="px-4 py-2 h-screen w-full overflow-hidden">
       <slot />
+    </div>
+  {:else}
+    <div class="flex justify-center items-center w-full">
+      <Loading />
     </div>
   {/if}
   {#if $store.boardDrawer.isOpen}

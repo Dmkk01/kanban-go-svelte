@@ -50,6 +50,7 @@ type Task = {
   updated_at: string
   sub_tasks: SubTask[]
   links: LinkTask[]
+  tags: Tag[]
 }
 
 type SubTaskCreate = {
@@ -80,4 +81,20 @@ type LinkTask = {
   emoji: string
   created_at: string
   updated_at: string
+}
+
+type Tag = {
+  board_id: number
+  id: number
+  title: string
+  color: string
+  created_at: string
+  updated_at: string
+}
+
+type TagType = {
+  id: number
+  title: string
+  color: string
+  isNew?: boolean
 }

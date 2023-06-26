@@ -13,7 +13,6 @@
   href={`/home/board/${board.id}`}
   use:link
   class="flex flex-row gap-0 w-full items-center"
-  transition:slide
   on:mouseover={() => (isHovering = true)}
   on:mouseleave={() => (isHovering = false)}
   on:focus={() => (isHovering = true)}

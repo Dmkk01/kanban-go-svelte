@@ -49,7 +49,7 @@
             ALL BOARDS ({$boards.data?.length || 0})
           </p>
         {/if}
-        {#each $boards.data || [] as board}
+        {#each $boards.data || [] as board (board.id)}
           <div class="relative">
             {#if boardID === board.id}
               <div

@@ -4,6 +4,7 @@
   import AuthAPI from '@/api/auth'
   import InputField from './common/InputField.svelte'
   import { z } from 'zod'
+  import Loading from '../common/Loading.svelte'
 
   const schema = z.object({
     email: z.string().email({ message: 'Invalid email' }),
@@ -110,11 +111,16 @@
       <p class="absolute w-full top-5 left-1/2 -translate-x-1/2 text-red-600 font-semibold text-sm">
         {message}
       </p>
-      <input
-        type="submit"
-        value="Register"
-        class="w-full cursor-pointer my-6 md:my-10 text-xl sm:text-2xl md:text-3xl shadow-lg text-black font-semibold bg-white/40 rounded-md py-2"
-      />
+
+      {#if $registerMutation.isLoading}
+        <Loading />
+      {:else}
+        <input
+          type="submit"
+          value="Register"
+          class="w-full cursor-pointer my-6 md:my-10 text-xl sm:text-2xl md:text-3xl shadow-lg text-black font-semibold bg-white/40 rounded-md py-2"
+        />
+      {/if}
     </div>
   </form>
   <div class="flex flex-row gap-1 text-sm md:text-base mx-auto font-semibold">

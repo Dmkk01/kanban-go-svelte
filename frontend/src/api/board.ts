@@ -60,6 +60,13 @@ const updateColumnPosition = async (board_id: number, data: { id: number; positi
   }).then(async (res) => handleResponse<StatusResponse>(res))
 }
 
+const getTagsBoard = async (board_id: number) => {
+  return await fetch(`${API_URL}/board/${board_id}/tag`, {
+    method: 'GET',
+    headers: authHeaderWithJSON(),
+  }).then(async (res) => handleResponse<Tag[]>(res))
+}
+
 const BoardsAPI = {
   getBoards,
   getColumns,
@@ -68,6 +75,7 @@ const BoardsAPI = {
   createColumn,
   updateColumnPosition,
   getBoardFull,
+  getTagsBoard,
 }
 
 export default BoardsAPI

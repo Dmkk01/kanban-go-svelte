@@ -2,15 +2,16 @@
   import { getInitEmoji } from '@/utils/emojis'
   import { z } from 'zod'
   import store from '@/store'
-  import EmojiButton from '../../common/EmojiButton.svelte'
+  import EmojiButton from '../../../common/EmojiButton.svelte'
   import { useMutation, useQuery, useQueryClient } from '@sveltestack/svelte-query'
   import BoardsAPI from '@/api/board'
   import SubmitButton from '@/components/common/SubmitButton.svelte'
   import { fly } from 'svelte/transition'
   import ColumnAPI from '@/api/column'
   import TaskAPI from '@/api/task'
-  import TaskDrawerSubtaskItem from './TaskDrawerSubtaskItem.svelte'
-  import TaskDrawerLinkItem from './TaskDrawerLinkItem.svelte'
+  import TaskDrawerSubtaskItem from './TaskEditDrawerSubtaskItem.svelte'
+  import TaskDrawerLinkItem from './TaskEditDrawerLinkItem.svelte'
+  import TagsInput from './tags/TagsInput.svelte'
 
   const schema = z.object({
     board_id: z.number().min(1),
@@ -31,6 +32,18 @@
 
   const columns = useQuery(`tasks-drawer-columns`, async () => await BoardsAPI.getColumns($store.taskDrawer.ids.board || 0), {})
   const tasks = useQuery(`tasks-drawer-tasks`, async () => await ColumnAPI.getTasks($store.taskDrawer.ids.column || 0), {})
+
+  type TagMutation = {
+    new: TagType[]
+    deleted: TagType[]
+    updated: TagType[]
+  }
+
+  let tagMutation: TagMutation = {
+    new: [],
+    deleted: [],
+    updated: [],
+  }
 
   const data: Schema = {
     board_id: $store.taskDrawer.ids.board || 0,
@@ -230,6 +243,19 @@
             <span class="text-sm font-bold text-tgray-600">minutes</span>
           </div>
         </div>
+      </div>
+
+      <div class="flex flex-col gap-3 w-full">
+        <p class="text-sm font-bold text-tgray-600"># tags</p>
+
+        {#if $store.taskDrawer.ids.board}
+          <TagsInput
+            on:new-added={(e) => (tagMutation.new = e.detail)}
+            on:removed={(e) => (tagMutation.deleted = e.detail)}
+            on:updated={(e) => (tagMutation.updated = e.detail)}
+            boardID={$store.taskDrawer.ids.board}
+          />
+        {/if}
       </div>
 
       <div class="flex flex-col gap-3 w-full">

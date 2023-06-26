@@ -1,27 +1,30 @@
 <script lang="ts">
+  import EmojiButton from '@/components/common/EmojiButton.svelte'
   import { createEventDispatcher } from 'svelte'
 
-  export let completed: boolean
-  export let title: string
+  export let emoji: string
+  // export let title: string
+  export let url: string
   export let id: number | undefined
 
-  const dispatch = createEventDispatcher<{ 'delete-subtask': number }>()
+  const dispatch = createEventDispatcher<{ 'delete-link': number }>()
 
   const deleteColumn = () => {
-    dispatch('delete-subtask', id)
+    dispatch('delete-link', id)
   }
 </script>
 
 <div class="flex flex-row gap-3 items-center w-full">
-  <input
-    type="checkbox"
-    bind:checked={completed}
-    class="h-5 w-5 rounded-md"
+  <EmojiButton
+    bind:emojiSlug={emoji}
+    emojiKey={`task-drawer-${id}`}
+    extraStyles="w-9 h-9 border border-tgray-200 aspect-square"
+    imageStyles="w-11/12 h-auto"
   />
   <input
     type="text"
-    bind:value={title}
-    class="text-sm w-full font-medium py-1 px-2 border border-tgray-200 rounded-lg"
+    bind:value={url}
+    class="text-sm w-full bg-transparent h-9 font-medium py-1 px-2 border border-tgray-200 rounded-lg"
   />
   <button
     type="button"
