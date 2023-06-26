@@ -3,7 +3,7 @@
   import { z } from 'zod'
   import UserAPI from '@/api/user'
   import { navigate } from 'svelte-routing'
-  import store from '@/store'
+  import { fade } from 'svelte/transition'
 
   import { getEmojiURLBySlug, getInitEmoji, openEmojiSelector } from '@/utils/emojis'
   import EmojiButton from '../components/common/EmojiButton.svelte'
@@ -57,22 +57,25 @@
 </script>
 
 <div class="w-full min-h-screen bg-[#C0C2CC] flex items-center justify-center">
-  <div class="bg-white/30 w-full max-w-xl rounded-3xl px-6 py-10 flex shadow-lg flex-col gap-6 items-start">
+  <div
+    transition:fade
+    class="bg-white/30 mx-3 w-full max-w-xl rounded-3xl px-4 md:px-6 py-6 md:py-10 flex shadow-lg flex-col gap-4 md:gap-6 items-start"
+  >
     <div class="flex flex-row gap-2 items-center justify-center w-full">
       <img
         src={getEmojiURLBySlug(data.app_emoji)}
         alt="getting-started-emoji"
-        class="w-10 h-full object-contain"
+        class="w-8 md:w-10 h-full object-contain"
       />
-      <h1 class="text-3xl font-extrabold text-tgray-600">{data.app_name}</h1>
+      <h1 class="text-2xl md:text-3xl font-extrabold text-tgray-600">{data.app_name}</h1>
     </div>
 
     <div>
-      <p class="font-bold text-2xl text-tgray-600">
+      <p class="font-bold text-xl md:text-2xl text-tgray-600">
         Welcome! <br />
         Personalize your KanBan.
       </p>
-      <p class="font-xl font-normal text-tgray-600">Don't worry, you can change these in the settings later.</p>
+      <p class="text-base sm:text-lg md:text-xl font-normal text-tgray-600">Don't worry, you can change these in the settings later.</p>
     </div>
 
     <form
@@ -85,7 +88,7 @@
           <EmojiButton
             bind:emojiSlug={data.app_emoji}
             emojiKey="getting-started"
-            extraStyles="w-14 h-14 bg-white/50 shadow-lg"
+            extraStyles="w-12 h-12 md:w-14 md:h-14 bg-white/50 shadow-lg"
           />
         </div>
         <div class="flex flex-col gap-0 w-full">
@@ -99,7 +102,7 @@
             type="text"
             id="app_name"
             bind:value={data.app_name}
-            class="text-3xl w-full h-14 px-2 bg-white/50 rounded-lg shadow-lg"
+            class="text-2xl md:text-3xl w-full h-12 md:h-14 px-2 bg-white/50 rounded-lg shadow-lg"
           />
         </div>
       </div>
@@ -111,7 +114,7 @@
         <input
           type="submit"
           value="Done"
-          class="w-full max-w-xs mt-16 cursor-pointer text-3xl shadow-lg text-black font-semibold bg-white/40 rounded-2xl py-2"
+          class="w-full max-w-xs mt-12 md:mt-16 cursor-pointer text-2xl md:text-3xl shadow-lg text-black font-semibold bg-white/40 rounded-2xl py-2"
         />
       </div>
     </form>
