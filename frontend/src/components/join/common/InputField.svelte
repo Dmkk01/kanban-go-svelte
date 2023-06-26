@@ -10,12 +10,12 @@
   }
 </script>
 
-<div class="flex flex-row bg-white/20 p-1.5 rounded-md gap-2 shadow-md">
-  <div class="p-0.5 h-10 w-12 flex items-center justify-center text-2xl bg-white/50 rounded-md">
+<div class="flex flex-row bg-white/20 p-1.5 rounded-md gap-2 shadow-md items-center">
+  <div class="p-0.5 h-8 md:h-10 w-10 md:w-12 flex items-center justify-center text-xl md:text-2xl bg-white/50 rounded-md">
     {emoji}
   </div>
   <input
-    class="w-full bg-transparent text-base text-tgray-600 px-2 py-2 placeholder-tgray-200"
+    class="w-full bg-transparent text-base text-tgray-600 px-2 py-1 md:py-2 placeholder-tgray-200"
     {type}
     {required}
     {placeholder}

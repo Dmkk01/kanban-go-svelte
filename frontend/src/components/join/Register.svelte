@@ -71,11 +71,11 @@
 </script>
 
 <div class="flex flex-col gap-0 w-full max-w-md">
-  <h2 class="text-3xl text-tgray-600 font-bold mb-16">Welcome!</h2>
+  <h2 class="text-3xl text-tgray-600 font-bold mb-6 sm:mb-10 md:mb-16">Welcome!</h2>
 
   <form
     on:submit={submitData}
-    class="flex flex-col gap-8 w-full"
+    class="flex flex-col gap-5 md:gap-8 w-full"
   >
     <InputField
       bind:value={data.username}
@@ -113,11 +113,11 @@
       <input
         type="submit"
         value="Register"
-        class="w-full my-10 cursor-pointer text-3xl shadow-lg text-black font-semibold bg-white/40 rounded-md py-2"
+        class="w-full cursor-pointer my-6 md:my-10 text-xl sm:text-2xl md:text-3xl shadow-lg text-black font-semibold bg-white/40 rounded-md py-2"
       />
     </div>
   </form>
-  <div class="flex flex-row gap-1 text-base mx-auto font-semibold">
+  <div class="flex flex-row gap-1 text-sm md:text-base mx-auto font-semibold">
     <p class="text-tgray-600">Already have an account?</p>
     <a
       href="/?type=login"

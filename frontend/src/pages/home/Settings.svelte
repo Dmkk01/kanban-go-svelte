@@ -18,7 +18,7 @@
     <div class="flex flex-row gap-2 items-center text-2xl font-bold">
       <p>⚙️ Settings</p>
     </div>
-    {#if !$user.isLoading && !$userSettings.isLoading && !$boards.isLoading}
+    {#if $user.data && $userSettings.data && $boards.data}
       <div class="grid grid-cols-2 2xl:grid-cols-3 gap-6">
         <div class="flex-1 w-full max-w-xl h-full 2xl:h-fit bg-white/20 shadow-lg rounded-lg px-4 py-6">
           <SettingsInfo

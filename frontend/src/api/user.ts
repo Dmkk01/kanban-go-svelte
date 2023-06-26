@@ -59,14 +59,7 @@ const updateEmail = async (email: string) => {
     method: 'PUT',
     headers: authHeaderWithJSON(),
     body: JSON.stringify({ email }),
-  }).then(async (res) => {
-    const data = await res.json()
-    if (res.ok) {
-      return data as MessageResponse
-    }
-
-    throw new Error(data.message)
-  })
+  }).then(async (res) => handleResponse<MessageResponse>(res))
 }
 
 const UserAPI = {

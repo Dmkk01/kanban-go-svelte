@@ -1,4 +1,4 @@
-import { API_URL } from '.'
+import { API_URL, handleResponse } from '.'
 
 const login = async (email: string, password: string) => {
   return fetch(`${API_URL}/auth/login`, {
@@ -7,14 +7,7 @@ const login = async (email: string, password: string) => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ email, password }),
-  }).then(async (res) => {
-    const data = await res.json()
-    if (res.ok) {
-      return data as TokenResponse
-    }
-
-    throw new Error(data.message)
-  })
+  }).then(async (res) => handleResponse<TokenResponse>(res))
 }
 
 const register = async (email: string, username: string, password: string) => {
@@ -24,14 +17,7 @@ const register = async (email: string, username: string, password: string) => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ email, password, username }),
-  }).then(async (res) => {
-    const data = await res.json()
-    if (res.ok) {
-      return data as StatusResponse
-    }
-
-    throw new Error(data.message)
-  })
+  }).then(async (res) => handleResponse<StatusResponse>(res))
 }
 
 const AuthAPI = {
