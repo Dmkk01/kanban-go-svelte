@@ -9,6 +9,7 @@
   import store from '@/store'
   import { useMutation, useQuery } from '@sveltestack/svelte-query'
   import { navigate } from 'svelte-routing'
+  import TaskViewDrawer from '@/components/drawers/task/view/TaskViewDrawer.svelte'
 
   export let boardID: number = 0
 
@@ -49,5 +50,8 @@
   {/if}
   {#if $store.taskDrawer.isOpen}
     <TaskDrawer />
+  {/if}
+  {#if $store.taskDrawerView.isOpen}
+    <TaskViewDrawer />
   {/if}
 </div>

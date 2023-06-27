@@ -4,10 +4,10 @@
   import MainLayout from '@/layout/MainLayout.svelte'
   import { getEmojiURLBySlug } from '@/utils/emojis'
   import { useMutation, useQuery } from '@sveltestack/svelte-query'
-  import { onMount } from 'svelte'
+  import { longpress } from '@/directives/longpress'
   import store from '@/store'
   import { flip } from 'svelte/animate'
-  import { dndzone } from 'svelte-dnd-action'
+  import { dndzone, SOURCES, TRIGGERS } from 'svelte-dnd-action'
 
   export let id: string = '0'
   let boardID = parseInt(id)
@@ -35,6 +35,8 @@
     }
   }
 
+  let dragDisabled = true
+
   const handleSort = (e: CustomEvent<DndEvent<ColumnBoard>>) => {
     const newItems = e.detail.items.map((item, index) => {
       item.position = index + 1
@@ -42,6 +44,10 @@
     })
 
     columnItems = newItems
+
+    if (e.detail.info.source === SOURCES.KEYBOARD && e.detail.info.trigger === TRIGGERS.DRAG_STOPPED) {
+      dragDisabled = true
+    }
   }
 
   const handleSortFinalized = (e: CustomEvent<DndEvent<ColumnBoard>>) => {
@@ -63,6 +69,10 @@
     if (toUpdate.length > 0) {
       void $positionMutation.mutate(toUpdate)
     }
+
+    if (e.detail.info.source === SOURCES.POINTER) {
+      dragDisabled = true
+    }
   }
 
   const positionMutation = useMutation(async (data: { id: number; position: number }[]) => {
@@ -72,35 +82,35 @@
 
 <MainLayout {boardID}>
   <div class="flex flex-col gap-2">
-    <div class="flex flex-row justify-between items-center px-6 pt-4">
+    <div class="flex flex-row items-center justify-between px-6 pt-4">
       {#if !$board.isLoading && $board.data}
-        <div class="flex flex-row gap-2 items-center">
+        <div class="flex flex-row items-center gap-2">
           <img
             src={getEmojiURLBySlug($board.data.board.emoji)}
             alt="emoji"
-            class="w-8 h-8 rounded-full"
+            class="h-8 w-8 rounded-full"
           />
-          <h1 class="font-bold text-xl">
+          <h1 class="text-xl font-bold">
             {$board.data.board.name}
           </h1>
         </div>
         <button
           type="button"
-          class="flex flex-row gap-0 items-center"
+          class="flex flex-row items-center gap-0"
           on:click={() => {
             $store.columnDrawer.boardID = boardID
             $store.columnDrawer.isOpen = true
             $store.columnDrawer.columnID = null
           }}
         >
-          <div class="flex items-center justify-center bg-white/20 h-12 w-auto aspect-square rounded-lg shadow-lg">
+          <div class="flex aspect-square h-12 w-auto items-center justify-center rounded-lg bg-white/20 shadow-lg">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
               stroke-width="1.5"
               stroke="currentColor"
-              class="w-11 h-11 text-white"
+              class="h-11 w-11 text-white"
             >
               <path
                 stroke-linecap="round"
@@ -109,23 +119,30 @@
               />
             </svg>
           </div>
-          <div class="flex flex-row bg-white/20 items-center justify-between w-full h-9 shadow-lg rounded-r-lg">
-            <p class="font-semibold text-sm text-tgray-600 px-3">Add new column</p>
+          <div class="flex h-9 w-full flex-row items-center justify-between rounded-r-lg bg-white/20 shadow-lg">
+            <p class="px-3 text-sm font-semibold text-tgray-600">Add new column</p>
           </div>
         </button>
       {/if}
     </div>
     {#if columnItems && $board.data}
       <div
-        use:dndzone={{ items: columnItems, flipDurationMs: 200, type: 'board-column' }}
+        use:dndzone={{ items: columnItems, flipDurationMs: 200, type: 'board-column', dragDisabled }}
         on:consider={handleSort}
         on:finalize={handleSortFinalized}
-        class="flex flex-row gap-8 w-full px-6 pb-4 overflow-x-auto"
+        class="flex w-full flex-row gap-8 overflow-x-auto px-6 pb-4"
       >
         {#each columnItems as column (column.id)}
           <div
             animate:flip={{ duration: 200 }}
-            draggable="true"
+            draggable={!dragDisabled}
+            use:longpress={{ category: 'board-column' }}
+            on:long={(e) => {
+              console.log(e)
+              if (e.detail.category === 'board-column') {
+                dragDisabled = false
+              }
+            }}
           >
             <BoardColumnItem column={$board.data.columns.find((item) => item.column.id === column.id)} />
           </div>

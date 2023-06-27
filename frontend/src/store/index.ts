@@ -18,7 +18,11 @@ interface IStore {
       column: number | null
       task: number | null
     }
-  }
+  },
+  taskDrawerView: {
+    isOpen: boolean
+    taskID: number | null
+  },
   emojis: {
     isOpen: boolean
     activeKey: string | null
@@ -47,6 +51,10 @@ const initial: IStore = {
       column: null,
       task: null,
     },
+  },
+  taskDrawerView: {
+    isOpen: false,
+    taskID: null,
   },
   emojis: {
     isOpen: false,

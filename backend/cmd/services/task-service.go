@@ -84,6 +84,13 @@ func GetTaskByID(taskID int) (models.Task, error) {
 		return models.Task{}, err
 	}
 
+	boardTags, err := GetBoardTagsByTaskID(task.ID)
+	if err != nil {
+		return models.Task{}, err
+	}
+
+	task.Tags = boardTags
+
 	return task, nil
 }
 
