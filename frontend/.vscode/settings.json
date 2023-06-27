@@ -2,5 +2,10 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.prettier": true
   },
-  "editor.formatOnSave": true
+  "[svelte]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "prettier.documentSelectors": ["**/*.svelte"],
+  "svelte.enable-ts-plugin": true
 }

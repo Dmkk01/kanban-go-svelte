@@ -88,13 +88,13 @@
   }
 </script>
 
-<div class="flex flex-col gap-2 w-full">
-  <div class="flex flex-row gap-2 items-center text-black">
+<div class="flex w-full flex-col gap-2">
+  <div class="flex flex-row items-center gap-2 text-black">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="currentColor"
-      class="w-6 h-6"
+      class="h-6 w-6"
     >
       <path
         fill-rule="evenodd"
@@ -102,7 +102,7 @@
         clip-rule="evenodd"
       />
     </svg>
-    <h2 class="font-bold text-lg">Personal Information</h2>
+    <h2 class="text-lg font-bold">Personal Information</h2>
   </div>
   <form
     on:submit={onSubmit}

@@ -7,12 +7,12 @@
   const currentPage: 'login' | 'register' = query.get('type') === 'register' ? 'register' : 'login'
 </script>
 
-<div class="w-full min-h-screen bg-[#C0C2CC] flex items-center justify-center">
+<div class="flex w-full min-h-screen items-center justify-center bg-[#C0C2CC]">
   <div
     transition:fade
-    class="bg-white/30 mx-4 w-full max-w-xl rounded-xl px-4 md:px-6 py-6 md:py-10 flex shadow-lg flex-col gap-6 md:gap-8 items-center"
+    class="mx-4 flex w-full max-w-xl flex-col items-center gap-6 rounded-xl bg-white/30 px-4 py-6 shadow-lg md:gap-8 md:px-6 md:py-10"
   >
-    <h1 class="text-xl sm:text-2xl md:text-3xl font-extrabold text-tgray-600">💗 BanBan</h1>
+    <h1 class="text-xl font-extrabold text-tgray-600 sm:text-2xl md:text-3xl">💗 BanBan</h1>
     {#if currentPage === 'login'}
       <Login />
     {:else}

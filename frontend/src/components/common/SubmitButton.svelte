@@ -8,10 +8,10 @@
 
 <button
   type="submit"
-  class={`bg-white/40 relative min-w-[15rem] max-w-xs gap-2 mx-auto border border-tgray-600 rounded-lg flex items-center justify-center py-2 px-6 ${extraStyles}`}
+  class={`relative mx-auto flex min-w-[15rem] max-w-xs items-center justify-center gap-2 rounded-lg border border-tgray-600 bg-white/40 px-6 py-2 ${extraStyles}`}
 >
   {#if message}
-    <p class="absolute -left-16 -right-16 -top-5 text-red-500 text-sm font-semibold">
+    <p class="absolute -left-16 -right-16 -top-5 text-sm font-semibold text-red-500">
       {message}
     </p>
   {/if}
@@ -22,7 +22,7 @@
       viewBox="0 0 24 24"
       stroke-width="1.5"
       stroke="currentColor"
-      class="w-6 h-6"
+      class="h-6 w-6"
     >
       <path
         stroke-linecap="round"

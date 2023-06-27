@@ -1,3 +1,5 @@
+declare module 'prettier-plugin-tailwindcss'
+
 type TokenResponse = {
   token: string
   expirationTime: string

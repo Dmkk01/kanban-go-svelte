@@ -58,7 +58,7 @@
 >
   <div class="min-w-[30rem] static flex p-2 flex-col gap-2 bg-white/90 z-[10000] border border-tgray-200 rounded-lg">
     <div class={`flex flex-row gap-2 w-full justify-around`}>
-      <button
+      <button   
         type="button"
         class={`w-full border rounded-md ${currentVendor === 'apple' ? 'border-tgray-200' : 'border-transparent'}`}
         on:click={() => (currentVendor = 'apple')}
