@@ -16,5 +16,5 @@ export default {
       maxWidth: {},
     },
   },
-  plugins: [require('tailwindcss-debug-screens')],
+  plugins: [require('tailwindcss-debug-screens'), require('tailwind-scrollbar')({ nocompatible: true }),],
 }

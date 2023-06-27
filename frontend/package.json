@@ -27,6 +27,7 @@
     "svelte-dnd-action": "^0.9.22",
     "svelte-eslint-parser": "^0.31.0",
     "svelte-routing": "^1.10.0",
+    "tailwind-scrollbar": "^3.0.4",
     "tailwindcss": "^3.3.2",
     "tailwindcss-debug-screens": "^2.2.1",
     "tslib": "^2.5.0",

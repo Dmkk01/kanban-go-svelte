@@ -14,7 +14,7 @@
 </script>
 
 <MainLayout>
-  <div class=" flex h-screen flex-col gap-4 overflow-y-auto px-4 py-4">
+  <div class=" flex h-screen flex-col gap-4 overflow-y-auto px-4 py-4 scrollbar">
     <div class="flex flex-row items-center gap-2 text-2xl font-bold">
       <p>⚙️ Settings</p>
     </div>

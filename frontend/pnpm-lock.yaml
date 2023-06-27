@@ -56,6 +56,9 @@ devDependencies:
   svelte-routing:
     specifier: ^1.10.0
     version: 1.10.0
+  tailwind-scrollbar:
+    specifier: ^3.0.4
+    version: 3.0.4(tailwindcss@3.3.2)
   tailwindcss:
     specifier: ^3.3.2
     version: 3.3.2
@@ -1917,6 +1920,15 @@ packages:
   /svelte@3.59.1:
     resolution: {integrity: sha512-pKj8fEBmqf6mq3/NfrB9SLtcJcUvjYSWyePlfCqN9gujLB25RitWK8PvFzlwim6hD/We35KbPlRteuA6rnPGcQ==}
     engines: {node: '>= 8'}
+    dev: true
+
+  /tailwind-scrollbar@3.0.4(tailwindcss@3.3.2):
+    resolution: {integrity: sha512-X/QBsn/C5u9x6/YvTc1Zo7b09Gqs5BfDe0UK/8LDQUv8IEBKF+p2ISTRwvAr50MH0hn/wTyCEOann7uXoa1/2Q==}
+    engines: {node: '>=12.13.0'}
+    peerDependencies:
+      tailwindcss: 3.x
+    dependencies:
+      tailwindcss: 3.3.2
     dev: true
 
   /tailwindcss-debug-screens@2.2.1(tailwindcss@3.3.2):
