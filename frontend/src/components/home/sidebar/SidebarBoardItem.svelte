@@ -12,26 +12,26 @@
 <a
   href={`/home/board/${board.id}`}
   use:link
-  class="flex flex-row gap-0 w-full items-center"
+  class="flex w-full flex-row items-center gap-0"
   on:mouseover={() => (isHovering = true)}
   on:mouseleave={() => (isHovering = false)}
   on:focus={() => (isHovering = true)}
   on:blur={() => (isHovering = false)}
 >
-  <div class="flex items-center relative justify-center bg-white/50 h-14 w-auto aspect-square rounded-lg">
+  <div class="relative flex aspect-square h-14 w-auto items-center justify-center rounded-lg bg-white/50">
     <img
       src={getEmojiURLBySlug(board.emoji || '')}
       alt="sidebar-emoji"
-      class="w-8 h-8"
+      class="h-8 w-8"
     />
 
     {#if !$store.isSidebarOpen && isHovering}
       <div
         transition:fade
-        class="absolute top-1/2 -translate-y-1/2 left-12 flex flex-row items-center"
+        class="absolute left-12 top-1/2 flex -translate-y-1/2 flex-row items-center"
       >
         <svg
-          class="w-5 h-5"
+          class="h-5 w-5"
           viewBox="0 0 9 10"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -42,34 +42,32 @@
           />
         </svg>
 
-        <div class="py-1.5 px-3 bg-white rounded-md w-fit -ml-[3px]">
-          <p class="whitespace-nowrap text-[12px] text-tgray-600 font-semibold">{board.name}</p>
+        <div class="-ml-[3px] w-fit rounded-md bg-white px-3 py-1.5">
+          <p class="whitespace-nowrap text-[12px] font-semibold text-tgray-600">{board.name}</p>
         </div>
       </div>
     {/if}
   </div>
 
-  {#if $store.isSidebarOpen}
-    <div class="flex flex-row bg-white/20 items-center justify-between w-full h-11 shadow-lg rounded-r-lg">
-      <p class="font-semibold text-base text-tgray-600 pl-4">
-        {board.name}
-      </p>
-      <div>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="w-6 h-6"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
-          />
-        </svg>
-      </div>
+  <div class={`h-11 w-full flex-row items-center justify-between rounded-r-lg bg-white/20 shadow-lg ${$store.isSidebarOpen ? 'flex' : 'hidden'}`}>
+    <p class="pl-4 text-base font-semibold text-tgray-600">
+      {board.name}
+    </p>
+    <div>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="h-6 w-6"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
+        />
+      </svg>
     </div>
-  {/if}
+  </div>
 </a>

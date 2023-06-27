@@ -14,22 +14,22 @@
 </script>
 
 <MainLayout>
-  <div class="flex flex-col gap-4 px-4 py-4 h-screen overflow-y-auto">
-    <div class="flex flex-row gap-2 items-center text-2xl font-bold">
+  <div class=" flex h-screen flex-col gap-4 overflow-y-auto px-4 py-4">
+    <div class="flex flex-row items-center gap-2 text-2xl font-bold">
       <p>⚙️ Settings</p>
     </div>
     {#if $user.data && $userSettings.data && $boards.data}
-      <div class="grid grid-cols-2 2xl:grid-cols-3 gap-6">
-        <div class="flex-1 w-full max-w-xl h-full 2xl:h-fit bg-white/20 shadow-lg rounded-lg px-4 py-6">
+      <div class="grid grid-cols-1 gap-6 pb-28 lg:grid-cols-2 2xl:grid-cols-3">
+        <div class="h-full w-full max-w-xl flex-1 rounded-lg bg-white/20 px-4 py-6 shadow-lg 2xl:h-fit">
           <SettingsInfo
             username={$user.data.username}
             email={$user.data.email}
           />
         </div>
-        <div class="flex-1 w-full max-w-xl h-fit bg-white/20 shadow-lg rounded-lg px-4 py-6">
+        <div class="h-fit w-full max-w-xl flex-1 rounded-lg bg-white/20 px-4 py-6 shadow-lg">
           <SettingsSecurity />
         </div>
-        <div class="flex-1 w-full max-w-xl h-fit bg-white/20 shadow-lg rounded-lg px-4 py-6">
+        <div class="h-fit w-full max-w-xl flex-1 rounded-lg bg-white/20 px-4 py-6 shadow-lg">
           <SettingsCustomization
             emoji={$userSettings.data.app_emoji}
             name={$userSettings.data.app_name}

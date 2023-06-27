@@ -30,14 +30,14 @@
   }, 1000 * 60 * 5)
 </script>
 
-<div class="w-full h-screen flex flex-row bg-[#C0C2CC] relative overflow-hidden">
+<div class="relative flex h-screen w-full flex-col overflow-hidden bg-[#C0C2CC] lg:flex-row">
   <Sidebar {boardID} />
   {#if !$user.isLoading}
-    <div class="px-4 py-2 h-screen w-full overflow-hidden">
+    <div class="h-screen w-full overflow-hidden px-4 py-2">
       <slot />
     </div>
   {:else}
-    <div class="flex justify-center items-center w-full">
+    <div class="flex w-full items-center justify-center">
       <Loading />
     </div>
   {/if}

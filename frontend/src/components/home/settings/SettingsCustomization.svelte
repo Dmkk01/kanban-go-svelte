@@ -117,7 +117,7 @@
   </div>
   <form
     on:submit={onSubmit}
-    class="flex flex-col gap-10 px-4 pt-10"
+    class="flex flex-col gap-6 px-4 pt-6 lg:gap-10 lg:pt-10"
   >
     <div class="flex w-full flex-row items-center gap-3">
       <div class="flex flex-col gap-0">
@@ -143,7 +143,7 @@
         />
       </div>
     </div>
-    <div class="flex flex-row gap-2">
+    <div class="flex flex-col gap-2 lg:flex-row">
       <label
         for="#date_format"
         class="text-tgray-400 w-40 px-2 py-2 text-sm font-semibold"
@@ -165,7 +165,7 @@
         {/each}
       </select>
     </div>
-    <div class="flex flex-row gap-2">
+    <div class="flex flex-col gap-2 lg:flex-row">
       <label
         for="#default_board"
         class="text-tgray-400 w-40 px-2 py-2 text-sm font-semibold"

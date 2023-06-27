@@ -10,7 +10,7 @@
   }
 </script>
 
-<div class="flex flex-row items-center gap-2 rounded-md p-1.5">
+<div class="flex flex-col items-start gap-2 rounded-md p-1.5 lg:flex-row lg:items-center">
   <label
     for={label + 'input'}
     class={`text-tgray-400 px-2 py-2 text-sm font-semibold ${labelWidth === 'sm' ? 'w-28' : labelWidth === 'md' ? 'w-40' : 'w-52'}`}

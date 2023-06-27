@@ -96,7 +96,7 @@
   </div>
   <form
     on:submit={onSubmit}
-    class="flex flex-col gap-10 pt-10"
+    class="flex flex-col gap-6 pt-6 lg:gap-10 lg:pt-10"
   >
     <SettingsInput
       label="Current Password"
