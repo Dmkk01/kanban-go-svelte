@@ -50,6 +50,7 @@
 
   let message = ''
   let isSaved = false
+  let isFocusTagInput = false
 
   const updateIsSaved = () => {
     isSaved = true
@@ -137,15 +138,15 @@
       closeDrawer()
     }
   }}
-  class="absolute inset-0 backdrop-blur-sm overflow-hidden"
+  class="absolute inset-0 overflow-hidden backdrop-blur-sm"
   transition:fly={{ x: 200, duration: 1000 }}
 >
-  <div class="absolute right-0 top-0 bottom-0 w-full max-w-md bg-white/90 drop-shadow-lg px-6 py-3 flex flex-col gap-2">
-    <div class="flex flex-row gap-4 items-center">
-      <h2 class="font-bold text-lg">{drawerType === 'edit' ? 'Edit' : 'Add New'} Task</h2>
+  <div class="absolute bottom-0 right-0 top-0 flex min-h-screen w-full max-w-md flex-col gap-2 bg-white/90 px-6 py-3 drop-shadow-lg">
+    <div class="flex flex-row items-center gap-4">
+      <h2 class="text-lg font-bold">{drawerType === 'edit' ? 'Edit' : 'Add New'} Task</h2>
       {#if $columns.data}
         <select
-          class="text-base font-medium py-1 px-1 border border-tgray-200 rounded-md text-tgray-600"
+          class="rounded-md border border-tgray-200 px-1 py-1 text-base font-medium text-tgray-600"
           bind:value={data.column_id}
         >
           {#each $columns.data as column}
@@ -156,10 +157,10 @@
     </div>
 
     <form
-      class="py-3 flex flex-col gap-5 w-full"
+      class="flex w-full flex-col gap-5 py-3"
       on:submit={onSubmit}
     >
-      <div class="flex flex-col gap-1 w-full">
+      <div class="flex w-full flex-col gap-1">
         <label
           for="#task_name"
           class="text-sm font-bold text-tgray-600"
@@ -170,10 +171,10 @@
           type="text"
           id="task_name"
           bind:value={data.title}
-          class="text-base w-full font-medium px-2 py-1 border border-tgray-200 rounded-md"
+          class="w-full rounded-md border border-tgray-200 px-2 py-1 text-base font-medium"
         />
       </div>
-      <div class="flex flex-col gap-1 w-full">
+      <div class="flex w-full flex-col gap-1">
         <label
           for="#task_description"
           class="text-sm font-bold text-tgray-600"
@@ -183,11 +184,11 @@
         <textarea
           id="task_description"
           bind:value={data.description}
-          class="text-base w-full min-h-[7rem] font-medium px-2 py-1 border border-tgray-200 rounded-md"
+          class="min-h-[7rem] w-full rounded-md border border-tgray-200 px-2 py-1 text-base font-medium"
         />
       </div>
       <div class="flex flex-row gap-8">
-        <div class="flex flex-col gap-2 w-full">
+        <div class="flex w-full flex-col gap-2">
           <label
             for="#task_description"
             class="text-sm font-bold text-tgray-600"
@@ -198,9 +199,9 @@
             type="date"
             id="task_due_date"
             bind:value={data.due_date}
-            class="text-base w-full font-medium px-2 py-1 border border-tgray-200 rounded-md"
+            class="w-full rounded-md border border-tgray-200 px-2 py-1 text-base font-medium"
           />
-          <div class="flex flex-row gap-2 items-center">
+          <div class="flex flex-row items-center gap-2">
             <input
               type="checkbox"
               id="task_no_due_date"
@@ -215,37 +216,48 @@
             </label>
           </div>
         </div>
-        <div class="flex flex-col gap-1 w-full">
+        <div class="flex w-full flex-col gap-1">
           <label
             for="#task_time_needed"
             class="text-sm font-bold text-tgray-600"
           >
             Approximate time
           </label>
-          <div class="flex flex-row gap-2 items-center">
+          <div class="flex flex-row items-center gap-2">
             <input
               type="number"
               min="0"
               id="task_time_needed"
               bind:value={data.time_needed}
-              class="text-base w-full font-medium px-2 py-1 border border-tgray-200 rounded-md"
+              class="w-full rounded-md border border-tgray-200 px-2 py-1 text-base font-medium"
             />
             <span class="text-sm font-bold text-tgray-600">minutes</span>
           </div>
         </div>
       </div>
 
-      <div class="flex flex-col gap-3 w-full">
+      <div
+        on:mouseleave={() => {
+          isFocusTagInput = false
+        }}
+        on:mouseenter={() => {
+          isFocusTagInput = true
+        }}
+        class="flex w-full flex-col gap-3 pb-10"
+      >
         <p class="text-sm font-bold text-tgray-600"># tags</p>
         {#if $store.taskDrawer.ids.board}
-          <TagsInput
-            bind:selectedTagIds={data.tags}
-            boardID={$store.taskDrawer.ids.board}
-          />
+          <div class="relative">
+            <TagsInput
+              bind:selectedTagIds={data.tags}
+              boardID={$store.taskDrawer.ids.board}
+              bind:isFocus={isFocusTagInput}
+            />
+          </div>
         {/if}
       </div>
 
-      <div class="flex flex-col gap-3 w-full">
+      <div class="flex w-full flex-col gap-3">
         <p class="text-sm font-bold text-tgray-600">Subtasks</p>
         {#each data.sub_tasks as subtask (subtask.id)}
           <TaskDrawerSubtaskItem
@@ -258,7 +270,7 @@
         <button
           type="button"
           on:click={addNewSubtask}
-          class="px-2 py-1 border border-tgray-200 flex flex-row gap-2 items-center w-fit rounded-md"
+          class="flex w-fit flex-row items-center gap-2 rounded-md border border-tgray-200 px-2 py-1"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -266,7 +278,7 @@
             viewBox="0 0 24 24"
             stroke-width="2.5"
             stroke="currentColor"
-            class="w-5 h-5"
+            class="h-5 w-5"
           >
             <path
               stroke-linecap="round"
@@ -274,11 +286,11 @@
               d="M12 4.5v15m7.5-7.5h-15"
             />
           </svg>
-          <p class="font-medium text-sm">Add New Subtask</p>
+          <p class="text-sm font-medium">Add New Subtask</p>
         </button>
       </div>
 
-      <div class="flex flex-col gap-3 w-full">
+      <div class="flex w-full flex-col gap-3">
         <p class="text-sm font-bold text-tgray-600">Links</p>
         {#each data.links as link (link.id)}
           <TaskDrawerLinkItem
@@ -291,7 +303,7 @@
         <button
           type="button"
           on:click={addNewLink}
-          class="px-2 py-1 border border-tgray-200 flex flex-row gap-2 items-center w-fit rounded-md"
+          class="flex w-fit flex-row items-center gap-2 rounded-md border border-tgray-200 px-2 py-1"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -299,7 +311,7 @@
             viewBox="0 0 24 24"
             stroke-width="2.5"
             stroke="currentColor"
-            class="w-5 h-5"
+            class="h-5 w-5"
           >
             <path
               stroke-linecap="round"
@@ -307,7 +319,7 @@
               d="M12 4.5v15m7.5-7.5h-15"
             />
           </svg>
-          <p class="font-medium text-sm">Add New Link</p>
+          <p class="text-sm font-medium">Add New Link</p>
         </button>
       </div>
 

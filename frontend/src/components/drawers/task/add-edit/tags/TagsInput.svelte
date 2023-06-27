@@ -29,7 +29,7 @@
   }
   let newTagName = ''
   let newTagColor = getRandomColor()
-  let isFocus = false
+  export let isFocus = false
 
   const createNew = async () => {
     if (newTagName !== '') {
@@ -57,7 +57,50 @@
   )
 </script>
 
-<div class="w-full relative">
+{#if !$tags.isLoading && $tags.data && isFocus}
+  <div
+    on:mouseleave={() => {
+      isFocus = false
+    }}
+    class="absolute -bottom-48 -left-0 -right-0 h-44 bg-transparent"
+  >
+    <div
+      transition:fade
+      class="absolute top-0 flex w-full flex-col gap-2 rounded-md border border-tgray-600 bg-white/50 p-3 backdrop-blur-lg"
+    >
+      <p class="text-sm font-medium">Select an option or type to create one</p>
+      {#each $tags.data as tag (`option-tag-${tag.id}`)}
+        <TagItem
+          {tag}
+          bind:optionsOpen={tagItemOptionsOpen}
+          refetch={$tags.refetch}
+          on:select-new={() => {
+            if (!selectedTagIds.includes(tag.id)) {
+              selectedTagIds = [...selectedTagIds, tag.id]
+            }
+          }}
+        />
+      {/each}
+
+      {#if newTagName !== ''}
+        <div class="flex flex-row items-center gap-2">
+          <p class="text-sm font-medium">Create</p>
+          <button
+            type="button"
+            on:click={createNew}
+            class="relative z-30 flex w-fit flex-row items-center gap-0 rounded-md px-2 py-0.5"
+            style="background-color: {newTagColor}"
+          >
+            <p class="select-none text-sm font-semibold">
+              {newTagName}
+            </p>
+          </button>
+        </div>
+      {/if}
+    </div>
+  </div>
+{/if}
+<div class="relative w-full">
   <div
     on:mouseover={() => {
       isFocus = true
@@ -67,7 +110,7 @@
       isFocus = true
       tagItemOptionsOpen = 0
     }}
-    class="flex flex-row flex-wrap gap-4 w-full border border-tgray-600 rounded-md h-auto p-1"
+    class="flex h-auto w-full flex-row flex-wrap gap-4 rounded-md border border-tgray-600 p-1"
   >
     {#each selectedTags as tag (`current-tag-${tag.id}`)}
       <button
@@ -75,10 +118,10 @@
         on:click={() => {
           selectedTagIds = selectedTagIds.filter((id) => id !== tag.id)
         }}
-        class="px-2 py-0.5 w-fit relative rounded-md flex flex-row gap-0 items-center z-30"
+        class="relative z-30 flex w-fit flex-row items-center gap-0 rounded-md px-2 py-0.5"
         style="background-color: {tag.color}"
       >
-        <p class="text-sm font-semibold select-none">
+        <p class="select-none text-sm font-semibold">
           {tag.title}
         </p>
         <button
@@ -91,7 +134,7 @@
             viewBox="0 0 24 24"
             stroke-width="2"
             stroke="currentColor"
-            class="w-4 h-4"
+            class="h-4 w-4"
           >
             <path
               stroke-linecap="round"
@@ -105,47 +148,9 @@
 
     <input
       type="text"
-      class="text-sm font-bold text-tgray-600 w-fit bg-transparent"
+      class="w-fit bg-transparent text-sm font-bold text-tgray-600"
       bind:value={newTagName}
       on:focus={() => (isFocus = true)}
     />
-  </div>
-  <div class="relative mt-2">
-    {#if !$tags.isLoading && $tags.data && isFocus}
-      <div
-        transition:fade
-        class="bg-white/50 top-[110%] absolute border border-tgray-600 rounded-md backdrop-blur-lg p-3 flex flex-col w-full gap-2"
-      >
-        <p class="text-sm font-medium">Select an option or type to create one</p>
-        {#each $tags.data as tag (`option-tag-${tag.id}`)}
-          <TagItem
-            {tag}
-            bind:optionsOpen={tagItemOptionsOpen}
-            refetch={$tags.refetch}
-            on:select-new={() => {
-              if (!selectedTagIds.includes(tag.id)) {
-                selectedTagIds = [...selectedTagIds, tag.id]
-              }
-            }}
-          />
-        {/each}
-
-        {#if newTagName !== ''}
-          <div class="flex flex-row gap-2 items-center">
-            <p class="text-sm font-medium">Create</p>
-            <button
-              type="button"
-              on:click={createNew}
-              class="px-2 py-0.5 w-fit relative rounded-md flex flex-row gap-0 items-center z-30"
-              style="background-color: {newTagColor}"
-            >
-              <p class="text-sm font-semibold select-none">
-                {newTagName}
-              </p>
-            </button>
-          </div>
-        {/if}
-      </div>
-    {/if}
   </div>
 </div>
