@@ -31,11 +31,20 @@ const updateSubtask = async (task_id: number, subtask_id: number, completed: boo
   }).then(async (res) => handleResponse<StatusResponse>(res))
 }
 
+const updateSubtaskCompleted = async (subtask_id: number, completed: boolean) => {
+  return await fetch(`${API_URL}/subtask/${subtask_id}/complete`, {
+    method: 'PUT',
+    headers: authHeaderWithJSON(),
+    body: JSON.stringify({ completed }),
+  }).then(async (res) => handleResponse<StatusResponse>(res))
+}
+
 const TaskAPI = {
   getTask,
   taskUpdatePosition,
   createTask,
-  updateSubtask
+  updateSubtask,
+  updateSubtaskCompleted
 }
 
 export default TaskAPI

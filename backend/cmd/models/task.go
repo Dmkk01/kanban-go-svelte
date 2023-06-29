@@ -81,6 +81,10 @@ type SubTaskUpdate struct {
 	Completed bool   `json:"completed"`
 }
 
+type SubTaskUpdateCompleted struct {
+	Completed bool `json:"completed"`
+}
+
 type LinkTaskUpdate struct {
 	ID    int    `json:"id"`
 	Title string `json:"title"`

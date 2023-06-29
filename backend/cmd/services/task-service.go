@@ -414,3 +414,17 @@ func UpdateSubTaskByID(subtask models.SubTaskUpdate) error {
 
 	return err
 }
+
+func UpdateSubTaskCompleted(subtaskID int, completed bool) error {
+	db, err := db.Connect()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	updatedAt := time.Now()
+
+	_, err = db.Exec("UPDATE subtasks SET completed = $1, updated_at = $2 WHERE id = $3", completed, updatedAt, subtaskID)
+
+	return err
+}

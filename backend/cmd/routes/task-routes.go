@@ -131,4 +131,16 @@ func taskRoutes(e echoswagger.ApiRoot) {
 		AddResponse(http.StatusBadRequest, "Bad Request", models.MessageResponse{}, nil).
 		AddResponse(http.StatusNotFound, "Not Found", models.MessageResponse{}, nil).
 		AddResponse(http.StatusForbidden, "Forbidden", models.MessageResponse{}, nil)
+
+	subTaskGroup := e.Group("SubTasks", "/subtask", middlewares.AuthMiddleware).SetSecurity("Authorization")
+
+	subTaskGroup.PUT("/:subtask_id/complete", controllers.UpdateSubTaskComplete).
+		SetSummary("Update Sub Task ID").
+		AddParamPath("", "subtask_id", "Sub Task ID").
+		AddParamBody(models.SubTaskUpdateCompleted{}, "body", "SubTask Body", true).
+		AddResponse(http.StatusOK, "Subtask Updated", models.StatusResponse{}, nil).
+		AddResponse(http.StatusInternalServerError, "Server Error", models.MessageResponse{}, nil).
+		AddResponse(http.StatusBadRequest, "Bad Request", models.MessageResponse{}, nil).
+		AddResponse(http.StatusNotFound, "Not Found", models.MessageResponse{}, nil).
+		AddResponse(http.StatusForbidden, "Forbidden", models.MessageResponse{}, nil)
 }

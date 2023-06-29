@@ -333,3 +333,37 @@ func DeleteSubTaskByID(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, models.StatusResponse{Status: "OK"})
 }
+
+func UpdateSubTaskComplete(c echo.Context) error {
+	claims := c.Get("claims").(*models.Claims)
+
+	subTaskID, err := strconv.Atoi(c.Param("subtask_id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid SubTask ID")
+	}
+
+	subtask, err := services.GetSubTaskByID(subTaskID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return echo.NewHTTPError(http.StatusNotFound, "SubTask not Found")
+		}
+		return echo.NewHTTPError(http.StatusInternalServerError, "Server Error")
+	}
+
+	_, err = getCheckTaskById(subtask.TaskID, claims.Id)
+	if err != nil {
+		return err
+	}
+
+	var data models.SubTaskUpdateCompleted
+	if err := c.Bind(&data); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid Request Body")
+	}
+
+	err = services.UpdateSubTaskCompleted(subTaskID, data.Completed)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Server Error")
+	}
+
+	return c.JSON(http.StatusOK, models.StatusResponse{Status: "OK"})
+}

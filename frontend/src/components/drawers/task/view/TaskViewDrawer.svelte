@@ -4,7 +4,7 @@
   import UserAPI from '@/api/user'
   import store from '@/store'
   import { getEmojiBySlug, getEmojiURLBySlug } from '@/utils/emojis'
-  import { useMutation, useQuery } from '@sveltestack/svelte-query'
+  import { useMutation, useQuery, useQueryClient } from '@sveltestack/svelte-query'
   import { fly } from 'svelte/transition'
 
   const userSettings = useQuery('user-settings', async () => await UserAPI.getUserSettings())
@@ -26,23 +26,23 @@
   )
 
   const updateSubtask = useMutation(
-    async ({ subtask_id, value, title }: { subtask_id: number; value: boolean; title: string }) => {
-      const updatedSubtask = await TaskAPI.updateSubtask($store.taskDrawerView.taskID as number, subtask_id, value, title)
-      return updatedSubtask
-    },
+    async ({ subtask_id, value }: { subtask_id: number; value: boolean }) => TaskAPI.updateSubtaskCompleted(subtask_id, value),
     {
       onSuccess: (data) => {
         console.log(data)
+        if (!$task.data) return
+        queryClient.invalidateQueries(`board-${$task.data?.task.board_id}`)
       },
     }
   )
 
-  const handleSubtaskChange = async (e: Event, subtask_id: number, title: string) => {
+  const handleSubtaskChange = async (e: Event, subtask_id: number) => {
     const target = e.target as HTMLInputElement
     const checked = target.checked
 
-    $updateSubtask.mutateAsync({ subtask_id, value: checked, title })
+    $updateSubtask.mutateAsync({ subtask_id, value: checked })
   }
+  const queryClient = useQueryClient()
 
   const closeDrawer = () => {
     $store.taskDrawerView.isOpen = false
@@ -200,7 +200,7 @@
                   type="checkbox"
                   class="h-5 w-5 rounded-md border border-tgray-600"
                   checked={subtask.completed}
-                  on:input={(e) => handleSubtaskChange(e, subtask.id, subtask.title)}
+                  on:input={(e) => handleSubtaskChange(e, subtask.id)}
                 />
                 <p class="text-base font-medium">
                   {subtask.title}
