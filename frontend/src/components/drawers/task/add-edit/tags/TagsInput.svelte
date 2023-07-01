@@ -3,7 +3,7 @@
   import { useMutation, useQuery } from '@sveltestack/svelte-query'
   import { fade } from 'svelte/transition'
   import TagItem from './TagItem.svelte'
-  import { createEventDispatcher, onMount } from 'svelte'
+  import { onMount } from 'svelte'
   import TagAPI from '@/api/tag'
 
   let tagItemOptionsOpen: number
@@ -66,6 +66,12 @@
   >
     <div
       transition:fade
+      on:click={() => {
+        isFocus = true
+      }}
+      on:keypress={() => {
+        isFocus = false
+      }}
       class="absolute top-0 flex w-full flex-col gap-2 rounded-md border border-tgray-600 bg-white/50 p-3 backdrop-blur-lg"
     >
       <p class="text-sm font-medium">Select an option or type to create one</p>
@@ -103,7 +109,6 @@
 <div class="relative w-full">
   <div
     on:mouseover={() => {
-      isFocus = true
       tagItemOptionsOpen = 0
     }}
     on:focus={() => {

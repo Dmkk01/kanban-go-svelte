@@ -236,15 +236,7 @@
         </div>
       </div>
 
-      <div
-        on:mouseleave={() => {
-          isFocusTagInput = false
-        }}
-        on:mouseenter={() => {
-          isFocusTagInput = true
-        }}
-        class="flex w-full flex-col gap-3 pb-10"
-      >
+      <div class="flex w-full flex-col gap-3 pb-10">
         <p class="text-sm font-bold text-tgray-600"># tags</p>
         {#if $store.taskDrawer.ids.board}
           <div class="relative">

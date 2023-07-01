@@ -82,7 +82,7 @@
 >
   <div class="absolute bottom-0 right-0 top-0 flex min-h-screen w-full max-w-md flex-col gap-2 bg-white/90 px-6 py-3 drop-shadow-lg">
     {#if $task.data && !$task.isLoading}
-      <div class="flex w-full flex-col gap-4">
+      <div class="flex w-full flex-col gap-6">
         <div class="flex flex-row items-center justify-between gap-2">
           <div class="flex flex-row items-center gap-4">
             <h2 class="text-xl font-bold text-tgray-600">
@@ -120,28 +120,32 @@
           </button>
         </div>
 
-        <div class="flex flex-col gap-1">
-          <h3 class="text-base font-bold text-tgray-600"># Tags</h3>
-          <div class="ml-6 flex flex-row flex-wrap gap-3">
-            {#each $task.data.task.tags as tag (tag.id)}
-              <div
-                class="relative z-30 flex w-fit flex-row items-center gap-0 rounded-md px-2 py-0.5"
-                style="background-color: {tag.color}"
-              >
-                <p class="select-none text-sm font-medium">
-                  {tag.title}
-                </p>
-              </div>
-            {/each}
+        {#if $task.data.task.tags.length > 0}
+          <div class="flex flex-col gap-1">
+            <h3 class="text-base font-bold text-tgray-600"># Tags</h3>
+            <div class="ml-6 flex flex-row flex-wrap gap-3">
+              {#each $task.data.task.tags as tag (tag.id)}
+                <div
+                  class="relative z-30 flex w-fit flex-row items-center gap-0 rounded-md px-2 py-0.5"
+                  style="background-color: {tag.color}"
+                >
+                  <p class="select-none text-sm font-medium">
+                    {tag.title}
+                  </p>
+                </div>
+              {/each}
+            </div>
           </div>
-        </div>
+        {/if}
 
-        <div class="flex flex-col gap-1">
-          <h3 class="text-base font-bold text-tgray-600">Description</h3>
-          <p class="ml-6 text-base font-medium text-tgray-600">
-            {$task.data.task.description}
-          </p>
-        </div>
+        {#if $task.data.task.description.length > 0}
+          <div class="flex flex-col gap-1">
+            <h3 class="text-base font-bold text-tgray-600">Description</h3>
+            <p class="ml-6 text-base font-medium text-tgray-600">
+              {$task.data.task.description}
+            </p>
+          </div>
+        {/if}
 
         <div class="flex w-full flex-row justify-between">
           <div class="flex flex-col gap-1">
@@ -191,20 +195,44 @@
           {/if}
         </div>
 
+        {#if $task.data.task.sub_tasks.length > 0}
+          <div class="flex flex-col gap-1">
+            <h3 class="text-base font-bold text-tgray-600">Subtasks</h3>
+            <div class="my-2 ml-6 flex flex-col gap-2">
+              {#each $task.data.task.sub_tasks as subtask (subtask.id)}
+                <div class="flex flex-row gap-4">
+                  <input
+                    type="checkbox"
+                    class="h-5 w-5 rounded-lg border border-tgray-600"
+                    checked={subtask.completed}
+                    on:input={(e) => handleSubtaskChange(e, subtask.id)}
+                  />
+                  <p class="text-base font-medium">
+                    {subtask.title}
+                  </p>
+                </div>
+              {/each}
+            </div>
+          </div>
+        {/if}
+
         <div class="flex flex-col gap-1">
-          <h3 class="text-base font-bold text-tgray-600">Subtasks</h3>
-          <div class="ml-6 flex flex-col gap-2">
-            {#each $task.data.task.sub_tasks as subtask (subtask.id)}
-              <div class="flex flex-row gap-2">
-                <input
-                  type="checkbox"
-                  class="h-5 w-5 rounded-md border border-tgray-600"
-                  checked={subtask.completed}
-                  on:input={(e) => handleSubtaskChange(e, subtask.id)}
+          <h3 class="text-base font-bold text-tgray-600">Links</h3>
+          <div class="my-2 ml-6 flex flex-col gap-2">
+            {#each $task.data.task.links as link (link.id)}
+              <div class="flex flex-row gap-4">
+                <img
+                  src={getEmojiURLBySlug(link.emoji)}
+                  alt={link.url}
+                  class="h-5 w-5"
                 />
-                <p class="text-base font-medium">
-                  {subtask.title}
-                </p>
+                <a
+                  href={link.url}
+                  target="_blank"
+                  class="text-base font-medium underline"
+                >
+                  {link.url}
+                </a>
               </div>
             {/each}
           </div>
