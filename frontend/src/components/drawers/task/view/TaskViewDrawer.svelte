@@ -102,6 +102,13 @@
           <button
             type="button"
             class="text-tgray-600"
+            on:click={() => {
+              closeDrawer()
+              $store.taskDrawer.ids.board = $task.data?.task.board_id ?? 0
+              $store.taskDrawer.ids.column = $task.data?.task.column_id ?? 0
+              $store.taskDrawer.ids.task = $task.data?.task.id ?? 0
+              $store.taskDrawer.isOpen = true
+            }}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -216,6 +223,7 @@
           </div>
         {/if}
 
+        {#if $task.data.task.links.length > 0}
         <div class="flex flex-col gap-1">
           <h3 class="text-base font-bold text-tgray-600">Links</h3>
           <div class="my-2 ml-6 flex flex-col gap-2">
@@ -237,6 +245,7 @@
             {/each}
           </div>
         </div>
+        {/if}
       </div>
     {/if}
   </div>

@@ -5,6 +5,7 @@
   import InputField from './common/InputField.svelte'
   import { z } from 'zod'
   import { navigate } from 'svelte-routing'
+  import UserAPI from '@/api/user'
 
   const schema = z.object({
     email: z.string().email({ message: 'Invalid email' }),
@@ -21,7 +22,11 @@
   const loginMutation = useMutation((data: LoginSchema) => AuthAPI.login(data.email, data.password), {
     onSuccess: async (data) => {
       localStorage.setItem('token', data.token)
-      navigate('/home/settings', { replace: true, state: {} })
+
+      const userData = await UserAPI.getUserSettings()
+      const primaryBoard = userData.primary_board_id
+
+      navigate(`/home/board/${primaryBoard}`, { replace: true, state: {} })
     },
     onError: (err) => {
       message = err as string

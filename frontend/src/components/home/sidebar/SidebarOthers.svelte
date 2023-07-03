@@ -1,13 +1,12 @@
 <script lang="ts">
-  import { Link } from 'svelte-routing'
   import store from '@/store'
 </script>
 
-<div class="flex flex-col gap-6 w-full">
-  <div class="flex flex-row gap-0 w-full items-center">
-    <Link
-      to="/home/settings"
-      class="flex items-center shadow-lg justify-center bg-white/50 h-14 w-auto aspect-square rounded-lg"
+<div class="flex w-full flex-col gap-6">
+  <div class="flex w-full flex-row items-center gap-0">
+    <a
+      href="/home/settings"
+      class="flex aspect-square h-14 w-auto items-center justify-center rounded-lg bg-white/50 shadow-lg"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +14,7 @@
         viewBox="0 0 24 24"
         stroke-width="1.5"
         stroke="currentColor"
-        class="w-9 h-9"
+        class="h-9 w-9"
       >
         <path
           stroke-linecap="round"
@@ -23,28 +22,28 @@
           d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
         />
       </svg>
-    </Link>
+    </a>
     {#if $store.isSidebarOpen}
-      <div class="flex flex-row bg-white/20 items-center justify-between w-full h-11 shadow-lg rounded-r-lg">
-        <p class="font-semibold text-base text-tgray-600 pl-4">Others</p>
+      <div class="flex h-11 w-full flex-row items-center justify-between rounded-r-lg bg-white/20 shadow-lg">
+        <p class="pl-4 text-base font-semibold text-tgray-600">Others</p>
       </div>
     {/if}
   </div>
   <button
     type="button"
-    class="flex flex-row gap-0 w-full items-center"
+    class="flex w-full flex-row items-center gap-0"
     on:click={() => {
       $store.isSidebarOpen = !$store.isSidebarOpen
     }}
   >
-    <div class="flex items-center shadow-lg justify-center bg-white/50 h-14 w-auto aspect-square rounded-lg">
+    <div class="flex aspect-square h-14 w-auto items-center justify-center rounded-lg bg-white/50 shadow-lg">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
         stroke-width="1.5"
         stroke="currentColor"
-        class="w-9 h-9"
+        class="h-9 w-9"
       >
         <path
           stroke-linecap="round"
@@ -54,8 +53,8 @@
       </svg>
     </div>
     {#if $store.isSidebarOpen}
-      <div class="flex flex-row bg-white/20 items-center justify-between w-full h-11 shadow-lg rounded-r-lg">
-        <p class="font-semibold text-base text-tgray-600 pl-4">Hide sidebar</p>
+      <div class="flex h-11 w-full flex-row items-center justify-between rounded-r-lg bg-white/20 shadow-lg">
+        <p class="pl-4 text-base font-semibold text-tgray-600">Hide sidebar</p>
       </div>
     {/if}
   </button>

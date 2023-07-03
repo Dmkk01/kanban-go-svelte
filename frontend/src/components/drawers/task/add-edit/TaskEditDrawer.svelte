@@ -2,7 +2,6 @@
   import { getInitEmoji } from '@/utils/emojis'
   import { z } from 'zod'
   import store from '@/store'
-  import EmojiButton from '../../../common/EmojiButton.svelte'
   import { useMutation, useQuery, useQueryClient } from '@sveltestack/svelte-query'
   import BoardsAPI from '@/api/board'
   import SubmitButton from '@/components/common/SubmitButton.svelte'
@@ -12,6 +11,7 @@
   import TaskDrawerSubtaskItem from './TaskEditDrawerSubtaskItem.svelte'
   import TaskDrawerLinkItem from './TaskEditDrawerLinkItem.svelte'
   import TagsInput from './tags/TagsInput.svelte'
+  import { onMount } from 'svelte'
 
   const schema = z.object({
     board_id: z.number().min(1),
@@ -33,6 +33,14 @@
 
   const columns = useQuery(`tasks-drawer-columns`, async () => await BoardsAPI.getColumns($store.taskDrawer.ids.board || 0), {})
   const tasks = useQuery(`tasks-drawer-tasks`, async () => await ColumnAPI.getTasks($store.taskDrawer.ids.column || 0), {})
+  const task = useQuery(['task', $store.taskDrawer.ids.task], async () => await TaskAPI.getTask($store.taskDrawer.ids.task as number), {
+    onSuccess: (res) => {
+      console.log('task-query', res)
+      data.description = res.description
+      data.due_date = res.due_date
+      data.title = res.title
+    },
+  })
 
   const data: Schema = {
     board_id: $store.taskDrawer.ids.board || 0,
@@ -129,6 +137,12 @@
   const deleteLink = (e: CustomEvent<number>) => {
     data.links = data.links.filter((item) => item.id !== e.detail)
   }
+
+  onMount(() => {
+    if ($store.taskDrawer.ids.task) {
+      $task.refetch()
+    }
+  })
 </script>
 
 <div
@@ -155,173 +169,174 @@
         </select>
       {/if}
     </div>
-
-    <form
-      class="flex w-full flex-col gap-5 py-3"
-      on:submit={onSubmit}
-    >
-      <div class="flex w-full flex-col gap-1">
-        <label
-          for="#task_name"
-          class="text-sm font-bold text-tgray-600"
-        >
-          Title
-        </label>
-        <input
-          type="text"
-          id="task_name"
-          bind:value={data.title}
-          class="w-full rounded-md border border-tgray-200 px-2 py-1 text-base font-medium"
-        />
-      </div>
-      <div class="flex w-full flex-col gap-1">
-        <label
-          for="#task_description"
-          class="text-sm font-bold text-tgray-600"
-        >
-          Description
-        </label>
-        <textarea
-          id="task_description"
-          bind:value={data.description}
-          class="min-h-[7rem] w-full rounded-md border border-tgray-200 px-2 py-1 text-base font-medium"
-        />
-      </div>
-      <div class="flex flex-row gap-8">
-        <div class="flex w-full flex-col gap-2">
+    {#if !$task.isLoading}
+      <form
+        class="flex w-full flex-col gap-5 py-3"
+        on:submit={onSubmit}
+      >
+        <div class="flex w-full flex-col gap-1">
+          <label
+            for="#task_name"
+            class="text-sm font-bold text-tgray-600"
+          >
+            Title
+          </label>
+          <input
+            type="text"
+            id="task_name"
+            bind:value={data.title}
+            class="w-full rounded-md border border-tgray-200 px-2 py-1 text-base font-medium"
+          />
+        </div>
+        <div class="flex w-full flex-col gap-1">
           <label
             for="#task_description"
             class="text-sm font-bold text-tgray-600"
           >
-            Due Date
+            Description
           </label>
-          <input
-            type="date"
-            id="task_due_date"
-            bind:value={data.due_date}
-            class="w-full rounded-md border border-tgray-200 px-2 py-1 text-base font-medium"
+          <textarea
+            id="task_description"
+            bind:value={data.description}
+            class="min-h-[7rem] w-full rounded-md border border-tgray-200 px-2 py-1 text-base font-medium"
           />
-          <div class="flex flex-row items-center gap-2">
-            <input
-              type="checkbox"
-              id="task_no_due_date"
-              bind:checked={data.no_due_date}
-              class="h-4 w-4 rounded-md"
-            />
+        </div>
+        <div class="flex flex-row gap-8">
+          <div class="flex w-full flex-col gap-2">
             <label
-              for="#task_no_due_date"
+              for="#task_description"
               class="text-sm font-bold text-tgray-600"
             >
-              No Due Date
+              Due Date
             </label>
-          </div>
-        </div>
-        <div class="flex w-full flex-col gap-1">
-          <label
-            for="#task_time_needed"
-            class="text-sm font-bold text-tgray-600"
-          >
-            Approximate time
-          </label>
-          <div class="flex flex-row items-center gap-2">
             <input
-              type="number"
-              min="0"
-              id="task_time_needed"
-              bind:value={data.time_needed}
+              type="date"
+              id="task_due_date"
+              bind:value={data.due_date}
               class="w-full rounded-md border border-tgray-200 px-2 py-1 text-base font-medium"
             />
-            <span class="text-sm font-bold text-tgray-600">minutes</span>
+            <div class="flex flex-row items-center gap-2">
+              <input
+                type="checkbox"
+                id="task_no_due_date"
+                bind:checked={data.no_due_date}
+                class="h-4 w-4 rounded-md"
+              />
+              <label
+                for="#task_no_due_date"
+                class="text-sm font-bold text-tgray-600"
+              >
+                No Due Date
+              </label>
+            </div>
+          </div>
+          <div class="flex w-full flex-col gap-1">
+            <label
+              for="#task_time_needed"
+              class="text-sm font-bold text-tgray-600"
+            >
+              Approximate time
+            </label>
+            <div class="flex flex-row items-center gap-2">
+              <input
+                type="number"
+                min="0"
+                id="task_time_needed"
+                bind:value={data.time_needed}
+                class="w-full rounded-md border border-tgray-200 px-2 py-1 text-base font-medium"
+              />
+              <span class="text-sm font-bold text-tgray-600">minutes</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="flex w-full flex-col gap-3 pb-10">
-        <p class="text-sm font-bold text-tgray-600"># tags</p>
-        {#if $store.taskDrawer.ids.board}
-          <div class="relative">
-            <TagsInput
-              bind:selectedTagIds={data.tags}
-              boardID={$store.taskDrawer.ids.board}
-              bind:isFocus={isFocusTagInput}
+        <div class="flex w-full flex-col gap-3 pb-10">
+          <p class="text-sm font-bold text-tgray-600"># tags</p>
+          {#if $store.taskDrawer.ids.board}
+            <div class="relative">
+              <TagsInput
+                bind:selectedTagIds={data.tags}
+                boardID={$store.taskDrawer.ids.board}
+                bind:isFocus={isFocusTagInput}
+              />
+            </div>
+          {/if}
+        </div>
+
+        <div class="flex w-full flex-col gap-3">
+          <p class="text-sm font-bold text-tgray-600">Subtasks</p>
+          {#each data.sub_tasks as subtask (subtask.id)}
+            <TaskDrawerSubtaskItem
+              bind:completed={subtask.completed}
+              bind:title={subtask.title}
+              id={subtask.id}
+              on:delete-subtask={deleteSubtask}
             />
-          </div>
-        {/if}
-      </div>
-
-      <div class="flex w-full flex-col gap-3">
-        <p class="text-sm font-bold text-tgray-600">Subtasks</p>
-        {#each data.sub_tasks as subtask (subtask.id)}
-          <TaskDrawerSubtaskItem
-            bind:completed={subtask.completed}
-            bind:title={subtask.title}
-            id={subtask.id}
-            on:delete-subtask={deleteSubtask}
-          />
-        {/each}
-        <button
-          type="button"
-          on:click={addNewSubtask}
-          class="flex w-fit flex-row items-center gap-2 rounded-md border border-tgray-200 px-2 py-1"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="2.5"
-            stroke="currentColor"
-            class="h-5 w-5"
+          {/each}
+          <button
+            type="button"
+            on:click={addNewSubtask}
+            class="flex w-fit flex-row items-center gap-2 rounded-md border border-tgray-200 px-2 py-1"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M12 4.5v15m7.5-7.5h-15"
-            />
-          </svg>
-          <p class="text-sm font-medium">Add New Subtask</p>
-        </button>
-      </div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2.5"
+              stroke="currentColor"
+              class="h-5 w-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 4.5v15m7.5-7.5h-15"
+              />
+            </svg>
+            <p class="text-sm font-medium">Add New Subtask</p>
+          </button>
+        </div>
 
-      <div class="flex w-full flex-col gap-3">
-        <p class="text-sm font-bold text-tgray-600">Links</p>
-        {#each data.links as link (link.id)}
-          <TaskDrawerLinkItem
-            bind:url={link.url}
-            bind:emoji={link.emoji}
-            id={link.id}
-            on:delete-link={deleteLink}
-          />
-        {/each}
-        <button
-          type="button"
-          on:click={addNewLink}
-          class="flex w-fit flex-row items-center gap-2 rounded-md border border-tgray-200 px-2 py-1"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="2.5"
-            stroke="currentColor"
-            class="h-5 w-5"
+        <div class="flex w-full flex-col gap-3">
+          <p class="text-sm font-bold text-tgray-600">Links</p>
+          {#each data.links as link (link.id)}
+            <TaskDrawerLinkItem
+              bind:url={link.url}
+              bind:emoji={link.emoji}
+              id={link.id}
+              on:delete-link={deleteLink}
+            />
+          {/each}
+          <button
+            type="button"
+            on:click={addNewLink}
+            class="flex w-fit flex-row items-center gap-2 rounded-md border border-tgray-200 px-2 py-1"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M12 4.5v15m7.5-7.5h-15"
-            />
-          </svg>
-          <p class="text-sm font-medium">Add New Link</p>
-        </button>
-      </div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2.5"
+              stroke="currentColor"
+              class="h-5 w-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 4.5v15m7.5-7.5h-15"
+              />
+            </svg>
+            <p class="text-sm font-medium">Add New Link</p>
+          </button>
+        </div>
 
-      <SubmitButton
-        text={drawerType === 'edit' ? 'Save Task' : 'Create Task'}
-        extraStyles="bg-transparent py-0.5"
-        textStyles="text-base"
-        {message}
-        {isSaved}
-      />
-    </form>
+        <SubmitButton
+          text={drawerType === 'edit' ? 'Save Task' : 'Create Task'}
+          extraStyles="bg-transparent py-0.5"
+          textStyles="text-base"
+          {message}
+          {isSaved}
+        />
+      </form>
+    {/if}
   </div>
 </div>
