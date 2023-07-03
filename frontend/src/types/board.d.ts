@@ -38,6 +38,17 @@ type TaskCreate = {
   tags: number[]
 }
 
+type TaskUpdate = {
+  title: string
+  description: string
+  time_needed: number
+  due_date: string
+  links: LinkTaskUpdate[]
+  position: number
+  sub_tasks: SubTaskUpdate[]
+  tags: number[]
+}
+
 type Task = {
   id: number
   column_id: number
@@ -59,6 +70,12 @@ type SubTaskCreate = {
   title: string
 }
 
+type SubTaskUpdate = {
+  id: number
+  completed: boolean
+  title: string
+}
+
 type SubTask = {
   id: number
   task_id: number
@@ -69,6 +86,13 @@ type SubTask = {
 }
 
 type LinkTaskCreate = {
+  title: string
+  url: string
+  emoji: string
+}
+
+type LinkTaskUpdate = {
+  id: number
   title: string
   url: string
   emoji: string

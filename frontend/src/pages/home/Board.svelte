@@ -17,7 +17,7 @@
   const board = useQuery(`board-${boardID}`, async () => await BoardsAPI.getBoardFull(boardID), {
     refetchOnWindowFocus: false,
     onSuccess: (data) => {
-      console.log(data)
+      console.log('board updated', data)
       columnItems = data.columns.map((item) => item.column)
     },
   })

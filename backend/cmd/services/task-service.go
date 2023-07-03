@@ -171,6 +171,56 @@ func GetTaskByBoardID(boardID int) ([]models.Task, error) {
 	return tasks, nil
 }
 
+func GetAllLinksByTaskID(taskID int) ([]models.LinkTask, error) {
+	db, err := db.Connect()
+	if err != nil {
+		return []models.LinkTask{}, err
+	}
+	defer db.Close()
+
+	links := []models.LinkTask{}
+	rows, err := db.Query("SELECT id, task_id, title, emoji, url, created_at, updated_at FROM links WHERE task_id = $1", taskID)
+	if err != nil {
+		return []models.LinkTask{}, err
+	}
+
+	for rows.Next() {
+		var link models.LinkTask
+		err := rows.Scan(&link.ID, &link.TaskID, &link.Title, &link.Emoji, &link.URL, &link.CreatedAt, &link.UpdatedAt)
+		if err != nil {
+			return []models.LinkTask{}, err
+		}
+		links = append(links, link)
+	}
+
+	return links, nil
+}
+
+func GetAllSubtasksByTaskID(taskID int) ([]models.SubTask, error) {
+	db, err := db.Connect()
+	if err != nil {
+		return []models.SubTask{}, err
+	}
+	defer db.Close()
+
+	subTasks := []models.SubTask{}
+	rows, err := db.Query("SELECT id, task_id, title, completed, created_at, updated_at FROM subtasks WHERE task_id = $1", taskID)
+	if err != nil {
+		return []models.SubTask{}, err
+	}
+
+	for rows.Next() {
+		var subTask models.SubTask
+		err := rows.Scan(&subTask.ID, &subTask.TaskID, &subTask.Title, &subTask.Completed, &subTask.CreatedAt, &subTask.UpdatedAt)
+		if err != nil {
+			return []models.SubTask{}, err
+		}
+		subTasks = append(subTasks, subTask)
+	}
+
+	return subTasks, nil
+}
+
 func GetAllTasks(userID int) ([]models.Task, error) {
 	db, err := db.Connect()
 	if err != nil {
@@ -278,6 +328,13 @@ func UpdateTaskByID(taskID int, task models.TaskUpdate) error {
 		return err
 	}
 
+	currentSubtasks, err := GetAllSubtasksByTaskID(taskID)
+	if err != nil {
+		return err
+	}
+
+	subTaskMap := map[int]bool{}
+
 	for _, subTask := range task.SubTasks {
 		if subTask.ID == 0 {
 			err := CreateSubTask(taskID, models.SubTaskCreate{
@@ -296,8 +353,25 @@ func UpdateTaskByID(taskID int, task models.TaskUpdate) error {
 			if err != nil {
 				return err
 			}
+
+			subTaskMap[subTask.ID] = true
 		}
 	}
+
+	for _, subTask := range currentSubtasks {
+		if _, ok := subTaskMap[subTask.ID]; !ok {
+			err := DeleteSubTaskByID(subTask.ID)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	currentLinks, err := GetAllLinksByTaskID(taskID)
+	if err != nil {
+		return err
+	}
+	linksMap := map[int]bool{}
 
 	for _, link := range task.Links {
 		if link.ID == 0 {
@@ -307,6 +381,48 @@ func UpdateTaskByID(taskID int, task models.TaskUpdate) error {
 			}
 		} else {
 			_, err = db.Exec("UPDATE links SET title = $1, emoji = $2, url = $3, updated_at = $4 WHERE id = $5", link.Title, link.Emoji, link.URL, updatedAt, link.ID)
+			if err != nil {
+				return err
+			}
+
+			linksMap[link.ID] = true
+		}
+	}
+
+	for _, link := range currentLinks {
+		if _, ok := linksMap[link.ID]; !ok {
+			err = DeleteLinkByID(link.ID)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	currentTagsMap := map[int]bool{}
+	currentTags, err := GetTagsTask(taskID)
+	if err != nil {
+		return err
+	}
+
+	for _, tag := range currentTags {
+		currentTagsMap[tag.BoardTagID] = true
+	}
+
+	tagsMap := map[int]bool{}
+	for _, tag := range task.Tags {
+		if _, ok := currentTagsMap[tag]; !ok {
+			err := AddBoardTagToTaskTag(taskID, tag)
+			if err != nil {
+				return err
+			}
+		}
+
+		tagsMap[tag] = true
+	}
+
+	for _, tag := range currentTags {
+		if _, ok := tagsMap[tag.BoardTagID]; !ok {
+			err := RemoveTaskTagFromTask(taskID, tag.BoardTagID)
 			if err != nil {
 				return err
 			}
@@ -380,6 +496,21 @@ func CreateSubTask(taskID int, subtask models.SubTaskCreate) error {
 
 	createdAt := time.Now()
 	_, err = db.Exec("INSERT INTO subtasks (task_id, title, completed, created_at, updated_at) VALUES ($1, $2, $3, $4, $5)", taskID, subtask.Title, subtask.Completed, createdAt, createdAt)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func DeleteLinkByID(linkID int) error {
+	db, err := db.Connect()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	_, err = db.Exec("DELETE FROM links WHERE id = $1", linkID)
 	if err != nil {
 		return err
 	}

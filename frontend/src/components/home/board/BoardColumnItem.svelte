@@ -12,34 +12,16 @@
 
   export let column: ColumnBoardFull | undefined
 
-  const dispatch = createEventDispatcher<{ 'move-task-to-column': number }>()
-
   $: {
     if (column) {
       taskItems = column.tasks
     }
   }
 
-  // export let columnID: number = 0
-  // let currColumnID = columnID
-  // const column = useQuery(['column', currColumnID], async () => await ColumnAPI.getColumn(currColumnID), {})
-  // const tasks = useQuery(['column', currColumnID, 'tasks'], async () => await ColumnAPI.getTasks(currColumnID), {
-  //   onSuccess: (data) => {
-  //     taskItems = data
-  //   },
-  // })
-  // $: {
-  //   if (currColumnID !== columnID) {
-  //     currColumnID = columnID
-  //     void $column.refetch()
-  //     void $tasks.refetch()
-  //   }
-  // }
 
   let taskItems: Task[] = []
 
   let dragDisabled = true
-  let canOpenTaskView = true
 
   const handleSort = (e: CustomEvent<DndEvent<Task>>) => {
     const newItems = e.detail.items.map((item, index) => {
@@ -149,6 +131,7 @@
         type="button"
         on:click={() => {
           $store.taskDrawer.isOpen = true
+          $store.taskDrawer.ids.task = null
           $store.taskDrawer.ids.board = column?.column.board_id ?? 0
           $store.taskDrawer.ids.column = column?.column.id ?? 0
         }}

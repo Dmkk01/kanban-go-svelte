@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getInitEmoji } from '@/utils/emojis'
-  import { z } from 'zod'
+  import { Schema, z } from 'zod'
   import store from '@/store'
   import { useMutation, useQuery, useQueryClient } from '@sveltestack/svelte-query'
   import BoardsAPI from '@/api/board'
@@ -22,8 +22,8 @@
     position: z.number(),
     time_needed: z.number(),
     title: z.string(),
-    sub_tasks: z.array(z.object({ id: z.number(), title: z.string(), completed: z.boolean() })),
-    links: z.array(z.object({ id: z.number(), title: z.string(), url: z.string(), emoji: z.string() })),
+    sub_tasks: z.array(z.object({ id: z.number(), title: z.string(), completed: z.boolean(), isNew: z.boolean().optional() })),
+    links: z.array(z.object({ id: z.number(), title: z.string(), url: z.string(), emoji: z.string(), isNew: z.boolean().optional() })),
     tags: z.array(z.number().min(1)),
   })
 
@@ -33,14 +33,32 @@
 
   const columns = useQuery(`tasks-drawer-columns`, async () => await BoardsAPI.getColumns($store.taskDrawer.ids.board || 0), {})
   const tasks = useQuery(`tasks-drawer-tasks`, async () => await ColumnAPI.getTasks($store.taskDrawer.ids.column || 0), {})
-  const task = useQuery(['task', $store.taskDrawer.ids.task], async () => await TaskAPI.getTask($store.taskDrawer.ids.task as number), {
-    onSuccess: (res) => {
-      console.log('task-query', res)
-      data.description = res.description
-      data.due_date = res.due_date
-      data.title = res.title
+  const task = useQuery(
+    ['task', $store.taskDrawer.ids.task],
+    async () => {
+      if (!$store.taskDrawer.ids.task) return
+      return await TaskAPI.getTask($store.taskDrawer.ids.task)
     },
-  })
+    {
+      onSuccess: (res) => {
+        if (res) {
+          data.title = res.title
+          data.description = res.description
+          data.time_needed = res.time_needed
+          data.sub_tasks = res.sub_tasks.map((item) => ({ id: item.id, title: item.title, completed: item.completed }))
+          data.links = res.links.map((item) => ({ id: item.id, title: item.title, url: item.url, emoji: item.emoji }))
+          data.tags = res.tags.map((item) => item.id)
+          data.position = res.position
+
+          if (res.due_date.includes('0001-01-01')) {
+            data.no_due_date = true
+          } else {
+            data.due_date = res.due_date.slice(0, 10)
+          }
+        }
+      },
+    }
+  )
 
   const data: Schema = {
     board_id: $store.taskDrawer.ids.board || 0,
@@ -55,6 +73,8 @@
     links: [],
     tags: [],
   }
+
+  // $: console.log('DATA', data)
 
   let message = ''
   let isSaved = false
@@ -81,15 +101,31 @@
   const mutationCreate = useMutation(({ columnID, data }: { data: TaskCreate; columnID: number }) => TaskAPI.createTask(columnID, data), {
     onSuccess: () => {
       updateIsSaved()
-      queryClient.invalidateQueries(`board-${$store.taskDrawer.ids.board}`)
     },
     onError: (err) => {
       updateMessage(err as string)
     },
   })
 
+  const mutationUpdate = useMutation(
+    async ({ taskId, data }: { taskId: number, data: TaskUpdate }) => TaskAPI.updateTask(taskId, data),
+    {
+      onSuccess: () => {
+        updateIsSaved()
+      },
+      onError: (err) => {
+        updateMessage(err as string)
+      },
+    }
+  )
+
   const closeDrawer = () => {
     $store.taskDrawer.isOpen = false
+    $store.taskDrawer.ids = {
+      board: null,
+      column: null,
+      task: null,
+    }
   }
 
   const onSubmit = async (e: Event) => {
@@ -113,13 +149,35 @@
         return
       }
       $mutationCreate.mutate({ data, columnID })
-    }
+    } else {
+      const taskId = $store.taskDrawer.ids.task
+      if (!taskId || !$task.data) {
+        updateMessage('Task ID is not defined')
+        return
+      }
+      const finalData: TaskUpdate = {
+        description: data.description,
+        due_date: data.no_due_date ? $task.data.due_date : data.due_date,
+        position: data.position,
+        title: data.title,
+        time_needed: data.time_needed,
+        sub_tasks: data.sub_tasks.map((item) => ({ id: item.isNew ? 0 : item.id, title: item.title, completed: item.completed })),
+        links: data.links.map((item) => ({ id: item.isNew ? 0 : item.id, title: item.title, url: item.url, emoji: item.emoji })),
+        tags: data.tags,
+      }
 
+      console.log('FINAL DATA', finalData)
+
+      $mutationUpdate.mutate({ taskId, data: finalData })
+    }
+    
+    queryClient.invalidateQueries(`board-${$store.taskDrawer.ids.board}`)
     closeDrawer()
+    
   }
 
   const addNewSubtask = () => {
-    const newSubtask = { id: Math.floor(Math.random() * 1000), title: '', completed: false }
+    const newSubtask = { id: Math.floor(Math.random() * 1000), title: '', completed: false, isNew: true }
 
     data.sub_tasks = [...data.sub_tasks, newSubtask]
   }
@@ -129,7 +187,7 @@
   }
 
   const addNewLink = () => {
-    const newLink = { id: Math.floor(Math.random() * 1000), title: '', url: '', emoji: getInitEmoji().slug }
+    const newLink = { id: Math.floor(Math.random() * 1000), title: '', url: '', emoji: getInitEmoji().slug, isNew: true }
 
     data.links = [...data.links, newLink]
   }
@@ -137,12 +195,6 @@
   const deleteLink = (e: CustomEvent<number>) => {
     data.links = data.links.filter((item) => item.id !== e.detail)
   }
-
-  onMount(() => {
-    if ($store.taskDrawer.ids.task) {
-      $task.refetch()
-    }
-  })
 </script>
 
 <div

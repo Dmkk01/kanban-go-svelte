@@ -73,6 +73,7 @@ type TaskUpdate struct {
 	Position    int              `json:"position"`
 	SubTasks    []SubTaskUpdate  `json:"sub_tasks"`
 	Links       []LinkTaskUpdate `json:"links"`
+	Tags        []int            `json:"tags"`
 }
 
 type SubTaskUpdate struct {
