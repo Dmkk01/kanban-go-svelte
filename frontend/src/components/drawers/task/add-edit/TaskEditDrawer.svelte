@@ -101,23 +101,22 @@
   const mutationCreate = useMutation(({ columnID, data }: { data: TaskCreate; columnID: number }) => TaskAPI.createTask(columnID, data), {
     onSuccess: () => {
       updateIsSaved()
+      refreshCloseBoard()
     },
     onError: (err) => {
       updateMessage(err as string)
     },
   })
 
-  const mutationUpdate = useMutation(
-    async ({ taskId, data }: { taskId: number, data: TaskUpdate }) => TaskAPI.updateTask(taskId, data),
-    {
-      onSuccess: () => {
-        updateIsSaved()
-      },
-      onError: (err) => {
-        updateMessage(err as string)
-      },
-    }
-  )
+  const mutationUpdate = useMutation(async ({ taskId, data }: { taskId: number; data: TaskUpdate }) => TaskAPI.updateTask(taskId, data), {
+    onSuccess: () => {
+      updateIsSaved()
+      refreshCloseBoard()
+    },
+    onError: (err) => {
+      updateMessage(err as string)
+    },
+  })
 
   const closeDrawer = () => {
     $store.taskDrawer.isOpen = false
@@ -126,6 +125,12 @@
       column: null,
       task: null,
     }
+  }
+
+  const refreshCloseBoard = () => {
+    const boardKey = `board-${$store.taskDrawer.ids.board}`
+    queryClient.invalidateQueries(boardKey)
+    closeDrawer()
   }
 
   const onSubmit = async (e: Event) => {
@@ -170,10 +175,6 @@
 
       $mutationUpdate.mutate({ taskId, data: finalData })
     }
-    
-    queryClient.invalidateQueries(`board-${$store.taskDrawer.ids.board}`)
-    closeDrawer()
-    
   }
 
   const addNewSubtask = () => {

@@ -18,7 +18,6 @@
     }
   }
 
-
   let taskItems: Task[] = []
 
   let dragDisabled = true

@@ -7,7 +7,7 @@
   const currentPage: 'login' | 'register' = query.get('type') === 'register' ? 'register' : 'login'
 </script>
 
-<div class="flex w-full min-h-screen items-center justify-center bg-[#C0C2CC]">
+<div class="flex min-h-screen w-full items-center justify-center bg-[#C0C2CC]">
   <div
     transition:fade
     class="mx-4 flex w-full max-w-xl flex-col items-center gap-6 rounded-xl bg-white/30 px-4 py-6 shadow-lg md:gap-8 md:px-6 md:py-10"
