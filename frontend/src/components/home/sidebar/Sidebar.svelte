@@ -17,6 +17,16 @@
       if (data.app_name === '') {
         navigate('/getting-started')
       }
+
+      if (data.app_emoji !== '' && data.app_name !== '') {
+        localStorage.setItem(
+          'default-join-data',
+          JSON.stringify({
+            name: data.app_name,
+            emoji: data.app_emoji,
+          })
+        )
+      }
     },
   })
 
