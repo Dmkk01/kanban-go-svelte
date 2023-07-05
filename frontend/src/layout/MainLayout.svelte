@@ -34,7 +34,7 @@
 <div class="relative flex h-screen w-full flex-col overflow-hidden bg-[#C0C2CC] lg:flex-row">
   <Sidebar {boardID} />
   {#if !$user.isLoading}
-    <div class="h-screen w-full overflow-hidden px-4 py-2">
+    <div class="h-screen w-full overflow-hidden px-0 py-2 sm:px-4">
       <slot />
     </div>
   {:else}

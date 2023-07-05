@@ -82,7 +82,7 @@
 
 <MainLayout {boardID}>
   <div class="flex flex-col gap-2">
-    <div class="flex flex-row items-center justify-between px-6 pt-4">
+    <div class="flex flex-row items-center justify-between px-4 pt-0 md:px-6 md:pt-4">
       {#if !$board.isLoading && $board.data}
         <div class="flex flex-row items-center gap-2">
           <img
@@ -119,7 +119,7 @@
               />
             </svg>
           </div>
-          <div class="flex h-9 w-full flex-row items-center justify-between rounded-r-lg bg-white/20 shadow-lg">
+          <div class="hidden h-9 w-full flex-row items-center justify-between rounded-r-lg bg-white/20 shadow-lg md:flex">
             <p class="px-3 text-sm font-semibold text-tgray-600">Add new column</p>
           </div>
         </button>
@@ -130,7 +130,7 @@
         use:dndzone={{ items: columnItems, flipDurationMs: 200, type: 'board-column', dragDisabled }}
         on:consider={handleSort}
         on:finalize={handleSortFinalized}
-        class="flex w-full flex-row gap-8 overflow-x-auto px-6 pb-4"
+        class="flex min-h-[90vh] w-full flex-row gap-8 overflow-x-auto px-6 pb-4"
       >
         {#each columnItems as column (column.id)}
           <div

@@ -94,17 +94,38 @@
       closeDrawer()
     }
   }}
-  class="absolute inset-0 backdrop-blur-sm overflow-hidden"
+  class="absolute inset-0 overflow-hidden backdrop-blur-sm"
   transition:fly={{ x: 200, duration: 1000 }}
 >
-  <div class="absolute right-0 top-0 bottom-0 w-full max-w-md bg-white/90 drop-shadow-lg px-6 py-10 flex flex-col gap-2">
-    <h2 class="font-bold text-lg">{drawerType === 'edit' ? 'Edit' : 'Add'} Column</h2>
+  <div class="absolute bottom-0 right-0 top-0 flex w-full max-w-md flex-col gap-2 bg-white/90 px-6 py-10 drop-shadow-lg">
+    <button
+      type="button"
+      on:click={closeDrawer}
+      class="absolute right-2 top-2"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="h-10 w-10"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M6 18L18 6M6 6l12 12"
+        />
+      </svg>
+    </button>
+
+    <h2 class="text-lg font-bold">{drawerType === 'edit' ? 'Edit' : 'Add'} Column</h2>
 
     <form
-      class="py-3 flex flex-col gap-5 w-full"
+      class="flex w-full flex-col gap-5 py-3"
       on:submit={onSubmit}
     >
-      <div class="flex flex-row gap-3 items-center w-full">
+      <div class="flex w-full flex-row items-center gap-3">
         <div class="flex flex-col gap-2">
           <p class="text-sm font-bold text-tgray-600">Emoji</p>
           <EmojiButton
@@ -114,7 +135,7 @@
             imageStyles="w-3/4 h-auto"
           />
         </div>
-        <div class="flex flex-col gap-2 w-full">
+        <div class="flex w-full flex-col gap-2">
           <label
             for="#board_name"
             class="text-sm font-bold text-tgray-600"
@@ -125,12 +146,12 @@
             type="text"
             id="board_name"
             bind:value={data.name}
-            class="text-xl w-full font-bold h-12 px-2 border border-tgray-200 rounded-lg"
+            class="h-12 w-full rounded-lg border border-tgray-200 px-2 text-xl font-bold"
           />
         </div>
       </div>
       {#if !$columns.isLoading && $columns.data}
-        <div class="flex flex-row gap-2 items-center">
+        <div class="flex flex-row items-center gap-2">
           <label
             for="#column_position"
             class="text-sm font-bold text-tgray-600"
@@ -138,7 +159,7 @@
             Position
           </label>
           <select
-            class="text-base font-medium w-16 py-1 px-1 border border-tgray-200 rounded-md text-tgray-600"
+            class="w-16 rounded-md border border-tgray-200 px-1 py-1 text-base font-medium text-tgray-600"
             bind:value={data.position}
             id="column_position"
           >
