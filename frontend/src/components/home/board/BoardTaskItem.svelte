@@ -4,11 +4,11 @@
 
 <div class="flex w-full flex-col gap-2 rounded-xl bg-white/50 px-4 py-3 drop-shadow-md">
   {#if task}
-    <p class="text-sm font-semibold text-tgray-600">
+    <p class="text-md font-semibold text-tgray-600">
       {task.title}
     </p>
 
-    <p class="text-[12px] font-semibold text-tgray-200">
+    <p class="text-sm font-semibold text-tgray-200">
       {task.sub_tasks.filter((item) => item.completed).length} of {task.sub_tasks.length} subtasks
     </p>
 

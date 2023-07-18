@@ -143,6 +143,7 @@
                 dragDisabled = false
               }
             }}
+            class="w-[90vw] md:w-[20rem] xl:w-[21rem]"
           >
             <BoardColumnItem column={$board.data.columns.find((item) => item.column.id === column.id)} />
           </div>

@@ -75,7 +75,7 @@
   }
 </script>
 
-<div class="w-[17rem] rounded-lg bg-white/30 px-2 py-4 shadow-lg">
+<div class="w-[90vw] md:w-[20rem] xl:w-[21rem] rounded-lg bg-white/30 px-2 py-4 shadow-lg">
   {#if column}
     <div class="flex flex-row items-center justify-between pb-6">
       <div class="flex flex-row items-center gap-2">
@@ -84,7 +84,7 @@
           alt="column-emoji"
           class="h-5 w-5"
         />
-        <h3 class="text-sm font-bold">
+        <h3 class="text-md font-bold">
           {column.column.name} ({taskItems.length ?? 0})
         </h3>
       </div>
@@ -154,7 +154,7 @@
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          class="h-8 w-8 text-white"
+          class="h-10 w-10 text-white"
         >
           <path
             stroke-linecap="round"
