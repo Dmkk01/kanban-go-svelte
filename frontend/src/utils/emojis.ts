@@ -4,7 +4,7 @@ import store from '../store/index'
 export const emojis = emojiJSON as Emoji[]
 
 export const getInitEmoji = () => {
-  return emojis[0]
+  return getEmojiBySlug("microsoft-teams-anatomical-heart")
 }
 
 export const getEmojisByCategory = (category: EmojiCategory): Emoji[] => {
