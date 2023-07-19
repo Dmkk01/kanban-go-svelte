@@ -125,6 +125,25 @@
               />
             </svg>
           </button>
+          <button
+            on:click={closeDrawer}
+            type="button"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="h-6 w-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
         </div>
 
         {#if $task.data.task.tags.length > 0}
@@ -187,7 +206,7 @@
 
           {#if $task.data.task.time_needed > 0}
             <div class="flex flex-col gap-1">
-              <h3 class="text-base font-bold text-tgray-600">Approximate time</h3>
+              <h3 class="text-base font-bold text-tgray-600">Approx. time</h3>
               <div class="ml-6 flex flex-row gap-3">
                 <img
                   src={getEmojiBySlug('apple-alarm-clock').image_url}

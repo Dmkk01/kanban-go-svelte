@@ -209,18 +209,39 @@
   transition:fly={{ x: 200, duration: 1000 }}
 >
   <div class="absolute bottom-0 right-0 top-0 flex min-h-screen w-full max-w-md flex-col gap-2 bg-white/90 px-6 py-3 drop-shadow-lg">
-    <div class="flex flex-row items-center gap-4">
-      <h2 class="text-lg font-bold">{drawerType === 'edit' ? 'Edit' : 'Add New'} Task</h2>
-      {#if $columns.data}
-        <select
-          class="rounded-md border border-tgray-200 px-1 py-1 text-base font-medium text-tgray-600"
-          bind:value={data.column_id}
+    <div class="flex flex-row justify-between">
+      <div class="flex flex-row items-center gap-4">
+        <h2 class="text-lg font-bold">{drawerType === 'edit' ? 'Edit' : 'Add New'} Task</h2>
+        {#if $columns.data}
+          <select
+            class="rounded-md border border-tgray-200 px-1 py-1 text-base font-medium text-tgray-600"
+            bind:value={data.column_id}
+          >
+            {#each $columns.data as column}
+              <option value={column.id}>{column.name}</option>
+            {/each}
+          </select>
+        {/if}
+      </div>
+      <button
+        on:click={closeDrawer}
+        type="button"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="h-6 w-6"
         >
-          {#each $columns.data as column}
-            <option value={column.id}>{column.name}</option>
-          {/each}
-        </select>
-      {/if}
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
     </div>
     {#if !$task.isLoading}
       <form

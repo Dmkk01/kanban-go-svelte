@@ -82,16 +82,18 @@
   )
 
   const mutationUpdate = useMutation(
-    ({ data, boardID, columnID }: { data: Schema; boardID: number, columnID: number }) => {
+    ({ data, boardID, columnID }: { data: Schema; boardID: number; columnID: number }) => {
       if (!$store.columnDrawer.columnID) {
         throw new Error('Column ID is not defined')
       }
 
       if ($currentColumn.data?.position !== data.position) {
-        return BoardsAPI.updateColumnPosition(boardID, [{
-          id: columnID,
-          position: data.position,
-        }])
+        return BoardsAPI.updateColumnPosition(boardID, [
+          {
+            id: columnID,
+            position: data.position,
+          },
+        ])
       }
 
       return ColumnAPI.editColumn(columnID, data.emoji, data.name)
@@ -153,28 +155,28 @@
   transition:fly={{ x: 200, duration: 1000 }}
 >
   <div class="absolute bottom-0 right-0 top-0 flex w-full max-w-md flex-col gap-2 bg-white/90 px-6 py-10 drop-shadow-lg">
-    <button
-      type="button"
-      on:click={closeDrawer}
-      class="absolute right-2 top-2"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="h-10 w-10"
+    <div class="flex flex-row justify-between">
+      <h2 class="text-lg font-bold">{drawerType === 'edit' ? 'Edit' : 'Add'} Column</h2>
+      <button
+        type="button"
+        on:click={closeDrawer}
       >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M6 18L18 6M6 6l12 12"
-        />
-      </svg>
-    </button>
-
-    <h2 class="text-lg font-bold">{drawerType === 'edit' ? 'Edit' : 'Add'} Column</h2>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="h-6 w-6"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+    </div>
 
     {#if !$currentColumn.isLoading}
       <form
