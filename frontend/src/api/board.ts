@@ -67,6 +67,17 @@ const getTagsBoard = async (board_id: number) => {
   }).then(async (res) => handleResponse<Tag[]>(res))
 }
 
+const editBoard = async (board_id: number, name: string, emoji: string) => {
+  return await fetch(`${API_URL}/board/${board_id}`, {
+    method: 'PUT',
+    headers: authHeaderWithJSON(),
+    body: JSON.stringify({
+      name: name,
+      emoji: emoji,
+    }),
+  }).then(async (res) => handleResponse<StatusResponse>(res))
+}
+
 const BoardsAPI = {
   getBoards,
   getColumns,
@@ -76,6 +87,7 @@ const BoardsAPI = {
   updateColumnPosition,
   getBoardFull,
   getTagsBoard,
+  editBoard
 }
 
 export default BoardsAPI

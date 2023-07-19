@@ -5,18 +5,19 @@
 <button
   type="button"
   on:click={() => {
+    $store.isSidebarOpen = false
     $store.boardDrawer.isOpen = true
   }}
-  class="flex flex-row gap-0 w-full items-center"
+  class="flex w-full flex-row items-center gap-0"
 >
-  <div class="flex items-center justify-center bg-white/20 h-14 w-auto aspect-square rounded-lg shadow-lg">
+  <div class="flex aspect-square h-14 w-auto items-center justify-center rounded-lg bg-white/20 shadow-lg">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
       stroke-width="1.5"
       stroke="currentColor"
-      class="w-12 h-12 text-white"
+      class="h-12 w-12 text-white"
     >
       <path
         stroke-linecap="round"
@@ -26,8 +27,8 @@
     </svg>
   </div>
   {#if $store.isSidebarOpen}
-    <div class="flex flex-row bg-white/20 items-center justify-between w-full h-11 shadow-lg rounded-r-lg">
-      <p class="font-semibold text-base text-tgray-600 pl-4">Add new board</p>
+    <div class="flex h-11 w-full flex-row items-center justify-between rounded-r-lg bg-white/20 shadow-lg">
+      <p class="pl-4 text-base font-semibold text-tgray-600">Add new board</p>
     </div>
   {/if}
 </button>
