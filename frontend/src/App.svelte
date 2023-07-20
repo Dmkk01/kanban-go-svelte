@@ -19,15 +19,9 @@
 <QueryClientProvider client={queryClient}>
   <main class={`font-mona ${import.meta.env.MODE === 'development' && 'debug-screens'}`}>
     <Router {url}>
-      <Route path="/">
-        <Join />
-      </Route>
-      <Route path="/about">
-        <About />
-      </Route>
-      <Route path="/getting-started">
-        <GettingStarted />
-      </Route>
+      <Route path="/" component={Join}/>
+      <Route path="/home/new" component={Home}/>
+      <Route path="/getting-started" component={GettingStarted}/>
       <Route
         path="/home/board/:id"
         component={Board}

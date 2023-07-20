@@ -29,7 +29,7 @@
       const login = await AuthAPI.login(request.email, request.password)
 
       localStorage.setItem('token', login.token)
-      navigate('/home', { replace: true, state: {} })
+      navigate('/home/new', { replace: true, state: {} })
     },
     onError: (err) => {
       message = err as string

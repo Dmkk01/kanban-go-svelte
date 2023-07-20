@@ -24,7 +24,7 @@
 
   const gsMutation = useMutation((data: GetStartedType) => UserAPI.gettingStarted(data.app_name, data.app_emoji), {
     onSuccess: async (data) => {
-      navigate('/home', { replace: true, state: {} })
+      navigate('/home/new', { replace: true, state: {} })
     },
     onError: (err) => {
       message = err as string

@@ -2,6 +2,7 @@
   import BoardsAPI from '@/api/board'
   import BoardColumnItem from '@/components/home/board/BoardColumnItem.svelte'
   import MainLayout from '@/layout/MainLayout.svelte'
+  import NoItems from '@/components/common/NoItems.svelte'
   import { getEmojiURLBySlug } from '@/utils/emojis'
   import { useMutation, useQuery } from '@sveltestack/svelte-query'
   import { longpress } from '@/directives/longpress'
@@ -78,6 +79,12 @@
   const positionMutation = useMutation(async (data: { id: number; position: number }[]) => {
     return await BoardsAPI.updateColumnPosition(boardID, data)
   })
+
+  const addNewColumn = () => {
+    $store.columnDrawer.boardID = boardID
+    $store.columnDrawer.isOpen = true
+    $store.columnDrawer.columnID = null
+  }
 </script>
 
 <MainLayout {boardID}>
@@ -97,11 +104,7 @@
         <button
           type="button"
           class="flex flex-row items-center gap-0"
-          on:click={() => {
-            $store.columnDrawer.boardID = boardID
-            $store.columnDrawer.isOpen = true
-            $store.columnDrawer.columnID = null
-          }}
+          on:click={addNewColumn}
         >
           <div class="flex aspect-square h-12 w-auto items-center justify-center rounded-lg bg-white/20 shadow-lg">
             <svg
@@ -126,29 +129,38 @@
       {/if}
     </div>
     {#if columnItems && $board.data}
-      <div
-        use:dndzone={{ items: columnItems, flipDurationMs: 200, type: 'board-column', dragDisabled }}
-        on:consider={handleSort}
-        on:finalize={handleSortFinalized}
-        class="flex min-h-[90vh] w-full flex-row gap-8 overflow-x-auto px-6 pb-4"
-      >
-        {#each columnItems as column (column.id)}
-          <div
-            animate:flip={{ duration: 200 }}
-            draggable={!dragDisabled}
-            use:longpress={{ category: 'board-column' }}
-            on:long={(e) => {
-              console.log(e)
-              if (e.detail.category === 'board-column') {
-                dragDisabled = false
-              }
-            }}
-            class="w-[90vw] md:w-[20rem] xl:w-[21rem]"
-          >
-            <BoardColumnItem column={$board.data.columns.find((item) => item.column.id === column.id)} />
-          </div>
-        {/each}
-      </div>
+      {#if columnItems.length > 0}
+        <div
+          use:dndzone={{ items: columnItems, flipDurationMs: 200, type: 'board-column', dragDisabled }}
+          on:consider={handleSort}
+          on:finalize={handleSortFinalized}
+          class="flex min-h-[90vh] w-full flex-row gap-8 overflow-x-auto px-6 pb-4"
+        >
+          {#each columnItems as column (column.id)}
+            <div
+              animate:flip={{ duration: 200 }}
+              draggable={!dragDisabled}
+              use:longpress={{ category: 'board-column' }}
+              on:long={(e) => {
+                console.log(e)
+                if (e.detail.category === 'board-column') {
+                  dragDisabled = false
+                }
+              }}
+              class="w-[90vw] md:w-[20rem] xl:w-[21rem]"
+            >
+              <BoardColumnItem column={$board.data.columns.find((item) => item.column.id === column.id)} />
+            </div>
+          {/each}
+        </div>
+      {:else}
+        <div class="h-full w-full items-center justify-center pt-8">
+          <NoItems
+            item="column"
+            onClickHandler={addNewColumn}
+          />
+        </div>
+      {/if}
     {/if}
   </div>
 </MainLayout>

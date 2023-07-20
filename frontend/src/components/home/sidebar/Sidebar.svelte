@@ -8,7 +8,7 @@
   import SidebarOthers from './SidebarOthers.svelte'
   import store from '@/store'
   import { getEmojiURLBySlug } from '@/utils/emojis'
-  import { fade, fly, slide } from 'svelte/transition'
+  import { fly } from 'svelte/transition'
 
   export let boardID: number = 0
 

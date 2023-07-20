@@ -78,9 +78,9 @@
   let drawerType: 'edit' | 'create' = $store.boardDrawer.boardID ? 'edit' : 'create'
 
   const mutationCreate = useMutation((data: Schema) => BoardsAPI.createNewBoard(data.name, data.emoji, data.columns), {
-    onSuccess: () => {
+    onSuccess: async () => {
       updateIsSaved()
-      queryClient.invalidateQueries('boards')
+      await queryClient.invalidateQueries('boards')
     },
     onError: (err) => {
       updateMessage(err as string)
@@ -95,7 +95,7 @@
       if (board.length > 0) {
         navigate(`/home/board/${board[0].id}`, { replace: true, state: {} })
       } else {
-        //TODO move to empty board page
+        window.location.href = '/home/new'
       }
       closeDrawer()
     },
