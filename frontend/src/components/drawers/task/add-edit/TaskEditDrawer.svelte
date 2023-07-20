@@ -10,8 +10,8 @@
   import TaskAPI from '@/api/task'
   import TaskDrawerSubtaskItem from './TaskEditDrawerSubtaskItem.svelte'
   import TaskDrawerLinkItem from './TaskEditDrawerLinkItem.svelte'
-  import TagsInput from './tags/TagsInput.svelte'
-  import { onMount } from 'svelte'
+  import TagsList from './tags/TagsList.svelte'
+  import TagsDrawer from './tags/TagsDrawer.svelte'
 
   const schema = z.object({
     board_id: z.number().min(1),
@@ -78,7 +78,7 @@
 
   let message = ''
   let isSaved = false
-  let isFocusTagInput = false
+  let tagsDrawerOpen = false
 
   const updateIsSaved = () => {
     isSaved = true
@@ -208,8 +208,17 @@
   class="absolute inset-0 overflow-hidden backdrop-blur-sm"
   transition:fly={{ x: 200, duration: 1000 }}
 >
-  <div class="absolute bottom-0 right-0 top-0 flex min-h-screen w-full max-w-md flex-col gap-2 bg-white/90 px-6 py-3 drop-shadow-lg">
-    <div class="flex flex-row justify-between">
+  <div class="absolute bottom-0 right-0 top-0 flex min-h-screen w-full max-w-md flex-col gap-2 bg-white/90 drop-shadow-lg">
+    {#if tagsDrawerOpen && $store.taskDrawer.ids.board}
+      <div class="absolute inset-0 z-10">
+        <TagsDrawer
+          bind:selectedTagIds={data.tags}
+          boardID={$store.taskDrawer.ids.board}
+          on:close-drawer={() => (tagsDrawerOpen = false)}
+        />
+      </div>
+    {/if}
+    <div class="flex flex-row justify-between px-6 py-3">
       <div class="flex flex-row items-center gap-4">
         <h2 class="text-lg font-bold">{drawerType === 'edit' ? 'Edit' : 'Add New'} Task</h2>
         {#if $columns.data}
@@ -245,7 +254,7 @@
     </div>
     {#if !$task.isLoading}
       <form
-        class="flex w-full flex-col gap-5 py-3"
+        class="flex w-full flex-col gap-5 overflow-y-auto px-6 py-3"
         on:submit={onSubmit}
       >
         <div class="flex w-full flex-col gap-1">
@@ -324,17 +333,37 @@
           </div>
         </div>
 
-        <div class="flex w-full flex-col gap-3 pb-10">
+        <div class="flex w-full flex-col gap-3">
           <p class="text-sm font-bold text-tgray-600"># tags</p>
           {#if $store.taskDrawer.ids.board}
-            <div class="relative">
-              <TagsInput
-                bind:selectedTagIds={data.tags}
-                boardID={$store.taskDrawer.ids.board}
-                bind:isFocus={isFocusTagInput}
-              />
-            </div>
+            <TagsList
+              selectedTagIds={data.tags}
+              boardID={$store.taskDrawer.ids.board}
+            />
           {/if}
+          <div>
+            <button
+              type="button"
+              on:click={() => (tagsDrawerOpen = true)}
+              class="flex w-fit flex-row items-center gap-2 rounded-md border border-tgray-200 px-2 py-1"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2.5"
+                stroke="currentColor"
+                class="h-5 w-5"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 4.5v15m7.5-7.5h-15"
+                />
+              </svg>
+              <p class="text-sm font-medium">Add Tags</p>
+            </button>
+          </div>
         </div>
 
         <div class="flex w-full flex-col gap-3">
