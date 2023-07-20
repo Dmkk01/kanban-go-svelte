@@ -47,13 +47,21 @@ const updateTask = async (task_id: number, data: TaskUpdate) => {
   }).then(async (res) => handleResponse<StatusResponse>(res))
 }
 
+const deleteTask = async (task_id: number) => {
+  return await fetch(`${API_URL}/task/${task_id}`, {
+    method: 'DELETE',
+    headers: authHeaderWithJSON(),
+  }).then(async (res) => handleResponse<StatusResponse>(res))
+}
+
 const TaskAPI = {
   getTask,
   taskUpdatePosition,
   createTask,
   updateSubtask,
   updateSubtaskCompleted,
-  updateTask
+  updateTask,
+  deleteTask
 }
 
 export default TaskAPI

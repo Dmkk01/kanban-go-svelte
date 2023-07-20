@@ -22,10 +22,18 @@ const editColumn = async (column_id: number, emoji: string, name: string) => {
   }).then(async (res) => handleResponse<StatusResponse>(res))
 }
 
+const deleteColumn = async (column_id: number) => {
+  return await fetch(`${API_URL}/column/${column_id}`, {
+    method: 'DELETE',
+    headers: authHeaderWithJSON(),
+  }).then(async (res) => handleResponse<StatusResponse>(res))
+}
+
 const ColumnAPI = {
   getColumn,
   getTasks,
-  editColumn
+  editColumn,
+  deleteColumn
 }
 
 export default ColumnAPI

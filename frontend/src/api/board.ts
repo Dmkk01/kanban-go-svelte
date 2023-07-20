@@ -78,6 +78,14 @@ const editBoard = async (board_id: number, name: string, emoji: string) => {
   }).then(async (res) => handleResponse<StatusResponse>(res))
 }
 
+const deleteBoard = async (board_id: number) => {
+  return await fetch(`${API_URL}/board/${board_id}`, {
+    method: 'DELETE',
+    headers: authHeaderWithJSON(),
+  }).then(async (res) => handleResponse<StatusResponse>(res))
+}
+
+
 const BoardsAPI = {
   getBoards,
   getColumns,
@@ -87,7 +95,8 @@ const BoardsAPI = {
   updateColumnPosition,
   getBoardFull,
   getTagsBoard,
-  editBoard
+  editBoard,
+  deleteBoard
 }
 
 export default BoardsAPI
