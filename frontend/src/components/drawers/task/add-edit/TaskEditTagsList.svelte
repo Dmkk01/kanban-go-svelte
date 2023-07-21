@@ -5,9 +5,8 @@
   export let boardID: number = 0
   export let selectedTagIds: number[] = []
 
-  const tags = useQuery(['board-tags', boardID], () => BoardsAPI.getTagsBoard(boardID), {
+  const tags = useQuery(`board-tags-${boardID}`, () => BoardsAPI.getTagsBoard(boardID), {
     refetchOnWindowFocus: false,
-    onSuccess: (data) => {},
   })
 
   let selectedTags: Tag[] = []

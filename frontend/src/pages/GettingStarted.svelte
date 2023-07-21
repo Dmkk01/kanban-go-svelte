@@ -5,7 +5,7 @@
   import { navigate } from 'svelte-routing'
   import { fade } from 'svelte/transition'
 
-  import { getEmojiURLBySlug, getInitEmoji, openEmojiSelector } from '@/utils/emojis'
+  import { getEmojiURLBySlug, getInitEmoji } from '@/utils/emojis'
   import EmojiButton from '../components/common/EmojiButton.svelte'
 
   const schema = z.object({
@@ -56,34 +56,34 @@
   }
 </script>
 
-<div class="w-full min-h-screen bg-[#C0C2CC] flex items-center justify-center">
+<div class="flex min-h-screen w-full items-center justify-center bg-[#C0C2CC]">
   <div
     transition:fade
-    class="bg-white/30 mx-3 w-full max-w-xl rounded-3xl px-4 md:px-6 py-6 md:py-10 flex shadow-lg flex-col gap-4 md:gap-6 items-start"
+    class="mx-3 flex w-full max-w-xl flex-col items-start gap-4 rounded-3xl bg-white/30 px-4 py-6 shadow-lg md:gap-6 md:px-6 md:py-10"
   >
-    <div class="flex flex-row gap-2 items-center justify-center w-full">
+    <div class="flex w-full flex-row items-center justify-center gap-2">
       <img
         src={getEmojiURLBySlug(data.app_emoji)}
         alt="getting-started-emoji"
-        class="w-8 md:w-10 h-full object-contain"
+        class="h-full w-8 object-contain md:w-10"
       />
-      <h1 class="text-2xl md:text-3xl font-extrabold text-tgray-600">{data.app_name}</h1>
+      <h1 class="text-2xl font-extrabold text-tgray-600 md:text-3xl">{data.app_name}</h1>
     </div>
 
     <div>
-      <p class="font-bold text-xl md:text-2xl text-tgray-600">
+      <p class="text-xl font-bold text-tgray-600 md:text-2xl">
         Welcome! <br />
         Personalize your KanBan.
       </p>
-      <p class="text-base sm:text-lg md:text-xl font-normal text-tgray-600">Don't worry, you can change these in the settings later.</p>
+      <p class="text-base font-normal text-tgray-600 sm:text-lg md:text-xl">Don't worry, you can change these in the settings later.</p>
     </div>
 
     <form
       class="w-full"
       on:submit={handleSubmit}
     >
-      <div class="flex flex-row gap-3 items-center w-full">
-        <div class="flex flex-col gap-0 relative">
+      <div class="flex w-full flex-row items-center gap-3">
+        <div class="relative flex flex-col gap-0">
           <p class="text-[10px] text-tgray-200">Emoji</p>
           <EmojiButton
             bind:emojiSlug={data.app_emoji}
@@ -91,7 +91,7 @@
             extraStyles="w-12 h-12 md:w-14 md:h-14 bg-white/50 shadow-lg"
           />
         </div>
-        <div class="flex flex-col gap-0 w-full">
+        <div class="flex w-full flex-col gap-0">
           <label
             for="#app_name"
             class="text-[10px] text-tgray-200"
@@ -102,19 +102,19 @@
             type="text"
             id="app_name"
             bind:value={data.app_name}
-            class="text-2xl md:text-3xl w-full h-12 md:h-14 px-2 bg-white/50 rounded-lg shadow-lg"
+            class="h-12 w-full rounded-lg bg-white/50 px-2 text-2xl shadow-lg md:h-14 md:text-3xl"
           />
         </div>
       </div>
 
-      <div class="w-full relative mx-auto flex items-center justify-center">
-        <p class="absolute top-10 left-1/2 -translate-x-1/2 text-red-600 font-semibold text-sm">
+      <div class="relative mx-auto flex w-full items-center justify-center">
+        <p class="absolute left-1/2 top-10 -translate-x-1/2 text-sm font-semibold text-red-600">
           {message}
         </p>
         <input
           type="submit"
           value="Done"
-          class="w-full max-w-xs mt-12 md:mt-16 cursor-pointer text-2xl md:text-3xl shadow-lg text-black font-semibold bg-white/40 rounded-2xl py-2"
+          class="mt-12 w-full max-w-xs cursor-pointer rounded-2xl bg-white/40 py-2 text-2xl font-semibold text-black shadow-lg md:mt-16 md:text-3xl"
         />
       </div>
     </form>

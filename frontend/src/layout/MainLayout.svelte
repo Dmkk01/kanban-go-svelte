@@ -7,7 +7,7 @@
   import Sidebar from '@/components/home/sidebar/Sidebar.svelte'
   import Loading from '@/components/common/Loading.svelte'
   import store from '@/store'
-  import { useMutation, useQuery } from '@sveltestack/svelte-query'
+  import { useQuery } from '@sveltestack/svelte-query'
   import { navigate } from 'svelte-routing'
   import TaskViewDrawer from '@/components/drawers/task/view/TaskViewDrawer.svelte'
 

@@ -1,17 +1,20 @@
 <script lang="ts">
   import { getInitEmoji } from '@/utils/emojis'
-  import { Schema, z } from 'zod'
+  import { z } from 'zod'
   import store from '@/store'
   import { useMutation, useQuery, useQueryClient } from '@sveltestack/svelte-query'
-  import BoardsAPI from '@/api/board'
+  import CloseButton from '@/components/common/CloseButton.svelte'
   import SubmitButton from '@/components/common/SubmitButton.svelte'
   import { fly } from 'svelte/transition'
   import ColumnAPI from '@/api/column'
   import TaskAPI from '@/api/task'
   import TaskDrawerSubtaskItem from './TaskEditDrawerSubtaskItem.svelte'
   import TaskDrawerLinkItem from './TaskEditDrawerLinkItem.svelte'
-  import TagsList from './tags/TagsList.svelte'
+  import TaskEditTagsList from './TaskEditTagsList.svelte'
   import TagsDrawer from './tags/TagsDrawer.svelte'
+  import TaskEditColumns from './TaskEditColumns.svelte'
+  import TaskEditAddButton from '../../../common/AddNewButton.svelte'
+  import DeleteButton from '@/components/common/DeleteButton.svelte'
 
   const schema = z.object({
     board_id: z.number().min(1),
@@ -31,7 +34,6 @@
 
   const queryClient = useQueryClient()
 
-  const columns = useQuery(`tasks-drawer-columns`, async () => await BoardsAPI.getColumns($store.taskDrawer.ids.board || 0), {})
   const tasks = useQuery(`tasks-drawer-tasks`, async () => await ColumnAPI.getTasks($store.taskDrawer.ids.column || 0), {})
   const task = useQuery(
     ['task', $store.taskDrawer.ids.task],
@@ -73,8 +75,6 @@
     links: [],
     tags: [],
   }
-
-  // $: console.log('DATA', data)
 
   let message = ''
   let isSaved = false
@@ -181,8 +181,6 @@
         tags: data.tags,
       }
 
-      console.log('FINAL DATA', finalData)
-
       $mutationUpdate.mutate({ taskId, data: finalData })
     }
   }
@@ -239,36 +237,9 @@
     <div class="flex flex-row justify-between px-6 py-3">
       <div class="flex flex-row items-center gap-4">
         <h2 class="text-lg font-bold">{drawerType === 'edit' ? 'Edit' : 'Add New'} Task</h2>
-        {#if $columns.data}
-          <select
-            class="rounded-md border border-tgray-200 px-1 py-1 text-base font-medium text-tgray-600"
-            bind:value={data.column_id}
-          >
-            {#each $columns.data as column}
-              <option value={column.id}>{column.name}</option>
-            {/each}
-          </select>
-        {/if}
+        <TaskEditColumns bind:columnID={data.column_id} />
       </div>
-      <button
-        on:click={closeDrawer}
-        type="button"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="h-6 w-6"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-      </button>
+      <CloseButton onClickHandler={closeDrawer} />
     </div>
     {#if !$task.isLoading}
       <form
@@ -354,34 +325,15 @@
         <div class="flex w-full flex-col gap-3">
           <p class="text-sm font-bold text-tgray-600"># tags</p>
           {#if $store.taskDrawer.ids.board}
-            <TagsList
+            <TaskEditTagsList
               selectedTagIds={data.tags}
               boardID={$store.taskDrawer.ids.board}
             />
           {/if}
-          <div>
-            <button
-              type="button"
-              on:click={() => (tagsDrawerOpen = true)}
-              class="flex w-fit flex-row items-center gap-2 rounded-md border border-tgray-200 px-2 py-1"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="2.5"
-                stroke="currentColor"
-                class="h-5 w-5"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M12 4.5v15m7.5-7.5h-15"
-                />
-              </svg>
-              <p class="text-sm font-medium">Add Tags</p>
-            </button>
-          </div>
+          <TaskEditAddButton
+            onClickHandler={() => (tagsDrawerOpen = true)}
+            text="Add New Tag"
+          />
         </div>
 
         <div class="flex w-full flex-col gap-3">
@@ -394,27 +346,10 @@
               on:delete-subtask={deleteSubtask}
             />
           {/each}
-          <button
-            type="button"
-            on:click={addNewSubtask}
-            class="flex w-fit flex-row items-center gap-2 rounded-md border border-tgray-200 px-2 py-1"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="2.5"
-              stroke="currentColor"
-              class="h-5 w-5"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 4.5v15m7.5-7.5h-15"
-              />
-            </svg>
-            <p class="text-sm font-medium">Add New Subtask</p>
-          </button>
+          <TaskEditAddButton
+            onClickHandler={addNewSubtask}
+            text="Add New Subtask"
+          />
         </div>
 
         <div class="flex w-full flex-col gap-3">
@@ -427,27 +362,10 @@
               on:delete-link={deleteLink}
             />
           {/each}
-          <button
-            type="button"
-            on:click={addNewLink}
-            class="flex w-fit flex-row items-center gap-2 rounded-md border border-tgray-200 px-2 py-1"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="2.5"
-              stroke="currentColor"
-              class="h-5 w-5"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 4.5v15m7.5-7.5h-15"
-              />
-            </svg>
-            <p class="text-sm font-medium">Add New Link</p>
-          </button>
+          <TaskEditAddButton
+            onClickHandler={addNewLink}
+            text="Add New Link"
+          />
         </div>
 
         <SubmitButton
@@ -458,27 +376,10 @@
           {isSaved}
         />
         <div class="w-full">
-          <button
-            type="button"
-            on:click={handleDeleteTask}
-            class="mx-auto flex flex-row items-center gap-2 rounded-lg border border-[#F07575] px-8 py-2 text-[#F07575]"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="h-5 w-5"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-              />
-            </svg>
-            <p class="text-sm">Delete Task</p>
-          </button>
+          <DeleteButton
+            onClickHandler={handleDeleteTask}
+            text="Delete Task"
+          />
         </div>
       </form>
     {/if}

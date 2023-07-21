@@ -1,13 +1,12 @@
 <script lang="ts">
   import ColumnAPI from '@/api/column'
   import { getEmojiURLBySlug } from '@/utils/emojis'
-  import { useMutation, useQuery } from '@sveltestack/svelte-query'
+  import { useMutation } from '@sveltestack/svelte-query'
   import { flip } from 'svelte/animate'
   import { dndzone, TRIGGERS, SOURCES } from 'svelte-dnd-action'
   import BoardTaskItem from './BoardTaskItem.svelte'
   import TaskAPI from '@/api/task'
   import store from '@/store'
-  import { createEventDispatcher } from 'svelte'
   import { longpress } from '@/directives/longpress'
 
   export let column: ColumnBoardFull | undefined
@@ -75,7 +74,7 @@
   }
 </script>
 
-<div class="w-[90vw] md:w-[20rem] xl:w-[21rem] rounded-lg bg-white/30 px-2 py-4 shadow-lg">
+<div class="w-[90vw] rounded-lg bg-white/30 px-2 py-4 shadow-lg md:w-[20rem] xl:w-[21rem]">
   {#if column}
     <div class="flex flex-row items-center justify-between pb-6">
       <div class="flex flex-row items-center gap-2">
