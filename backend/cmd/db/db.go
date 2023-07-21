@@ -3,22 +3,27 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"os"
+	"strconv"
 
 	_ "github.com/lib/pq"
 )
 
-const (
-	host     = "postgres"
-	port     = 5432
-	user     = "postgres"
-	password = "password"
-	dbname   = "mydb"
-)
-
 func Connect() (*sql.DB, error) {
+	host := os.Getenv("DB_HOST")
+	port, _ := strconv.Atoi(os.Getenv("DB_PORT"))
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	dbname := os.Getenv("DB_NAME")
+	sslMode := os.Getenv("DB_SSLMODE")
+
+	if sslMode == "" {
+		sslMode = "disable"
+	}
+
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
+		"password=%s dbname=%s sslmode=%s",
+		host, port, user, password, dbname, sslMode)
 
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {

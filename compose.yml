@@ -12,6 +12,11 @@ services:
       - ./backend/go.sum:/kanban-backend/go.sum
     environment:
       - JWT_SECRET_KEY=secret
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - DB_NAME=mydb
     build:
       context: ./backend
       dockerfile: Dockerfile
