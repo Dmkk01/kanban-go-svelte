@@ -17,22 +17,18 @@
 
   const board = useQuery(`board-${boardID}`, async () => await BoardsAPI.getBoardFull(boardID), {
     refetchOnWindowFocus: false,
+    enabled: boardID !== 0,
     onSuccess: (data) => {
       console.log('board updated', data)
       columnItems = data.columns.map((item) => item.column)
     },
   })
-  // const columns = useQuery(`board-${boardID}-columns`, async () => await BoardsAPI.getColumns(boardID), {
-  //   onSuccess: (data) => {
-  //     columnItems = data
-  //   },
-  // })
+
 
   $: {
     if (boardID !== parseInt(id)) {
       boardID = parseInt(id)
       void $board.refetch()
-      // void $columns.refetch()
     }
   }
 

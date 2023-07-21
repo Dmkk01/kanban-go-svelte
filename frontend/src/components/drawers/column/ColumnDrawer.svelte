@@ -71,9 +71,10 @@
   const mutationCreate = useMutation(
     ({ data, boardID }: { data: Schema; boardID: number }) => BoardsAPI.createColumn(boardID, data.name, data.emoji, data.position),
     {
-      onSuccess: () => {
+      onSuccess: async () => {
         updateIsSaved()
-        queryClient.invalidateQueries(`board-${$store.columnDrawer.boardID}`)
+        await queryClient.invalidateQueries(`board-${$store.columnDrawer.boardID}`)
+        closeDrawer()
       },
       onError: (err) => {
         updateMessage(err as string)
@@ -110,9 +111,10 @@
       return ColumnAPI.editColumn(columnID, data.emoji, data.name)
     },
     {
-      onSuccess: () => {
+      onSuccess: async () => {
         updateIsSaved()
-        queryClient.invalidateQueries(`board-${$store.columnDrawer.boardID}`)
+        await queryClient.invalidateQueries(`board-${$store.columnDrawer.boardID}`)
+        closeDrawer()
       },
       onError: (err) => {
         updateMessage(err as string)
@@ -150,8 +152,6 @@
       }
       $mutationUpdate.mutate({ data, boardID, columnID })
     }
-
-    closeDrawer()
   }
 
   const handleDelete = () => {

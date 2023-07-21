@@ -2,12 +2,15 @@
   import store from '@/store'
   import { getEmojiURLBySlug } from '@/utils/emojis'
   import { link } from 'svelte-routing'
-  import { slide, fade } from 'svelte/transition'
+  import { fade } from 'svelte/transition'
 
   export let board: Board
 
   let isHovering = false
+  let screenWidth = window.innerWidth
 </script>
+
+<svelte:window bind:innerWidth={screenWidth} />
 
 <a
   href={`/home/board/${board.id}`}
@@ -56,7 +59,9 @@
     <button
       type="button"
       on:click={() => {
-        $store.isSidebarOpen = false
+        if (screenWidth < 1024) {
+          $store.isSidebarOpen = false
+        }
         $store.boardDrawer.isOpen = true
         $store.boardDrawer.boardID = board.id
       }}

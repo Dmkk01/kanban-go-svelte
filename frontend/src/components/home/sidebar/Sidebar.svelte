@@ -28,6 +28,9 @@
         )
       }
     },
+    onError: (err) => {
+      console.log( err)
+    },
   })
 
   const boards = useQuery('boards', BoardsAPI.getBoards)
@@ -46,7 +49,7 @@
       viewBox="0 0 24 24"
       stroke-width="2.5"
       stroke="currentColor"
-      class="h-9 w-9 sm:h-10 sm:w-10 text-white"
+      class="h-9 w-9 text-white sm:h-10 sm:w-10"
     >
       <path
         stroke-linecap="round"
@@ -55,17 +58,17 @@
       />
     </svg>
   </button>
-  <div class="flex flex-row gap-2 items-center">
+  <div class="flex flex-row items-center gap-2">
     <h1 class="text-2xl font-bold sm:text-3xl md:text-4xl">
       {$settings.data?.app_name}
     </h1>
-    <div class={`aspect-square h-full p-1 w-12 md:w-14`}>
+    <div class={`aspect-square h-full w-12 p-1 md:w-14`}>
       <img
         src={getEmojiURLBySlug($settings.data?.app_emoji || '')}
         alt="sidebar-emoji"
       />
     </div>
-    </div>
+  </div>
 </div>
 
 {#if $store.isSidebarOpen}

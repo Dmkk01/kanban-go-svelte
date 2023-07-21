@@ -9,6 +9,10 @@ type Board struct {
 	UpdatedAt string `json:"updated_at"`
 }
 
+type BoardCreateResponse struct {
+	Id int `json:"id"`
+}
+
 type BoardFullResponse struct {
 	Board   `json:"board"`
 	Columns []BoardColumnFullResponse `json:"columns"`

@@ -78,9 +78,10 @@
   let drawerType: 'edit' | 'create' = $store.boardDrawer.boardID ? 'edit' : 'create'
 
   const mutationCreate = useMutation((data: Schema) => BoardsAPI.createNewBoard(data.name, data.emoji, data.columns), {
-    onSuccess: async () => {
+    onSuccess: async (data) => {
       updateIsSaved()
       await queryClient.invalidateQueries('boards')
+      navigate(`/home/board/${data.id}`, { replace: false })
     },
     onError: (err) => {
       updateMessage(err as string)
@@ -90,12 +91,12 @@
   const mutationDelete = useMutation((id: number) => BoardsAPI.deleteBoard(id), {
     onSuccess: async () => {
       updateIsSaved()
+      await queryClient.cancelQueries(`board-${$store.boardDrawer.boardID}`)
       await queryClient.invalidateQueries('boards')
+      
       const board = await BoardsAPI.getBoards()
       if (board.length > 0) {
         navigate(`/home/board/${board[0].id}`, { replace: true, state: {} })
-      } else {
-        window.location.href = '/home/new'
       }
       closeDrawer()
     },
@@ -174,8 +175,14 @@
     })
   }
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!$store.boardDrawer.boardID) return
+
+    const board = await BoardsAPI.getBoards()
+      if (board.length < 2) {
+        updateMessage('You cannot delete the last board')
+        return
+      }
 
     $mutationDelete.mutate($store.boardDrawer.boardID)
   }

@@ -68,10 +68,10 @@ func GetBoard(id int) (models.Board, error) {
 	return board, nil
 }
 
-func CreateBoard(board models.CreateBoardRequest, userId int) bool {
+func CreateBoard(board models.CreateBoardRequest, userId int) int {
 	db, err := db.Connect()
 	if err != nil {
-		return false
+		return 0
 	}
 	defer db.Close()
 
@@ -79,17 +79,17 @@ func CreateBoard(board models.CreateBoardRequest, userId int) bool {
 
 	err = db.QueryRow("INSERT INTO board (user_id, name, emoji) VALUES ($1, $2, $3) RETURNING id", userId, board.Name, board.Emoji).Scan(&boardID)
 	if err != nil {
-		return false
+		return 0
 	}
 
 	for _, column := range board.Columns {
 		err := CreateColumn(boardID, column)
 		if err != nil {
-			return false
+			return boardID
 		}
 	}
 
-	return true
+	return boardID
 }
 
 func UpdateBoard(id int, board models.BoardUpdate) bool {

@@ -49,7 +49,7 @@ const createNewBoard = async (board_name: string, board_emoji: string, columns: 
       name: board_name,
       columns: columns,
     }),
-  }).then(async (res) => handleResponse<StatusResponse>(res))
+  }).then(async (res) => handleResponse<{id: number}>(res))
 }
 
 const updateColumnPosition = async (board_id: number, data: { id: number; position: number }[]) => {

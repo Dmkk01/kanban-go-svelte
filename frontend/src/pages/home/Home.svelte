@@ -7,6 +7,8 @@
   import { navigate } from 'svelte-routing/src/history'
   import store from '@/store'
 
+  let screenWidth = window.innerWidth
+
   const settings = useQuery('settings', UserAPI.getUserSettings, {
     refetchOnMount: true,
     onSuccess: async (data) => {
@@ -19,6 +21,8 @@
   const boards = useQuery('boards', BoardsAPI.getBoards)
 </script>
 
+<svelte:window bind:innerWidth={screenWidth} />
+
 <MainLayout>
   <div>
     {#if $settings.isLoading || $boards.isLoading}
@@ -28,7 +32,10 @@
         <NoItems
           item="board"
           onClickHandler={() => {
-            $store.isSidebarOpen = false
+            if (screenWidth < 1024) {
+              $store.isSidebarOpen = false
+            }
+
             $store.boardDrawer.isOpen = true
           }}
         />

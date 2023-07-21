@@ -73,8 +73,8 @@ func CreateBoard(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Both fields are required")
 	}
 
-	ok := services.CreateBoard(data, id)
-	if !ok {
+	boardID := services.CreateBoard(data, id)
+	if boardID == 0 {
 		return echo.NewHTTPError(http.StatusInternalServerError, "There was an error creating the board")
 	}
 
@@ -87,7 +87,7 @@ func CreateBoard(c echo.Context) error {
 		}
 	}
 
-	return c.JSON(http.StatusCreated, models.StatusResponse{Status: "ok"})
+	return c.JSON(http.StatusCreated, models.BoardCreateResponse{Id: boardID})
 }
 
 func GetBoard(c echo.Context) error {
