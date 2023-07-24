@@ -42,7 +42,7 @@
 </button>
 {#if tagOptionsOpen === tag.id}
   <TagDrawerTagOption
-    {tag}
+    bind:tag
     {boardID}
     on:delete-tag-from-board={() => dispatch('delete-tag-from-board', tag.id)}
   />

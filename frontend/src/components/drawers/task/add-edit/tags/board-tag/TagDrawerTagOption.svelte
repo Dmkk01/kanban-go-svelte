@@ -25,19 +25,10 @@
     },
   })
 
-  const handleChangeColor = (color: string) => {
+  const saveTagHandler = () => {
     $updateMutation.mutateAsync({
       id: tag.id,
       title: tag.title,
-      color,
-    })
-  }
-
-  const handleTagInputChange = (e: Event) => {
-    const value = (e.target as HTMLInputElement).value
-    $updateMutation.mutateAsync({
-      id: tag.id,
-      title: value,
       color: tag.color,
     })
   }
@@ -49,15 +40,34 @@
 </script>
 
 <div class="my-2 flex flex-col items-center gap-1 rounded-md border border-tgray-200 px-2 py-2">
-  <div class="w-full">
+  <div class="flex w-full flex-row items-center gap-2">
     <input
       type="text"
       class="w-full rounded-md border border-tgray-600 px-1 py-0.5 text-sm"
       bind:value={tag.title}
       placeholder="Tag name"
       required
-      on:input={handleTagInputChange}
     />
+    <button
+      type="button"
+      on:click={saveTagHandler}
+      class="flex aspect-square h-6 w-6 items-center justify-center rounded-md border border-tgray-600"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="2.5"
+        stroke="currentColor"
+        class="h-4 w-4"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M4.5 12.75l6 6 9-13.5"
+        />
+      </svg>
+    </button>
   </div>
   <div class="flex w-full flex-row items-center justify-around gap-2">
     <div class="flex flex-row gap-1.5 px-2 py-1">
@@ -66,7 +76,7 @@
           type="button"
           class="flex h-6 w-6 items-center justify-center"
           style="background-color: {colorOption}"
-          on:click={() => handleChangeColor(colorOption)}
+          on:click={() => (tag.color = colorOption)}
         >
           {#if colorOption === tag.color}
             <svg
