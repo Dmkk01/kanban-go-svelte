@@ -14,9 +14,9 @@
   export let boardID: number = 0
 
   const user = useQuery('user-check', async () => await UserAPI.getUser(), {
-    onError: (err) => {
-      navigate('/')
-    },
+    // onError: (err) => {
+    //   navigate('/')
+    // },
   })
 
   const refreshMutation = useQuery('refresh', () => AuthAPI.refresh(), {
@@ -28,7 +28,7 @@
 
   setInterval(() => {
     $refreshMutation.refetch()
-  }, 1000 * 60 * 5)
+  }, 1000 * 60 * 2)
 </script>
 
 <div class="relative flex h-screen w-full flex-col overflow-hidden bg-[#C0C2CC] lg:flex-row">
