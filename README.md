@@ -1,4 +1,6 @@
-<img src="/images/header.png"/>
+<p align="center">
+  <img src="/images/header.png" />
+</p>
 
 # Kanban Go Svelte
 
