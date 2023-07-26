@@ -55,3 +55,15 @@ Login Page
 
 Settings Page
 <img src="/images/settings.png"/>
+
+Board
+<img src="/images/board.png"/>
+
+Edit board
+<img src="/images/edit-board.png"/>
+
+Edit task
+<img src="/images/edit-task.png"/>
+
+Tags
+<img src="/images/tags.png"/>
