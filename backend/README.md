@@ -1,12 +1,6 @@
 # Kanban Backend
 
-
-## Commands
-
-https://fly.io/docs/languages-and-frameworks/golang/
-`flyctl deploy`
-`flyctl status`
-`flyctl ips list`
+The backend is written in Go and uses the Echo framework. It is responsible for serving the frontend, providing the API and managing the database.
 
 
 ## Database
